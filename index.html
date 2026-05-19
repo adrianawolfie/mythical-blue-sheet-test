@@ -194,7 +194,7 @@
   }
   .hdr-row { display: grid; gap: 18px; margin-bottom: 12px; }
   .hdr-row.r1 { grid-template-columns: 2fr 1.5fr 1.2fr 1fr; }
-  .hdr-row.r2 { grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1fr; }
+.hdr-row.r2 { grid-template-columns: 1.5fr 1.5fr 1fr 2fr; }
 .hdr-row.r3 {
   grid-template-columns: repeat(4, 78px) 1fr 95px;
   gap: 10px;
@@ -290,6 +290,22 @@
     text-align: center;
     outline: none;
   }
+ .hmini-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  align-items: end;
+}
+
+.hmini {
+  min-width: 70px;
+}
+
+.hmini input {
+  width: 46px;
+  height: 46px;
+  font-size: 14px;
+}
   .hstat input:focus { background: rgba(255,253,240,.7); border-color: var(--gold-light); }
 
   /* BODY GRID */
@@ -1054,8 +1070,10 @@
         <div class="hfl"><label>Species / Race</label><input type="text" placeholder="sea elf, human…" /></div>
         <div class="hfl"><label>Subclass</label><input type="text" placeholder="…" /></div>
         <div class="hfl"><label>Alignment</label><input type="text" placeholder="cn…" /></div>
-        <div class="hfl"><label>Initiative</label><input type="text" placeholder="+0" /></div>
-        <div class="hfl"><label>Speed</label><input type="text" placeholder="30 ft" /></div>
+<div class="hmini-row">
+  <div class="hstat hmini"><label>Initiative</label><input type="text" placeholder="+0" /></div>
+  <div class="hstat hmini"><label>Speed</label><input type="text" placeholder="30" /></div>
+</div>
       </div>
 <div class="hdr-row r3">
   <div class="hstat"><label>Armor Class</label><input type="text" placeholder="—" /></div>
