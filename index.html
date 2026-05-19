@@ -647,7 +647,24 @@
 
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-  .feats-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px; }
+ .feats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.feats-main {
+  grid-column: 1 / -1;
+}
+
+.feats-main textarea {
+  min-height: 420px;
+}
+
+.inventory-card textarea,
+.treasure-card textarea {
+  min-height: 180px;
+}
 
   .spell-stats { display: flex; gap: 9px; padding: 10px; }
   .slot-grid {
@@ -1156,29 +1173,29 @@
             <textarea placeholder="List your class features, species traits, and special abilities here…" style="min-height:120px;"></textarea>
           </div>
 
-          <div class="feats-grid">
-            <div class="sb-card">
-              <div class="sb-hdr">Feats</div>
-              <textarea placeholder="Tavern Brawler&#10;Lucky&#10;Alert&#10;Sharpshooter&#10;Magic Initiate&#10;Mage Slayer&#10;&#10;Add feat descriptions, passive bonuses, and special rules here. Plenty of room for a fully detailed list of your acquired feats over your adventuring career." style="min-height:520px;"></textarea>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:12px;">
-              <div class="sb-card" style="flex:1;">
-                <div class="sb-hdr">Equipment & Proficiencies</div>
-                <textarea placeholder="Armor: Light, Medium&#10;Weapons: Martial, Simple&#10;Tools: Navigator's Tools&#10;          Thieves' Tools" style="min-height:130px;"></textarea>
-              </div>
-              <div class="sb-card">
-                <div class="sb-hdr">Treasure & Coinage</div>
-                <div class="coinsrow">
-                  <div class="cbox2"><label>CP</label><input type="text" placeholder="0" /></div>
-                  <div class="cbox2"><label>SP</label><input type="text" placeholder="0" /></div>
-                  <div class="cbox2"><label>EP</label><input type="text" placeholder="0" /></div>
-                  <div class="cbox2 gold-coin"><label>GP</label><input type="text" placeholder="0" /></div>
-                  <div class="cbox2"><label>PP</label><input type="text" placeholder="0" /></div>
-                </div>
-                <textarea placeholder="Notable loot, ship's cargo manifest…" style="min-height:300px;padding:6px 12px 10px;"></textarea>
-              </div>
-            </div>
-          </div>
+<div class="feats-grid">
+  <div class="sb-card feats-main">
+    <div class="sb-hdr">Feats</div>
+    <textarea placeholder="Tavern Brawler&#10;Lucky&#10;Alert&#10;Sharpshooter&#10;Magic Initiate&#10;Mage Slayer&#10;&#10;Add feat descriptions, passive bonuses, and special rules here. Plenty of room for a fully detailed list of your acquired feats over your adventuring career."></textarea>
+  </div>
+
+  <div class="sb-card inventory-card">
+    <div class="sb-hdr">Equipment & Proficiencies</div>
+    <textarea placeholder="Armor: Light, Medium&#10;Weapons: Martial, Simple&#10;Tools: Navigator's Tools&#10;          Thieves' Tools"></textarea>
+  </div>
+
+  <div class="sb-card treasure-card">
+    <div class="sb-hdr">Treasure & Coinage</div>
+    <div class="coinsrow">
+      <div class="cbox2"><label>CP</label><input type="text" placeholder="0" /></div>
+      <div class="cbox2"><label>SP</label><input type="text" placeholder="0" /></div>
+      <div class="cbox2"><label>EP</label><input type="text" placeholder="0" /></div>
+      <div class="cbox2 gold-coin"><label>GP</label><input type="text" placeholder="0" /></div>
+      <div class="cbox2"><label>PP</label><input type="text" placeholder="0" /></div>
+    </div>
+    <textarea placeholder="Notable loot, ship's cargo manifest…"></textarea>
+  </div>
+</div>
         </div>
 
       </div>
