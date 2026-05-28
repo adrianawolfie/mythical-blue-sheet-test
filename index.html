@@ -1307,11 +1307,32 @@
     btn.classList.add('on');
   }
 
-  function mkCell(v) {
-    return `<td><input type="text" value="${v}" /></td>`;
-  }
+const DEFAULT_SPELL_ROWS = [
+  ['C', 'Mage Hand', '1 action', '30 ft', false, false, false, ''],
+  ['C', 'Control Water', '1 action', '300 ft', true, false, false, ''],
+  ['1', 'Fog Cloud', '1 action', '120 ft', true, false, false, ''],
+  ['2', 'Misty Step', 'Bonus', 'Self', false, false, false, ''],
+  ['3', 'Call Lightning', '1 action', '120 ft', true, false, false, ''],
+  ['', '', '', '', false, false, false, ''],
+  ['', '', '', '', false, false, false, ''],
+  ['', '', '', '', false, false, false, ''],
+  ['', '', '', '', false, false, false, '']
+];
 
-function addSR(level = "", name = "", castTime = "", range = "", concentration = false, ritual = false, material = false, notes = "") {
+function mkCell(v = "") {
+  return `<td><input type="text" value="${String(v).replace(/"/g, "&quot;")}" /></td>`;
+}
+
+function addSR(
+  level = "",
+  name = "",
+  castTime = "",
+  range = "",
+  concentration = false,
+  ritual = false,
+  material = false,
+  notes = ""
+) {
   const tb = document.getElementById("sbody");
   const tr = document.createElement("tr");
 
@@ -1328,17 +1349,13 @@ function addSR(level = "", name = "", castTime = "", range = "", concentration =
   tb.appendChild(tr);
 }
 
-[
-  ["C", "Mage Hand", "1 action", "30 ft", false, false, false, ""],
-  ["C", "Control Water", "1 action", "300 ft", true, false, false, ""],
-  ["1", "Fog Cloud", "1 action", "120 ft", true, false, false, ""],
-  ["2", "Misty Step", "Bonus", "Self", false, false, false, ""],
-  ["3", "Call Lightning", "1 action", "120 ft", true, false, false, ""],
-  ["", "", "", "", false, false, false, ""],
-  ["", "", "", "", false, false, false, ""],
-  ["", "", "", "", false, false, false, ""],
-  ["", "", "", "", false, false, false, ""]
-].forEach(row => addSR(...row));
+function resetSpellRows() {
+  const tb = document.getElementById("sbody");
+  tb.innerHTML = "";
+  DEFAULT_SPELL_ROWS.forEach(row => addSR(...row));
+}
+
+resetSpellRows();
 </script>
 <script>
 let currentCharacterId = null;
@@ -1399,7 +1416,8 @@ summary: {
   armorClass: getValueByExactLabel("Armor Class"),
   hpCurrent: getValueByExactLabel("HP Current"),
   hpMax: getValueByExactLabel("HP Max"),
-  passivePerception: getValueByExactLabel("Passive Perc.")
+  passivePerception: getValueByExactLabel("Passive Perc."),
+  currentConditions: getValueByExactLabel("Current Conditions")
 },
     fields
   };
@@ -1469,17 +1487,38 @@ function newCharacter() {
   showSheet();
 }
 
-function deleteCurrentCharacter() {
+async function deleteCurrentCharacter() {
   if (!currentCharacterId) return;
 
   if (!confirm("Delete this character?")) return;
 
-  const characters = getCharacters().filter(c => c.id !== currentCharacterId);
-  saveCharacters(characters);
+  try {
+    const response = await fetch("/.netlify/functions/delete-character", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ id: currentCharacterId })
+    });
 
-  currentCharacterId = null;
-  renderCharacterList();
-  showStartPage();
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error(result);
+      alert("Failed to delete character.");
+      return;
+    }
+
+    currentCharacterId = null;
+
+    await renderCharacterList();
+    showStartPage();
+
+    alert("Character deleted!");
+  } catch (error) {
+    console.error(error);
+    alert("Error deleting character.");
+  }
 }
 
 async function renderCharacterList() {
@@ -1488,7 +1527,7 @@ async function renderCharacterList() {
   let characters = [];
 
   try {
-    const response = await fetch(`/characters/character-index.json?cacheBust=${Date.now()}`);
+    const response = await fetch(`https://raw.githubusercontent.com/adrianawolfie/mythical-blue-sheet/main/characters/character-index.json?cacheBust=${Date.now()}`);
     characters = await response.json();
   } catch (error) {
     console.error(error);
@@ -1506,13 +1545,14 @@ async function renderCharacterList() {
       <strong>${character.name}</strong><br>
       Armor Class: ${character.armorClass || "—"}<br>
       Hit Points: ${character.hpCurrent || "—"} / ${character.hpMax || "—"}<br>
-      Passive Perception: ${character.passivePerception || "—"}
+      Passive Perception: ${character.passivePerception || "—"}<br>
+      Current Conditions: ${character.currentConditions || "—"}
     </div>
   `).join("");
 
   document.querySelectorAll(".character-card").forEach(card => {
     card.addEventListener("click", async () => {
-      const response = await fetch(`/${card.dataset.file}?cacheBust=${Date.now()}`);
+      const response = await fetch(`https://raw.githubusercontent.com/adrianawolfie/mythical-blue-sheet/main/${card.dataset.file}?cacheBust=${Date.now()}`);
       const character = await response.json();
       loadCharacter(character);
     });
