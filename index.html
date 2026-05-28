@@ -682,29 +682,31 @@
 
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
- .feats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+ 
+.features-traits-main {
+  width: 100%;
 }
 
-.feats-main {
-  grid-column: 1 / -1;
+.features-traits-main textarea {
+  min-height: 120px;
 }
 
-.class-features-card textarea {
-  min-height: 220px;
+.inventory-card {
+  margin-top: 12px;
 }
 
-.feats-main textarea {
-  min-height: 420px;
-}
-
-.inventory-card textarea,
-.treasure-card textarea {
+.inventory-card textarea {
   min-height: 180px;
 }
 
+.treasure-card {
+  margin-top: 12px;
+}
+
+.treasure-card textarea {
+  min-height: 150px;
+}
+ 
 .feature-list {
   display: flex;
   flex-direction: column;
@@ -1278,7 +1280,10 @@
             <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Persuasion</div></div>
           </div>
         </div>
-
+<div class="sb-card inventory-card">
+  <div class="sb-hdr">Equipment & Proficiencies</div>
+  <textarea placeholder="Armor: Light, Medium&#10;Weapons: Martial, Simple&#10;Tools: Navigator's Tools&#10;          Thieves' Tools"></textarea>
+</div>
         <div class="rp">
           <div class="combrow">
             <div class="dsbox">
@@ -1305,43 +1310,31 @@
             </table>
           </div>
 
-<div class="sb-card class-features-card">
-  <div class="sb-hdr">Class Features & Species Traits</div>
-  <textarea placeholder="List your class features, species traits, and special abilities here…"></textarea>
+<div class="sb-card treasure-card">
+  <div class="sb-hdr">Treasure & Coinage</div>
+  <div class="coinsrow">
+    <div class="cbox2"><label>CP</label><input type="text" placeholder="0" /></div>
+    <div class="cbox2"><label>SP</label><input type="text" placeholder="0" /></div>
+    <div class="cbox2"><label>EP</label><input type="text" placeholder="0" /></div>
+    <div class="cbox2 gold-coin"><label>GP</label><input type="text" placeholder="0" /></div>
+    <div class="cbox2"><label>PP</label><input type="text" placeholder="0" /></div>
+  </div>
+  <textarea placeholder="Notable loot, ship's cargo manifest…"></textarea>
 </div>
 
-<div class="feats-grid">
-<div class="sb-card feats-main">
-  <div class="sb-hdr">Feats</div>
+<div class="sb-card features-traits-main">
+  <div class="sb-hdr">Features & Traits</div>
 
   <div id="featList" class="feature-list"></div>
 
   <div class="feature-actions">
     <button type="button" class="feature-add" onclick="addFeatureEntry('featList')">
-      + Add Feat
+      + Add Feature / Trait
     </button>
 
     <button type="button" class="feature-add" onclick="toggleFeatureEditMode('featList')">
-      Edit Feats
+      Edit Features / Traits
     </button>
-  </div>
-</div>
-
-  <div class="sb-card inventory-card">
-    <div class="sb-hdr">Equipment & Proficiencies</div>
-    <textarea placeholder="Armor: Light, Medium&#10;Weapons: Martial, Simple&#10;Tools: Navigator's Tools&#10;          Thieves' Tools"></textarea>
-  </div>
-
-  <div class="sb-card treasure-card">
-    <div class="sb-hdr">Treasure & Coinage</div>
-    <div class="coinsrow">
-      <div class="cbox2"><label>CP</label><input type="text" placeholder="0" /></div>
-      <div class="cbox2"><label>SP</label><input type="text" placeholder="0" /></div>
-      <div class="cbox2"><label>EP</label><input type="text" placeholder="0" /></div>
-      <div class="cbox2 gold-coin"><label>GP</label><input type="text" placeholder="0" /></div>
-      <div class="cbox2"><label>PP</label><input type="text" placeholder="0" /></div>
-    </div>
-    <textarea placeholder="Notable loot, ship's cargo manifest…"></textarea>
   </div>
 </div>
         </div>
@@ -1576,19 +1569,24 @@ function renderFeatureEntries(listId, entries = []) {
 
   list.innerHTML = "";
 
-  if (!entries.length) {
-    addFeatureEntry(listId, {
-      name: "Tavern Brawler",
-      short: "Improvised strikes, shoves, and brawling tricks.",
-      details: ""
-    });
-    addFeatureEntry(listId, {
-      name: "Lucky",
-      short: "Spend luck to influence rolls.",
-      details: ""
-    });
-    return;
-  }
+if (!entries.length) {
+  addFeatureEntry(listId, {
+    name: "Class Feature",
+    short: "Short summary of what this feature does.",
+    details: ""
+  });
+  addFeatureEntry(listId, {
+    name: "Species Trait",
+    short: "Short summary of what this trait does.",
+    details: ""
+  });
+  addFeatureEntry(listId, {
+    name: "Feat",
+    short: "Short summary of what this feat does.",
+    details: ""
+  });
+  return;
+}
 
   entries.forEach(entry => addFeatureEntry(listId, entry));
 }
