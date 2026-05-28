@@ -1013,33 +1013,54 @@
   }
 
   .body {
-    grid-template-columns: 1fr;
-    gap: 14px;
+    display: grid;
+    grid-template-columns: repeat(14, minmax(0, 1fr));
+    gap: 8px;
   }
 
-  .lp {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+  .lp,
+  .rp,
+  .bonrow,
+  .combrow {
+    display: contents;
+  }
+
+  .bonrow .bonbox,
+  .combrow .dsbox,
+  .combrow .cbox {
+    order: 1;
+    min-width: 0;
+  }
+
+  .bonrow .bonbox {
+    grid-column: span 2;
+  }
+
+  .combrow .dsbox {
+    grid-column: span 4;
+    width: auto;
+  }
+
+  .combrow .cbox {
+    grid-column: span 2;
+  }
+
+  .lp .ab {
+    order: 2;
+    grid-column: span 7;
+  }
+
+  .rp > .sb-card,
+  .rp > .treasure-card,
+  .rp > .features-traits-main {
+    order: 3;
+    grid-column: 1 / -1;
   }
 
   .three-col,
   .two-col,
   .feats-grid {
     grid-template-columns: 1fr;
-  }
-
-  .combrow {
-    flex-wrap: wrap;
-  }
-
-  .dsbox {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .cbox {
-    min-width: calc(33.333% - 6px);
   }
 
   .coinsrow {
@@ -1110,8 +1131,18 @@
     width: 190px;
   }
 
-  .lp {
-    grid-template-columns: 1fr;
+  .body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bonrow .bonbox,
+  .combrow .cbox,
+  .lp .ab {
+    grid-column: span 1;
+  }
+
+  .combrow .dsbox {
+    grid-column: 1 / -1;
   }
 
   .hdr-row.r3 {
