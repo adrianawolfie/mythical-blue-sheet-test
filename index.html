@@ -763,8 +763,14 @@
   user-select: none;
 }
 
-.feature-remove,
-.feature-add {
+.feature-actions {
+  display: flex;
+  gap: 8px;
+  margin: 0 10px 12px;
+}
+
+.feature-add,
+.feature-edit-btn {
   border: 1px solid var(--gold-deep);
   background: var(--navy);
   color: white;
@@ -774,13 +780,25 @@
   padding: 7px 9px;
 }
 
-.feature-remove {
-  background: rgba(43,56,102,.85);
-  padding: 6px 8px;
+.feature-edit-controls {
+  display: none;
+  gap: 5px;
+  justify-content: flex-end;
+  margin-top: 8px;
 }
 
-.feature-add {
-  margin: 0 10px 12px;
+.feature-list.editing .feature-edit-controls {
+  display: flex;
+}
+
+.feature-edit-btn {
+  background: rgba(43,56,102,.85);
+  padding: 5px 7px;
+  font-size: 9px;
+}
+
+.feature-entry-top {
+  grid-template-columns: 1fr 2fr;
 }
 
   .spell-stats { display: flex; gap: 9px; padding: 10px; }
@@ -1293,15 +1311,21 @@
 </div>
 
 <div class="feats-grid">
-  <div class="sb-card feats-main">
-    <div class="sb-hdr">Feats</div>
+<div class="sb-card feats-main">
+  <div class="sb-hdr">Feats</div>
 
-    <div id="featList" class="feature-list"></div>
+  <div id="featList" class="feature-list"></div>
 
+  <div class="feature-actions">
     <button type="button" class="feature-add" onclick="addFeatureEntry('featList')">
       + Add Feat
     </button>
+
+    <button type="button" class="feature-add" onclick="toggleFeatureEditMode('featList')">
+      Edit Feats
+    </button>
   </div>
+</div>
 
   <div class="sb-card inventory-card">
     <div class="sb-hdr">Equipment & Proficiencies</div>
@@ -1492,16 +1516,35 @@ function addFeatureEntry(listId, data = {}) {
     <div class="feature-entry-top">
       <input class="feature-name" type="text" placeholder="Name" value="${escapeHtml(data.name || "")}" />
       <input class="feature-short" type="text" placeholder="Short description" value="${escapeHtml(data.short || "")}" />
-      <button type="button" class="feature-remove">Remove</button>
     </div>
 
     <details ${data.open ? "open" : ""}>
       <summary>Details</summary>
       <textarea class="feature-details" placeholder="Full rules text, usage limits, recharge, source, notes...">${escapeHtml(data.details || "")}</textarea>
     </details>
+
+    <div class="feature-edit-controls">
+      <button type="button" class="feature-edit-btn feature-up">↑</button>
+      <button type="button" class="feature-edit-btn feature-down">↓</button>
+      <button type="button" class="feature-edit-btn feature-delete">Remove</button>
+    </div>
   `;
 
-  entry.querySelector(".feature-remove").addEventListener("click", () => {
+  entry.querySelector(".feature-up").addEventListener("click", () => {
+    const previous = entry.previousElementSibling;
+    if (previous) {
+      list.insertBefore(entry, previous);
+    }
+  });
+
+  entry.querySelector(".feature-down").addEventListener("click", () => {
+    const next = entry.nextElementSibling;
+    if (next) {
+      list.insertBefore(next, entry);
+    }
+  });
+
+  entry.querySelector(".feature-delete").addEventListener("click", () => {
     if (confirm("Remove this feat?")) {
       entry.remove();
     }
@@ -1509,7 +1552,12 @@ function addFeatureEntry(listId, data = {}) {
 
   list.appendChild(entry);
 }
+function toggleFeatureEditMode(listId) {
+  const list = document.getElementById(listId);
+  if (!list) return;
 
+  list.classList.toggle("editing");
+}
 function collectFeatureEntries(listId) {
   const list = document.getElementById(listId);
   if (!list) return [];
