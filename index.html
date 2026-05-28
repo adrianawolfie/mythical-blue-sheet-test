@@ -829,6 +829,12 @@ background-position: top center;
   font-size: 10px;
   padding: 7px 9px;
   line-height: 1.2;
+  margin: 0;
+  border-radius: 0;
+  letter-spacing: normal;
+  text-transform: none;
+  font-weight: 400;
+  transition: none;
 }
 
 .dynamic-table .edit-col,
@@ -867,31 +873,36 @@ background-position: top center;
 }
 
 .spell-details-cell {
-  text-align: center;
+  text-align: right;
   vertical-align: middle;
+  padding-left: 2px;
+  padding-right: 4px;
 }
 
-.spell-details-toggle {
-  border: 1px solid rgba(184,144,44,.7);
-  background: rgba(255,253,245,.45);
-  color: var(--navy-deep);
+.spell-details-toggle-wrap {
+  display: inline-block;
+}
+
+.spell-details-toggle-wrap summary {
   cursor: pointer;
   font-family: 'Cinzel', serif;
-  font-size: 8px;
-  letter-spacing: 1.1px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--navy-deep);
   font-weight: 700;
   text-transform: uppercase;
-  padding: 4px 5px;
-  width: 100%;
+  user-select: none;
+  white-space: nowrap;
 }
 
 .spell-details-row td {
-  padding: 0 8px 8px;
+  padding: 0;
   border-top: 0;
+  border-bottom: 0;
 }
 
 .spell-details-panel {
-  padding-top: 6px;
+  padding: 4px 8px 8px;
 }
 
 .spell-details-panel textarea {
@@ -905,6 +916,12 @@ background-position: top center;
   font-size: 13px;
   padding: 6px 8px;
   outline: none;
+  margin-top: 0;
+}
+
+.stbl .spell-main-row td input[type="text"] {
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 
 @media (max-width: 768px) {
@@ -1607,7 +1624,7 @@ background-position: top center;
   <th style="width:4%">R</th>
   <th style="width:4%">M</th>
   <th>Effect</th>
-  <th style="width:8%"></th>
+  <th style="width:5%"></th>
   <th class="edit-col">Edit</th>
 </tr>
     </thead>
@@ -1869,14 +1886,17 @@ function addSR(data = {}) {
     tableCell("spell-effect", spell.effect) +
     `
       <td class="spell-details-cell">
-        <button type="button" class="spell-details-toggle">Details</button>
+        <details class="spell-details-toggle-wrap" ${spell.open ? "open" : ""}>
+          <summary>Details</summary>
+        </details>
       </td>
     ` +
     makeEditCell();
 
+  detailsRow.style.display = spell.open ? "" : "none";
   detailsRow.innerHTML = `
     <td colspan="10">
-      <div class="spell-details-panel" style="${spell.open ? "" : "display:none;"}">
+      <div class="spell-details-panel">
         <textarea class="spell-details" placeholder="Full spell rules, upcasting, components, area, duration, reminders...">${safeText(spell.details)}</textarea>
       </div>
     </td>
@@ -1885,10 +1905,8 @@ function addSR(data = {}) {
   tb.appendChild(mainRow);
   tb.appendChild(detailsRow);
 
-  mainRow.querySelector(".spell-details-toggle").addEventListener("click", () => {
-    const panel = detailsRow.querySelector(".spell-details-panel");
-    const isHidden = panel.style.display === "none";
-    panel.style.display = isHidden ? "" : "none";
+  mainRow.querySelector(".spell-details-toggle-wrap").addEventListener("toggle", event => {
+    detailsRow.style.display = event.target.open ? "" : "none";
   });
 
   attachSpellRowControls(mainRow, detailsRow);
@@ -1924,7 +1942,6 @@ function collectSpellRows() {
 
   mainRows.forEach(mainRow => {
     const detailsRow = mainRow.nextElementSibling;
-    const panel = detailsRow?.querySelector(".spell-details-panel");
 
     rows.push({
       level: mainRow.querySelector(".spell-level")?.value || "",
@@ -1936,7 +1953,7 @@ function collectSpellRows() {
       material: mainRow.querySelector(".spell-material")?.checked || false,
       effect: mainRow.querySelector(".spell-effect")?.value || "",
       details: detailsRow?.querySelector(".spell-details")?.value || "",
-      open: panel?.style.display !== "none"
+      open: detailsRow?.style.display !== "none"
     });
   });
 
