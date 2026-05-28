@@ -1014,7 +1014,7 @@
 
   .body {
     display: grid;
-    grid-template-columns: repeat(14, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
 
@@ -1025,36 +1025,68 @@
     display: contents;
   }
 
-  .bonrow .bonbox,
-  .combrow .dsbox,
-  .combrow .cbox {
+  /* Inspiration first, directly after the header/exhaustion area */
+  .combrow .cbox:last-child {
     order: 1;
+    grid-column: span 1;
     min-width: 0;
   }
 
+  /* Prof Bonus + Passive Perception */
   .bonrow .bonbox {
-    grid-column: span 2;
-  }
-
-  .combrow .dsbox {
-    grid-column: span 4;
-    width: auto;
-  }
-
-  .combrow .cbox {
-    grid-column: span 2;
-  }
-
-  .lp .ab {
     order: 2;
-    grid-column: span 7;
+    grid-column: span 1;
+    min-width: 0;
   }
 
-  .rp > .sb-card,
-  .rp > .treasure-card,
-  .rp > .features-traits-main {
+  /* Death Saves full width so it does not get squished */
+  .combrow .dsbox {
     order: 3;
     grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Temp HP + HD Spent */
+  .combrow .cbox:not(:last-child) {
+    order: 4;
+    grid-column: span 1;
+    min-width: 0;
+  }
+
+  /* Ability scores */
+  .lp .ab {
+    order: 5;
+    grid-column: span 1;
+  }
+
+  /* Main right-column cards, in the requested order */
+  .rp > .sb-card:not(.treasure-card):not(.features-traits-main),
+  .rp > .wtbl,
+  .rp > table {
+    order: 6;
+    grid-column: 1 / -1;
+  }
+
+  .rp > .treasure-card {
+    order: 7;
+    grid-column: 1 / -1;
+  }
+
+  .inventory-card {
+    order: 8;
+    grid-column: 1 / -1;
+  }
+
+  .rp > .features-traits-main {
+    order: 9;
+    grid-column: 1 / -1;
+  }
+
+  .three-col,
+  .two-col,
+  .feats-grid {
+    grid-template-columns: 1fr;
   }
 
   .three-col,
@@ -1141,7 +1173,11 @@
     grid-column: span 1;
   }
 
-  .combrow .dsbox {
+  .combrow .dsbox,
+  .rp > .sb-card,
+  .inventory-card,
+  .treasure-card,
+  .features-traits-main {
     grid-column: 1 / -1;
   }
 
