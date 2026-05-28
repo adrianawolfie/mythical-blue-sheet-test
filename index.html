@@ -765,6 +765,44 @@ background-position: top center;
   user-select: none;
 }
 
+ .feature-meta-row {
+  display: grid;
+  grid-template-columns: 1fr 150px;
+  gap: 10px;
+  align-items: start;
+  margin-top: 8px;
+}
+
+.feature-meta-row details {
+  margin-top: 0;
+}
+
+.feature-resource-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.feature-resource-box label {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1.3px;
+  color: var(--navy);
+  opacity: .8;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-align: center;
+}
+
+.feature-resource-box input {
+  min-height: 28px;
+  text-align: center;
+  font-family: 'IM Fell English', serif;
+  font-size: 12px;
+  font-style: italic;
+  padding: 4px 6px;
+}
+
 .feature-actions {
   display: flex;
   gap: 8px;
@@ -1580,10 +1618,17 @@ function addFeatureEntry(listId, data = {}) {
       <input class="feature-short" type="text" placeholder="Short description" value="${escapeHtml(data.short || "")}" />
     </div>
 
-    <details ${data.open ? "open" : ""}>
-      <summary>Details</summary>
-      <textarea class="feature-details" placeholder="Full rules text, usage limits, recharge, source, notes...">${escapeHtml(data.details || "")}</textarea>
-    </details>
+    <div class="feature-meta-row">
+      <details ${data.open ? "open" : ""}>
+        <summary>Details</summary>
+        <textarea class="feature-details" placeholder="Full rules text, usage limits, recharge, source, notes...">${escapeHtml(data.details || "")}</textarea>
+      </details>
+
+      <div class="feature-resource-box">
+        <label>Resource</label>
+        <input class="feature-resource" type="text" placeholder="2/3 Short Rest" value="${escapeHtml(data.resource || "")}" />
+      </div>
+    </div>
 
     <div class="feature-edit-controls">
       <button type="button" class="feature-edit-btn feature-up">↑</button>
@@ -1607,7 +1652,7 @@ function addFeatureEntry(listId, data = {}) {
   });
 
   entry.querySelector(".feature-delete").addEventListener("click", () => {
-    if (confirm("Remove this feat?")) {
+    if (confirm("Remove this feature or trait?")) {
       entry.remove();
     }
   });
@@ -1624,12 +1669,13 @@ function collectFeatureEntries(listId) {
   const list = document.getElementById(listId);
   if (!list) return [];
 
-  return Array.from(list.querySelectorAll(".feature-entry")).map(entry => ({
-    name: entry.querySelector(".feature-name")?.value || "",
-    short: entry.querySelector(".feature-short")?.value || "",
-    details: entry.querySelector(".feature-details")?.value || "",
-    open: entry.querySelector("details")?.open || false
-  }));
+return Array.from(list.querySelectorAll(".feature-entry")).map(entry => ({
+  name: entry.querySelector(".feature-name")?.value || "",
+  short: entry.querySelector(".feature-short")?.value || "",
+  resource: entry.querySelector(".feature-resource")?.value || "",
+  details: entry.querySelector(".feature-details")?.value || "",
+  open: entry.querySelector("details")?.open || false
+}));
 }
 
 function renderFeatureEntries(listId, entries = []) {
@@ -1639,11 +1685,12 @@ function renderFeatureEntries(listId, entries = []) {
   list.innerHTML = "";
 
 if (!entries.length) {
-  addFeatureEntry(listId, {
-    name: "Class Feature",
-    short: "Short summary of what this feature does.",
-    details: ""
-  });
+addFeatureEntry(listId, {
+  name: "Class Feature",
+  short: "Short summary of what this feature does.",
+  resource: "1/1 Short Rest",
+  details: ""
+});
   addFeatureEntry(listId, {
     name: "Species Trait",
     short: "Short summary of what this trait does.",
