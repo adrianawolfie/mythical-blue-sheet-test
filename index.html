@@ -705,6 +705,84 @@
   min-height: 180px;
 }
 
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
+.feature-entry {
+  border: 1px solid rgba(184,144,44,.75);
+  background: rgba(255,253,245,.28);
+  padding: 10px;
+  border-radius: var(--r);
+}
+
+.feature-entry-top {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.feature-entry input,
+.feature-entry textarea {
+  width: 100%;
+  border: 1px solid rgba(184,144,44,.7);
+  background: rgba(255,253,245,.45);
+  color: var(--ink);
+  font-family: 'IM Fell English', serif;
+  font-size: 13px;
+  padding: 6px 8px;
+  outline: none;
+}
+
+.feature-entry input {
+  min-height: 32px;
+}
+
+.feature-entry textarea {
+  min-height: 110px;
+  resize: vertical;
+  margin-top: 8px;
+}
+
+.feature-entry details {
+  margin-top: 8px;
+}
+
+.feature-entry summary {
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--navy-deep);
+  font-weight: 700;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.feature-remove,
+.feature-add {
+  border: 1px solid var(--gold-deep);
+  background: var(--navy);
+  color: white;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  padding: 7px 9px;
+}
+
+.feature-remove {
+  background: rgba(43,56,102,.85);
+  padding: 6px 8px;
+}
+
+.feature-add {
+  margin: 0 10px 12px;
+}
+
   .spell-stats { display: flex; gap: 9px; padding: 10px; }
   .slot-grid {
     display: grid;
@@ -1217,7 +1295,12 @@
 <div class="feats-grid">
   <div class="sb-card feats-main">
     <div class="sb-hdr">Feats</div>
-    <textarea placeholder="Tavern Brawler&#10;Lucky&#10;Alert&#10;Sharpshooter&#10;Magic Initiate&#10;Mage Slayer&#10;&#10;Add feat descriptions, passive bonuses, and special rules here. Plenty of room for a fully detailed list of your acquired feats over your adventuring career."></textarea>
+
+    <div id="featList" class="feature-list"></div>
+
+    <button type="button" class="feature-add" onclick="addFeatureEntry('featList')">
+      + Add Feat
+    </button>
   </div>
 
   <div class="sb-card inventory-card">
@@ -1371,7 +1454,9 @@ function saveCharacters(characters) {
 }
 
 function getFields() {
-  return Array.from(document.querySelectorAll(".sheet input, .sheet textarea, .sheet select"));
+  return Array.from(
+    document.querySelectorAll(".sheet input, .sheet textarea, .sheet select")
+  ).filter(field => !field.closest(".feature-entry"));
 }
 
 function findFieldByNearbyText(possibleTexts) {
@@ -1387,6 +1472,77 @@ function findFieldByNearbyText(possibleTexts) {
   }
 
   return "";
+}
+ function escapeHtml(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function addFeatureEntry(listId, data = {}) {
+  const list = document.getElementById(listId);
+  if (!list) return;
+
+  const entry = document.createElement("div");
+  entry.className = "feature-entry";
+
+  entry.innerHTML = `
+    <div class="feature-entry-top">
+      <input class="feature-name" type="text" placeholder="Name" value="${escapeHtml(data.name || "")}" />
+      <input class="feature-short" type="text" placeholder="Short description" value="${escapeHtml(data.short || "")}" />
+      <button type="button" class="feature-remove">Remove</button>
+    </div>
+
+    <details ${data.open ? "open" : ""}>
+      <summary>Details</summary>
+      <textarea class="feature-details" placeholder="Full rules text, usage limits, recharge, source, notes...">${escapeHtml(data.details || "")}</textarea>
+    </details>
+  `;
+
+  entry.querySelector(".feature-remove").addEventListener("click", () => {
+    if (confirm("Remove this feat?")) {
+      entry.remove();
+    }
+  });
+
+  list.appendChild(entry);
+}
+
+function collectFeatureEntries(listId) {
+  const list = document.getElementById(listId);
+  if (!list) return [];
+
+  return Array.from(list.querySelectorAll(".feature-entry")).map(entry => ({
+    name: entry.querySelector(".feature-name")?.value || "",
+    short: entry.querySelector(".feature-short")?.value || "",
+    details: entry.querySelector(".feature-details")?.value || "",
+    open: entry.querySelector("details")?.open || false
+  }));
+}
+
+function renderFeatureEntries(listId, entries = []) {
+  const list = document.getElementById(listId);
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  if (!entries.length) {
+    addFeatureEntry(listId, {
+      name: "Tavern Brawler",
+      short: "Improvised strikes, shoves, and brawling tricks.",
+      details: ""
+    });
+    addFeatureEntry(listId, {
+      name: "Lucky",
+      short: "Spend luck to influence rolls.",
+      details: ""
+    });
+    return;
+  }
+
+  entries.forEach(entry => addFeatureEntry(listId, entry));
 }
 function getValueByExactLabel(labelText) {
   const labels = Array.from(document.querySelectorAll(".sheet label"));
@@ -1419,7 +1575,10 @@ summary: {
   passivePerception: getValueByExactLabel("Passive Perc."),
   currentConditions: getValueByExactLabel("Current Conditions")
 },
-    fields
+    fields,
+    customLists: {
+      feats: collectFeatureEntries("featList")
+    }
   };
 }
 
@@ -1431,11 +1590,17 @@ function loadCharacter(character) {
     if (!saved) return;
 
     if (field.type === "checkbox") {
-      field.checked = saved.value;
+      field.checked = saved.value === true;
     } else {
-      field.value = saved.value;
+      if (typeof saved.value === "boolean") {
+        field.value = "";
+      } else {
+        field.value = saved.value ?? "";
+      }
     }
   });
+
+  renderFeatureEntries("featList", character.customLists?.feats || []);
 
   showSheet();
 }
@@ -1483,6 +1648,8 @@ function newCharacter() {
       field.value = "";
     }
   });
+
+  renderFeatureEntries("featList", []);
 
   showSheet();
 }
@@ -1574,6 +1741,7 @@ function showSheet() {
 document.addEventListener("DOMContentLoaded", () => {
   renderCharacterList();
   showStartPage();
+   renderFeatureEntries("featList", []);
 
   document.getElementById("newCharacterBtn").addEventListener("click", newCharacter);
   document.getElementById("saveCharacterBtn").addEventListener("click", saveCurrentCharacter);
