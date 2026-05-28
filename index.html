@@ -810,6 +810,88 @@ background-position: top center;
 }
 
 .feature-add,
+ .table-actions {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0 0;
+  flex-wrap: wrap;
+}
+
+.dynamic-table .edit-col,
+.dynamic-table .row-edit-cell {
+  display: none;
+}
+
+.dynamic-table.editing .edit-col,
+.dynamic-table.editing .row-edit-cell {
+  display: table-cell;
+}
+
+.row-edit-tools {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+}
+
+.row-edit-tools button {
+  border: 1px solid var(--gold-deep);
+  background: rgba(43,56,102,.9);
+  color: white;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  padding: 4px 6px;
+}
+
+.spell-details-row td {
+  padding: 0 8px 8px;
+  border-top: 0;
+}
+
+.spell-details-wrap {
+  padding: 4px 0 2px;
+}
+
+.spell-details-wrap summary {
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  color: var(--navy-deep);
+  font-weight: 700;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.spell-details-wrap textarea {
+  width: 100%;
+  min-height: 90px;
+  margin-top: 6px;
+  resize: vertical;
+  border: 1px solid rgba(184,144,44,.7);
+  background: rgba(255,253,245,.45);
+  color: var(--ink);
+  font-family: 'IM Fell English', serif;
+  font-size: 13px;
+  padding: 6px 8px;
+  outline: none;
+}
+
+@media (max-width: 768px) {
+  .table-actions {
+    justify-content: center;
+  }
+
+  .row-edit-tools {
+    flex-wrap: wrap;
+  }
+
+  .row-edit-tools button {
+    font-size: 8px;
+    padding: 3px 5px;
+  }
+}
 .feature-edit-btn {
   border: 1px solid var(--gold-deep);
   background: var(--navy);
@@ -1403,19 +1485,27 @@ background-position: top center;
             <div class="cbox"><label>Inspiration</label><div class="insp" onclick="this.textContent = this.textContent === '✦' ? '○' : '✦'">○</div></div>
           </div>
 
-          <div class="sb-card">
-            <div class="sb-hdr">Weapons & Damage Cantrips</div>
-            <table class="wtbl">
-              <thead><tr><th style="width:30%">Name</th><th style="width:15%">Atk Bonus</th><th style="width:25%">Damage & Type</th><th>Notes</th></tr></thead>
-              <tbody>
-                <tr><td><input type="text" placeholder="Cutlass" /></td><td><input type="text" placeholder="+5" /></td><td><input type="text" placeholder="1d6+3 slashing" /></td><td><input type="text" placeholder="Finesse" /></td></tr>
-                <tr><td><input type="text" /></td><td><input type="text" /></td><td><input type="text" /></td><td><input type="text" /></td></tr>
-                <tr><td><input type="text" /></td><td><input type="text" /></td><td><input type="text" /></td><td><input type="text" /></td></tr>
-                <tr><td><input type="text" /></td><td><input type="text" /></td><td><input type="text" /></td><td><input type="text" /></td></tr>
-                <tr><td><input type="text" /></td><td><input type="text" /></td><td><input type="text" /></td><td><input type="text" /></td></tr>
-              </tbody>
-            </table>
-          </div>
+<div class="sb-card">
+  <div class="sb-hdr">Weapons & Damage Cantrips</div>
+
+  <table class="wtbl dynamic-table" id="weaponTable">
+    <thead>
+      <tr>
+        <th style="width:30%">Name</th>
+        <th style="width:16%">Atk Bonus/DC</th>
+        <th style="width:25%">Damage & Type</th>
+        <th>Notes</th>
+        <th class="edit-col">Edit</th>
+      </tr>
+    </thead>
+    <tbody id="weaponBody"></tbody>
+  </table>
+
+  <div class="table-actions">
+    <button type="button" class="add-btn" onclick="addWeaponRow()">+ Add Row</button>
+    <button type="button" class="add-btn" onclick="toggleTableEditMode('weaponTable')">Edit Rows</button>
+  </div>
+</div>
 
 <div class="sb-card treasure-card">
   <div class="sb-hdr">Treasure & Coinage</div>
@@ -1474,14 +1564,31 @@ background-position: top center;
           </div>
         </div>
       </div>
-      <div class="sb-card" style="margin-top:12px;">
-        <div class="sb-hdr">Cantrips & Prepared Spells</div>
-        <table class="stbl">
-          <thead><tr><th style="width:8%">Lvl</th><th style="width:28%">Spell Name</th><th style="width:13%">Cast Time</th><th style="width:11%">Range</th><th style="width:5%">C</th><th style="width:5%">R</th><th style="width:5%">M</th><th>Notes</th></tr></thead>
-          <tbody id="sbody"></tbody>
-        </table>
-        <button class="add-btn" onclick="addSR()">+ Add Spell</button>
-      </div>
+<div class="sb-card" style="margin-top:12px;">
+  <div class="sb-hdr">Cantrips & Prepared Spells</div>
+
+  <table class="stbl dynamic-table" id="spellTable">
+    <thead>
+      <tr>
+        <th style="width:5%">Lvl</th>
+        <th style="width:28%">Spell Name</th>
+        <th style="width:9%">Cast Time</th>
+        <th style="width:11%">Range</th>
+        <th style="width:5%">C</th>
+        <th style="width:5%">R</th>
+        <th style="width:5%">M</th>
+        <th>Effect</th>
+        <th class="edit-col">Edit</th>
+      </tr>
+    </thead>
+    <tbody id="sbody"></tbody>
+  </table>
+
+  <div class="table-actions">
+    <button type="button" class="add-btn" onclick="addSR()">+ Add Spell</button>
+    <button type="button" class="add-btn" onclick="toggleTableEditMode('spellTable')">Edit Spells</button>
+  </div>
+</div>
     </div>
 
     <div id="pg-journal" class="pg">
@@ -1514,54 +1621,288 @@ background-position: top center;
     btn.classList.add('on');
   }
 
-const DEFAULT_SPELL_ROWS = [
-  ['C', 'Mage Hand', '1 action', '30 ft', false, false, false, ''],
-  ['C', 'Control Water', '1 action', '300 ft', true, false, false, ''],
-  ['1', 'Fog Cloud', '1 action', '120 ft', true, false, false, ''],
-  ['2', 'Misty Step', 'Bonus', 'Self', false, false, false, ''],
-  ['3', 'Call Lightning', '1 action', '120 ft', true, false, false, ''],
-  ['', '', '', '', false, false, false, ''],
-  ['', '', '', '', false, false, false, ''],
-  ['', '', '', '', false, false, false, ''],
-  ['', '', '', '', false, false, false, '']
+const DEFAULT_WEAPON_ROWS = [
+  {
+    name: "Cutlass",
+    atk: "+5",
+    damage: "1d6+3 slashing",
+    notes: "Finesse"
+  },
+  { name: "", atk: "", damage: "", notes: "" },
+  { name: "", atk: "", damage: "", notes: "" },
+  { name: "", atk: "", damage: "", notes: "" },
+  { name: "", atk: "", damage: "", notes: "" }
 ];
 
-function mkCell(v = "") {
-  return `<td><input type="text" value="${String(v).replace(/"/g, "&quot;")}" /></td>`;
+const DEFAULT_SPELL_ROWS = [
+  {
+    level: "C",
+    name: "Mage Hand",
+    castTime: "1 action",
+    range: "30 ft",
+    concentration: false,
+    ritual: false,
+    material: false,
+    effect: "",
+    details: "",
+    open: false
+  },
+  {
+    level: "C",
+    name: "Control Water",
+    castTime: "1 action",
+    range: "300 ft",
+    concentration: true,
+    ritual: false,
+    material: false,
+    effect: "",
+    details: "",
+    open: false
+  },
+  {
+    level: "1",
+    name: "Fog Cloud",
+    castTime: "1 action",
+    range: "120 ft",
+    concentration: true,
+    ritual: false,
+    material: false,
+    effect: "",
+    details: "",
+    open: false
+  },
+  {
+    level: "2",
+    name: "Misty Step",
+    castTime: "Bonus",
+    range: "Self",
+    concentration: false,
+    ritual: false,
+    material: false,
+    effect: "",
+    details: "",
+    open: false
+  },
+  {
+    level: "3",
+    name: "Call Lightning",
+    castTime: "1 action",
+    range: "120 ft",
+    concentration: true,
+    ritual: false,
+    material: false,
+    effect: "",
+    details: "",
+    open: false
+  },
+  { level: "", name: "", castTime: "", range: "", concentration: false, ritual: false, material: false, effect: "", details: "", open: false },
+  { level: "", name: "", castTime: "", range: "", concentration: false, ritual: false, material: false, effect: "", details: "", open: false },
+  { level: "", name: "", castTime: "", range: "", concentration: false, ritual: false, material: false, effect: "", details: "", open: false },
+  { level: "", name: "", castTime: "", range: "", concentration: false, ritual: false, material: false, effect: "", details: "", open: false }
+];
+
+function safeValue(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
-function addSR(
-  level = "",
-  name = "",
-  castTime = "",
-  range = "",
-  concentration = false,
-  ritual = false,
-  material = false,
-  notes = ""
-) {
-  const tb = document.getElementById("sbody");
+function safeText(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function tableCell(className, value = "") {
+  return `<td><input class="${className}" type="text" value="${safeValue(value)}" /></td>`;
+}
+
+function makeEditCell() {
+  return `
+    <td class="row-edit-cell">
+      <div class="row-edit-tools">
+        <button type="button" class="row-up">↑</button>
+        <button type="button" class="row-down">↓</button>
+        <button type="button" class="row-delete">Remove</button>
+      </div>
+    </td>
+  `;
+}
+
+function attachSimpleRowControls(row) {
+  row.querySelector(".row-up")?.addEventListener("click", () => {
+    const previous = row.previousElementSibling;
+    if (previous) row.parentElement.insertBefore(row, previous);
+  });
+
+  row.querySelector(".row-down")?.addEventListener("click", () => {
+    const next = row.nextElementSibling;
+    if (next) row.parentElement.insertBefore(next, row);
+  });
+
+  row.querySelector(".row-delete")?.addEventListener("click", () => {
+    if (confirm("Remove this row?")) row.remove();
+  });
+}
+
+function attachSpellRowControls(mainRow, detailsRow) {
+  mainRow.querySelector(".row-up")?.addEventListener("click", () => {
+    const previousDetails = mainRow.previousElementSibling;
+    const previousMain = previousDetails?.previousElementSibling;
+
+    if (previousMain?.classList.contains("spell-main-row")) {
+      const tbody = mainRow.parentElement;
+      tbody.insertBefore(mainRow, previousMain);
+      tbody.insertBefore(detailsRow, previousMain);
+    }
+  });
+
+  mainRow.querySelector(".row-down")?.addEventListener("click", () => {
+    const nextMain = detailsRow.nextElementSibling;
+    const nextDetails = nextMain?.nextElementSibling;
+
+    if (nextMain?.classList.contains("spell-main-row") && nextDetails) {
+      const tbody = mainRow.parentElement;
+      tbody.insertBefore(nextMain, mainRow);
+      tbody.insertBefore(nextDetails, mainRow);
+    }
+  });
+
+  mainRow.querySelector(".row-delete")?.addEventListener("click", () => {
+    if (confirm("Remove this spell?")) {
+      detailsRow.remove();
+      mainRow.remove();
+    }
+  });
+}
+
+function addWeaponRow(data = {}) {
+  const tb = document.getElementById("weaponBody");
+  if (!tb) return;
+
   const tr = document.createElement("tr");
+  tr.className = "weapon-row";
 
   tr.innerHTML =
-    mkCell(level) +
-    mkCell(name) +
-    mkCell(castTime) +
-    mkCell(range) +
-    `<td style="text-align:center;"><input type="checkbox" ${concentration ? "checked" : ""} /></td>` +
-    `<td style="text-align:center;"><input type="checkbox" ${ritual ? "checked" : ""} /></td>` +
-    `<td style="text-align:center;"><input type="checkbox" ${material ? "checked" : ""} /></td>` +
-    mkCell(notes);
+    tableCell("weapon-name", data.name || "") +
+    tableCell("weapon-atk", data.atk || "") +
+    tableCell("weapon-damage", data.damage || "") +
+    tableCell("weapon-notes", data.notes || "") +
+    makeEditCell();
 
   tb.appendChild(tr);
+  attachSimpleRowControls(tr);
 }
 
-function resetSpellRows() {
-  const tb = document.getElementById("sbody");
+function resetWeaponRows(rows = DEFAULT_WEAPON_ROWS) {
+  const tb = document.getElementById("weaponBody");
+  if (!tb) return;
+
   tb.innerHTML = "";
-  DEFAULT_SPELL_ROWS.forEach(row => addSR(...row));
+  rows.forEach(row => addWeaponRow(row));
 }
 
+function addSR(data = {}) {
+  const tb = document.getElementById("sbody");
+  if (!tb) return;
+
+  const spell = {
+    level: data.level || "",
+    name: data.name || "",
+    castTime: data.castTime || "",
+    range: data.range || "",
+    concentration: data.concentration === true,
+    ritual: data.ritual === true,
+    material: data.material === true,
+    effect: data.effect || "",
+    details: data.details || "",
+    open: data.open === true
+  };
+
+  const mainRow = document.createElement("tr");
+  mainRow.className = "spell-main-row";
+
+  mainRow.innerHTML =
+    tableCell("spell-level", spell.level) +
+    tableCell("spell-name", spell.name) +
+    tableCell("spell-cast-time", spell.castTime) +
+    tableCell("spell-range", spell.range) +
+    `<td style="text-align:center;"><input class="spell-concentration" type="checkbox" ${spell.concentration ? "checked" : ""} /></td>` +
+    `<td style="text-align:center;"><input class="spell-ritual" type="checkbox" ${spell.ritual ? "checked" : ""} /></td>` +
+    `<td style="text-align:center;"><input class="spell-material" type="checkbox" ${spell.material ? "checked" : ""} /></td>` +
+    tableCell("spell-effect", spell.effect) +
+    makeEditCell();
+
+  const detailsRow = document.createElement("tr");
+  detailsRow.className = "spell-details-row";
+
+  detailsRow.innerHTML = `
+    <td colspan="9">
+      <details class="spell-details-wrap" ${spell.open ? "open" : ""}>
+        <summary>Details</summary>
+        <textarea class="spell-details" placeholder="Full spell rules, upcasting, components, area, duration, reminders...">${safeText(spell.details)}</textarea>
+      </details>
+    </td>
+  `;
+
+  tb.appendChild(mainRow);
+  tb.appendChild(detailsRow);
+
+  attachSpellRowControls(mainRow, detailsRow);
+}
+
+function resetSpellRows(rows = DEFAULT_SPELL_ROWS) {
+  const tb = document.getElementById("sbody");
+  if (!tb) return;
+
+  tb.innerHTML = "";
+  rows.forEach(row => addSR(row));
+}
+
+function toggleTableEditMode(tableId) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+
+  table.classList.toggle("editing");
+}
+
+function collectWeaponRows() {
+  return Array.from(document.querySelectorAll("#weaponBody .weapon-row")).map(row => ({
+    name: row.querySelector(".weapon-name")?.value || "",
+    atk: row.querySelector(".weapon-atk")?.value || "",
+    damage: row.querySelector(".weapon-damage")?.value || "",
+    notes: row.querySelector(".weapon-notes")?.value || ""
+  }));
+}
+
+function collectSpellRows() {
+  const rows = [];
+  const mainRows = Array.from(document.querySelectorAll("#sbody .spell-main-row"));
+
+  mainRows.forEach(mainRow => {
+    const detailsRow = mainRow.nextElementSibling;
+
+    rows.push({
+      level: mainRow.querySelector(".spell-level")?.value || "",
+      name: mainRow.querySelector(".spell-name")?.value || "",
+      castTime: mainRow.querySelector(".spell-cast-time")?.value || "",
+      range: mainRow.querySelector(".spell-range")?.value || "",
+      concentration: mainRow.querySelector(".spell-concentration")?.checked || false,
+      ritual: mainRow.querySelector(".spell-ritual")?.checked || false,
+      material: mainRow.querySelector(".spell-material")?.checked || false,
+      effect: mainRow.querySelector(".spell-effect")?.value || "",
+      details: detailsRow?.querySelector(".spell-details")?.value || "",
+      open: detailsRow?.querySelector("details")?.open || false
+    });
+  });
+
+  return rows;
+}
+
+resetWeaponRows();
 resetSpellRows();
 </script>
 <script>
@@ -1580,7 +1921,12 @@ function saveCharacters(characters) {
 function getFields() {
   return Array.from(
     document.querySelectorAll(".sheet input, .sheet textarea, .sheet select")
-  ).filter(field => !field.closest(".feature-entry"));
+  ).filter(field =>
+    !field.closest(".feature-entry") &&
+    !field.closest(".weapon-row") &&
+    !field.closest(".spell-main-row") &&
+    !field.closest(".spell-details-row")
+  );
 }
 
 function findFieldByNearbyText(possibleTexts) {
@@ -1738,9 +2084,11 @@ summary: {
   currentConditions: getValueByExactLabel("Current Conditions")
 },
     fields,
-    customLists: {
-      feats: collectFeatureEntries("featList")
-    }
+customLists: {
+  feats: collectFeatureEntries("featList"),
+  weapons: collectWeaponRows(),
+  spells: collectSpellRows()
+}
   };
 }
 
@@ -1762,9 +2110,11 @@ function loadCharacter(character) {
     }
   });
 
-  renderFeatureEntries("featList", character.customLists?.feats || []);
+renderFeatureEntries("featList", character.customLists?.feats || []);
+resetWeaponRows(character.customLists?.weapons || DEFAULT_WEAPON_ROWS);
+resetSpellRows(character.customLists?.spells || DEFAULT_SPELL_ROWS);
 
-  showSheet();
+showSheet();
 }
 
 async function saveCurrentCharacter(showAlert = true) {
@@ -1811,9 +2161,11 @@ function newCharacter() {
     }
   });
 
-  renderFeatureEntries("featList", []);
+renderFeatureEntries("featList", []);
+resetWeaponRows();
+resetSpellRows();
 
-  showSheet();
+showSheet();
 }
 
 async function deleteCurrentCharacter() {
