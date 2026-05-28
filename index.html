@@ -877,22 +877,28 @@ background-position: top center;
   vertical-align: middle;
   padding-left: 2px;
   padding-right: 4px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .spell-details-toggle-wrap {
-  display: inline-block;
+  display: block;
+  width: 100%;
 }
 
 .spell-details-toggle-wrap summary {
   cursor: pointer;
   font-family: 'Cinzel', serif;
-  font-size: 9px;
-  letter-spacing: 1.5px;
+  font-size: 8px;
+  letter-spacing: .6px;
   color: var(--navy-deep);
   font-weight: 700;
   text-transform: uppercase;
   user-select: none;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  max-width: 100%;
 }
 
 .spell-details-row td {
@@ -922,6 +928,19 @@ background-position: top center;
 .stbl .spell-main-row td input[type="text"] {
   padding-top: 3px;
   padding-bottom: 3px;
+}
+
+/* Keep the hidden detail rows from adding blank space between spells. */
+.spell-details-row[style*="display: none"] td {
+  padding: 0;
+  border: 0;
+}
+
+.editing-active {
+  background: var(--gold) !important;
+  color: var(--navy-deep) !important;
+  border-color: var(--gold-deep) !important;
+  font-weight: 700 !important;
 }
 
 @media (max-width: 768px) {
@@ -1051,6 +1070,34 @@ background-position: top center;
     transition: background .2s;
   }
   .add-btn:hover { background: rgba(214,168,56,.25); }
+
+/* Match table action buttons to Features & Traits buttons. */
+.feature-actions .feature-add,
+.table-actions .add-btn {
+  border: 1px solid var(--gold-deep);
+  background: var(--navy);
+  color: white;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  padding: 7px 9px;
+  line-height: 1.2;
+  margin: 0;
+  border-radius: 0;
+  letter-spacing: normal;
+  text-transform: none;
+  font-weight: 400;
+  transition: none;
+}
+
+.feature-actions .feature-add.editing-active,
+.table-actions .add-btn.editing-active {
+  background: var(--gold) !important;
+  color: var(--navy-deep) !important;
+  border-color: var(--gold-deep) !important;
+  font-weight: 700 !important;
+}
+
 
   .ftr {
     margin-top: 30px;
@@ -1541,7 +1588,7 @@ background-position: top center;
         <th style="width:16%">Atk Bonus/DC</th>
         <th style="width:25%">Damage & Type</th>
         <th>Notes</th>
-        <th class="edit-col">Edit</th>
+        <th class="edit-col"></th>
       </tr>
     </thead>
     <tbody id="weaponBody"></tbody>
@@ -1549,7 +1596,7 @@ background-position: top center;
 
   <div class="table-actions">
     <button type="button" class="add-btn" onclick="addWeaponRow()">+ Add Row</button>
-    <button type="button" class="add-btn" onclick="toggleTableEditMode('weaponTable')">Edit Rows</button>
+    <button type="button" class="add-btn" onclick="toggleTableEditMode('weaponTable', this)">Edit Rows</button>
   </div>
 </div>
 
@@ -1575,7 +1622,7 @@ background-position: top center;
     + Add Feature / Trait
   </button>
 
-  <button type="button" class="feature-add" onclick="toggleFeatureEditMode('featList')">
+  <button type="button" class="feature-add" onclick="toggleFeatureEditMode('featList', this)">
     Edit Features / Traits
   </button>
 </div>
@@ -1617,15 +1664,15 @@ background-position: top center;
     <thead>
 <tr>
   <th style="width:5%">Lvl</th>
-  <th style="width:23%">Spell Name</th>
+  <th style="width:20%">Spell Name</th>
   <th style="width:8%">Cast Time</th>
-  <th style="width:10%">Range</th>
+  <th style="width:9%">Range</th>
   <th style="width:4%">C</th>
   <th style="width:4%">R</th>
   <th style="width:4%">M</th>
   <th>Effect</th>
-  <th style="width:5%"></th>
-  <th class="edit-col">Edit</th>
+  <th class="spell-details-heading" style="width:7%"></th>
+  <th class="edit-col" style="width:6%"></th>
 </tr>
     </thead>
     <tbody id="sbody"></tbody>
@@ -1633,7 +1680,7 @@ background-position: top center;
 
   <div class="table-actions">
     <button type="button" class="add-btn" onclick="addSR()">+ Add Spell</button>
-    <button type="button" class="add-btn" onclick="toggleTableEditMode('spellTable')">Edit Spells</button>
+    <button type="button" class="add-btn" onclick="toggleTableEditMode('spellTable', this)">Edit Spells</button>
   </div>
 </div>
     </div>
@@ -1920,11 +1967,14 @@ function resetSpellRows(rows = DEFAULT_SPELL_ROWS) {
   rows.forEach(row => addSR(row));
 }
 
-function toggleTableEditMode(tableId) {
+function toggleTableEditMode(tableId, button) {
   const table = document.getElementById(tableId);
   if (!table) return;
 
-  table.classList.toggle("editing");
+  const isEditing = table.classList.toggle("editing");
+  if (button) {
+    button.classList.toggle("editing-active", isEditing);
+  }
 }
 
 function collectWeaponRows() {
@@ -2063,11 +2113,14 @@ function addFeatureEntry(listId, data = {}) {
 
   list.appendChild(entry);
 }
-function toggleFeatureEditMode(listId) {
+function toggleFeatureEditMode(listId, button) {
   const list = document.getElementById(listId);
   if (!list) return;
 
-  list.classList.toggle("editing");
+  const isEditing = list.classList.toggle("editing");
+  if (button) {
+    button.classList.toggle("editing-active", isEditing);
+  }
 }
 function collectFeatureEntries(listId) {
   const list = document.getElementById(listId);
