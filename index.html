@@ -765,9 +765,9 @@ background-position: top center;
   user-select: none;
 }
 
- .feature-meta-row {
+.feature-meta-row {
   display: grid;
-  grid-template-columns: 1fr 150px;
+  grid-template-columns: 1fr 210px;
   gap: 10px;
   align-items: start;
   margin-top: 8px;
@@ -777,10 +777,14 @@ background-position: top center;
   margin-top: 0;
 }
 
+.feature-meta-row details[open] {
+  grid-column: 1 / -1;
+}
+
 .feature-resource-box {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 6px;
 }
 
 .feature-resource-box label {
@@ -791,11 +795,11 @@ background-position: top center;
   opacity: .8;
   text-transform: uppercase;
   font-weight: 700;
-  text-align: center;
+  white-space: nowrap;
 }
 
 .feature-resource-box input {
-  min-height: 28px;
+  min-height: 26px;
   text-align: center;
   font-family: 'IM Fell English', serif;
   font-size: 12px;
@@ -803,34 +807,27 @@ background-position: top center;
   padding: 4px 6px;
 }
 
-.feature-actions {
+.feature-actions,
+.table-actions {
   display: flex;
   gap: 8px;
   margin: 0 10px 12px;
-}
-
-.feature-add,
-.table-actions,
-.feature-actions {
-  display: flex;
-  gap: 8px;
-  margin: 10px 0 0;
   flex-wrap: wrap;
 }
 
-.feature-actions {
-  margin: 0 10px 12px;
+.table-actions {
+  margin-top: 10px;
 }
 
-.table-actions .add-btn,
-.feature-actions .feature-add {
+.feature-add,
+.table-actions .add-btn {
   border: 1px solid var(--gold-deep);
   background: var(--navy);
   color: white;
   cursor: pointer;
   font-family: 'Cinzel', serif;
-  font-size: 9px;
-  padding: 5px 8px;
+  font-size: 10px;
+  padding: 7px 9px;
   line-height: 1.2;
 }
 
@@ -863,42 +860,51 @@ background-position: top center;
   min-width: 22px;
 }
 
+.row-edit-tools .delete-x,
+.feature-edit-controls .delete-x {
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .spell-details-cell {
-  vertical-align: top;
+  text-align: center;
+  vertical-align: middle;
 }
 
-.spell-details-wrap {
-  position: relative;
-}
-
-.spell-details-wrap summary {
+.spell-details-toggle {
+  border: 1px solid rgba(184,144,44,.7);
+  background: rgba(255,253,245,.45);
+  color: var(--navy-deep);
   cursor: pointer;
   font-family: 'Cinzel', serif;
   font-size: 8px;
-  letter-spacing: 1.2px;
-  color: var(--navy-deep);
+  letter-spacing: 1.1px;
   font-weight: 700;
   text-transform: uppercase;
-  user-select: none;
-  white-space: nowrap;
+  padding: 4px 5px;
+  width: 100%;
 }
 
-.spell-details-wrap textarea {
-  width: 220px;
+.spell-details-row td {
+  padding: 0 8px 8px;
+  border-top: 0;
+}
+
+.spell-details-panel {
+  padding-top: 6px;
+}
+
+.spell-details-panel textarea {
+  width: 100%;
   min-height: 90px;
-  margin-top: 6px;
   resize: vertical;
   border: 1px solid rgba(184,144,44,.7);
-  background: rgba(255,253,245,.92);
+  background: rgba(255,253,245,.45);
   color: var(--ink);
   font-family: 'IM Fell English', serif;
   font-size: 13px;
   padding: 6px 8px;
   outline: none;
-  position: absolute;
-  right: 0;
-  z-index: 5;
-  box-shadow: 0 4px 10px rgba(0,0,0,.18);
 }
 
 @media (max-width: 768px) {
@@ -1601,7 +1607,7 @@ background-position: top center;
   <th style="width:4%">R</th>
   <th style="width:4%">M</th>
   <th>Effect</th>
-  <th style="width:8%">Details</th>
+  <th style="width:8%"></th>
   <th class="edit-col">Edit</th>
 </tr>
     </thead>
@@ -1750,7 +1756,7 @@ function makeEditCell() {
       <div class="row-edit-tools">
         <button type="button" class="row-up" title="Move up">↑</button>
         <button type="button" class="row-down" title="Move down">↓</button>
-        <button type="button" class="row-delete" title="Delete">×</button>
+        <button type="button" class="row-delete delete-x" title="Delete">X</button>
       </div>
     </td>
   `;
@@ -1769,6 +1775,37 @@ function attachSimpleRowControls(row) {
 
   row.querySelector(".row-delete")?.addEventListener("click", () => {
     if (confirm("Remove this row?")) row.remove();
+  });
+}
+
+function attachSpellRowControls(mainRow, detailsRow) {
+  mainRow.querySelector(".row-up")?.addEventListener("click", () => {
+    const previousDetails = mainRow.previousElementSibling;
+    const previousMain = previousDetails?.previousElementSibling;
+
+    if (previousMain?.classList.contains("spell-main-row")) {
+      const tbody = mainRow.parentElement;
+      tbody.insertBefore(mainRow, previousMain);
+      tbody.insertBefore(detailsRow, previousMain);
+    }
+  });
+
+  mainRow.querySelector(".row-down")?.addEventListener("click", () => {
+    const nextMain = detailsRow.nextElementSibling;
+    const nextDetails = nextMain?.nextElementSibling;
+
+    if (nextMain?.classList.contains("spell-main-row") && nextDetails?.classList.contains("spell-details-row")) {
+      const tbody = mainRow.parentElement;
+      tbody.insertBefore(nextMain, mainRow);
+      tbody.insertBefore(nextDetails, mainRow);
+    }
+  });
+
+  mainRow.querySelector(".row-delete")?.addEventListener("click", () => {
+    if (confirm("Remove this spell?")) {
+      detailsRow.remove();
+      mainRow.remove();
+    }
   });
 }
 
@@ -1815,10 +1852,13 @@ function addSR(data = {}) {
     open: data.open === true
   };
 
-  const row = document.createElement("tr");
-  row.className = "spell-main-row";
+  const mainRow = document.createElement("tr");
+  mainRow.className = "spell-main-row";
 
-  row.innerHTML =
+  const detailsRow = document.createElement("tr");
+  detailsRow.className = "spell-details-row";
+
+  mainRow.innerHTML =
     tableCell("spell-level", spell.level) +
     tableCell("spell-name", spell.name) +
     tableCell("spell-cast-time", spell.castTime) +
@@ -1829,17 +1869,31 @@ function addSR(data = {}) {
     tableCell("spell-effect", spell.effect) +
     `
       <td class="spell-details-cell">
-        <details class="spell-details-wrap" ${spell.open ? "open" : ""}>
-          <summary>Details</summary>
-          <textarea class="spell-details" placeholder="Full spell rules, upcasting, components, area, duration, reminders...">${safeText(spell.details)}</textarea>
-        </details>
+        <button type="button" class="spell-details-toggle">Details</button>
       </td>
     ` +
     makeEditCell();
 
-  tb.appendChild(row);
-  attachSimpleRowControls(row);
+  detailsRow.innerHTML = `
+    <td colspan="10">
+      <div class="spell-details-panel" style="${spell.open ? "" : "display:none;"}">
+        <textarea class="spell-details" placeholder="Full spell rules, upcasting, components, area, duration, reminders...">${safeText(spell.details)}</textarea>
+      </div>
+    </td>
+  `;
+
+  tb.appendChild(mainRow);
+  tb.appendChild(detailsRow);
+
+  mainRow.querySelector(".spell-details-toggle").addEventListener("click", () => {
+    const panel = detailsRow.querySelector(".spell-details-panel");
+    const isHidden = panel.style.display === "none";
+    panel.style.display = isHidden ? "" : "none";
+  });
+
+  attachSpellRowControls(mainRow, detailsRow);
 }
+
 function resetSpellRows(rows = DEFAULT_SPELL_ROWS) {
   const tb = document.getElementById("sbody");
   if (!tb) return;
@@ -1865,18 +1919,28 @@ function collectWeaponRows() {
 }
 
 function collectSpellRows() {
-  return Array.from(document.querySelectorAll("#sbody .spell-main-row")).map(row => ({
-    level: row.querySelector(".spell-level")?.value || "",
-    name: row.querySelector(".spell-name")?.value || "",
-    castTime: row.querySelector(".spell-cast-time")?.value || "",
-    range: row.querySelector(".spell-range")?.value || "",
-    concentration: row.querySelector(".spell-concentration")?.checked || false,
-    ritual: row.querySelector(".spell-ritual")?.checked || false,
-    material: row.querySelector(".spell-material")?.checked || false,
-    effect: row.querySelector(".spell-effect")?.value || "",
-    details: row.querySelector(".spell-details")?.value || "",
-    open: row.querySelector("details")?.open || false
-  }));
+  const rows = [];
+  const mainRows = Array.from(document.querySelectorAll("#sbody .spell-main-row"));
+
+  mainRows.forEach(mainRow => {
+    const detailsRow = mainRow.nextElementSibling;
+    const panel = detailsRow?.querySelector(".spell-details-panel");
+
+    rows.push({
+      level: mainRow.querySelector(".spell-level")?.value || "",
+      name: mainRow.querySelector(".spell-name")?.value || "",
+      castTime: mainRow.querySelector(".spell-cast-time")?.value || "",
+      range: mainRow.querySelector(".spell-range")?.value || "",
+      concentration: mainRow.querySelector(".spell-concentration")?.checked || false,
+      ritual: mainRow.querySelector(".spell-ritual")?.checked || false,
+      material: mainRow.querySelector(".spell-material")?.checked || false,
+      effect: mainRow.querySelector(".spell-effect")?.value || "",
+      details: detailsRow?.querySelector(".spell-details")?.value || "",
+      open: panel?.style.display !== "none"
+    });
+  });
+
+  return rows;
 }
 
 resetWeaponRows();
@@ -1956,7 +2020,7 @@ function addFeatureEntry(listId, data = {}) {
     <div class="feature-edit-controls">
       <button type="button" class="feature-edit-btn feature-up">↑</button>
       <button type="button" class="feature-edit-btn feature-down">↓</button>
-      <button type="button" class="feature-edit-btn feature-delete">Remove</button>
+      <button type="button" class="feature-edit-btn feature-delete delete-x">X</button>
     </div>
   `;
 
