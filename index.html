@@ -872,33 +872,45 @@ background-position: top center;
   font-weight: 700;
 }
 
-.spell-details-cell {
-  text-align: right;
-  vertical-align: middle;
-  padding-left: 2px;
-  padding-right: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.spell-details-toggle-wrap {
-  display: block;
+.spell-table-wrap {
   width: 100%;
+  overflow-x: visible;
 }
 
-.spell-details-toggle-wrap summary {
+#spellTable {
+  table-layout: fixed;
+}
+
+.spell-details-cell {
+  text-align: center;
+  vertical-align: middle;
+  padding-left: 3px;
+  padding-right: 3px;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.spell-details-toggle {
+  display: inline-block;
+  width: 100%;
+  max-width: 58px;
+  border: none;
+  background: transparent;
+  color: var(--navy-deep);
   cursor: pointer;
   font-family: 'Cinzel', serif;
   font-size: 8px;
   letter-spacing: .6px;
-  color: var(--navy-deep);
   font-weight: 700;
   text-transform: uppercase;
-  user-select: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  max-width: 100%;
+  text-align: center;
+  padding: 3px 1px;
+  line-height: 1.1;
+}
+
+.spell-details-toggle.open,
+.spell-details-toggle:hover {
+  color: var(--gold-deep);
 }
 
 .spell-details-row td {
@@ -934,6 +946,44 @@ background-position: top center;
 .spell-details-row[style*="display: none"] td {
   padding: 0;
   border: 0;
+}
+
+#spellTable.editing .spell-details-cell {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+#spellTable.editing .row-edit-cell {
+  min-width: 70px;
+}
+
+#spellTable.editing .row-edit-tools {
+  gap: 3px;
+}
+
+#spellTable.editing .row-edit-tools button {
+  min-width: 20px;
+  padding: 3px 4px;
+}
+
+@media (max-width: 768px) {
+  .spell-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #spellTable {
+    min-width: 760px;
+  }
+
+  #spellTable .spell-details-toggle {
+    max-width: 62px;
+    font-size: 8px;
+  }
+
+  #spellTable .spell-cast-time {
+    min-width: 70px;
+  }
 }
 
 .editing-active {
@@ -1407,6 +1457,42 @@ background-position: top center;
     min-width: 100%;
   }
 }
+
+/* Spell table stability fixes */
+#spellTable .spell-details-heading {
+  text-align: center;
+}
+
+#spellTable .edit-col {
+  text-align: center;
+}
+
+#spellTable .row-edit-cell {
+  white-space: nowrap;
+  overflow: visible;
+}
+
+@media (max-width: 420px) {
+  .spell-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #spellTable {
+    min-width: 800px;
+  }
+
+  #spellTable th:nth-child(3),
+  #spellTable td:nth-child(3) {
+    width: 90px;
+  }
+
+  #spellTable th:nth-child(9),
+  #spellTable td:nth-child(9) {
+    width: 70px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1660,23 +1746,25 @@ background-position: top center;
 <div class="sb-card" style="margin-top:12px;">
   <div class="sb-hdr">Cantrips & Prepared Spells</div>
 
+  <div class="spell-table-wrap">
   <table class="stbl dynamic-table" id="spellTable">
     <thead>
 <tr>
   <th style="width:5%">Lvl</th>
-  <th style="width:20%">Spell Name</th>
-  <th style="width:8%">Cast Time</th>
+  <th style="width:18%">Spell Name</th>
+  <th style="width:10%">Cast Time</th>
   <th style="width:9%">Range</th>
   <th style="width:4%">C</th>
   <th style="width:4%">R</th>
   <th style="width:4%">M</th>
   <th>Effect</th>
-  <th class="spell-details-heading" style="width:7%"></th>
-  <th class="edit-col" style="width:6%"></th>
+  <th class="spell-details-heading" style="width:8%"></th>
+  <th class="edit-col" style="width:10%"></th>
 </tr>
     </thead>
     <tbody id="sbody"></tbody>
   </table>
+  </div>
 
   <div class="table-actions">
     <button type="button" class="add-btn" onclick="addSR()">+ Add Spell</button>
@@ -1933,9 +2021,7 @@ function addSR(data = {}) {
     tableCell("spell-effect", spell.effect) +
     `
       <td class="spell-details-cell">
-        <details class="spell-details-toggle-wrap" ${spell.open ? "open" : ""}>
-          <summary>Details</summary>
-        </details>
+        <button type="button" class="spell-details-toggle ${spell.open ? "open" : ""}">Details</button>
       </td>
     ` +
     makeEditCell();
@@ -1952,8 +2038,10 @@ function addSR(data = {}) {
   tb.appendChild(mainRow);
   tb.appendChild(detailsRow);
 
-  mainRow.querySelector(".spell-details-toggle-wrap").addEventListener("toggle", event => {
-    detailsRow.style.display = event.target.open ? "" : "none";
+  mainRow.querySelector(".spell-details-toggle").addEventListener("click", event => {
+    const isOpening = detailsRow.style.display === "none";
+    detailsRow.style.display = isOpening ? "" : "none";
+    event.currentTarget.classList.toggle("open", isOpening);
   });
 
   attachSpellRowControls(mainRow, detailsRow);
