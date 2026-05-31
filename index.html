@@ -1407,64 +1407,73 @@ background-position: top center;
     background: rgba(255,255,255,.11);
   }
 
+  /* Keep the parchment sheet and its baked-background decorative artwork
+     in their original palette. This avoids visible rectangles around the
+     title banner, corners, and ship illustration. */
   html[data-theme="dark"] .sheet {
-    background-color: #2a2526;
-    background-blend-mode: multiply;
-    box-shadow: 0 8px 46px rgba(0,0,0,.72), 0 2px 12px rgba(0,0,0,.55);
+    --navy:        #2b3866;
+    --navy-deep:   #1c2750;
+    --navy-soft:   #3d4d80;
+    --gold:        #b8902c;
+    --gold-deep:   #8a6918;
+    --gold-light:  #d6a838;
+    --ink:         #1f2952;
+    --ink-soft:    #404e88;
+
+    background-color: #ede1c0;
+    background-blend-mode: normal;
+    box-shadow: 0 10px 52px rgba(0,0,0,.78), 0 2px 14px rgba(0,0,0,.6);
   }
 
   html[data-theme="dark"] .corner,
   html[data-theme="dark"] .compass-watermark,
-  html[data-theme="dark"] .ship-art {
-    filter: brightness(.72) saturate(.82) contrast(1.06);
-  }
-
+  html[data-theme="dark"] .ship-art,
   html[data-theme="dark"] .title-banner {
-    filter: brightness(.82) saturate(.88) contrast(1.05);
+    filter: none;
   }
 
-  html[data-theme="dark"] input,
-  html[data-theme="dark"] textarea,
-  html[data-theme="dark"] select,
-  html[data-theme="dark"] .condition-control,
-  html[data-theme="dark"] .condition-chip,
-  html[data-theme="dark"] .condition-explanation,
-  html[data-theme="dark"] .feature-entry,
-  html[data-theme="dark"] .weapon-entry,
-  html[data-theme="dark"] .spell-detail-row td {
+  html[data-theme="dark"] .sheet input,
+  html[data-theme="dark"] .sheet textarea,
+  html[data-theme="dark"] .sheet select,
+  html[data-theme="dark"] .sheet .condition-control,
+  html[data-theme="dark"] .sheet .condition-chip,
+  html[data-theme="dark"] .sheet .condition-explanation,
+  html[data-theme="dark"] .sheet .feature-entry,
+  html[data-theme="dark"] .sheet .weapon-entry,
+  html[data-theme="dark"] .sheet .spell-detail-row td {
     color: var(--ink);
   }
 
-  html[data-theme="dark"] input,
-  html[data-theme="dark"] textarea,
-  html[data-theme="dark"] select,
-  html[data-theme="dark"] .condition-control {
-    background-color: rgba(17,23,38,.46);
+  html[data-theme="dark"] .sheet input,
+  html[data-theme="dark"] .sheet textarea,
+  html[data-theme="dark"] .sheet select,
+  html[data-theme="dark"] .sheet .condition-control {
+    background-color: rgba(255,253,245,.4);
   }
 
-  html[data-theme="dark"] input::placeholder,
-  html[data-theme="dark"] textarea::placeholder {
-    color: rgba(238,228,210,.58);
+  html[data-theme="dark"] .sheet input::placeholder,
+  html[data-theme="dark"] .sheet textarea::placeholder {
+    color: rgba(31,41,82,.48);
   }
 
-  html[data-theme="dark"] .scorebox,
-  html[data-theme="dark"] .sb-card,
-  html[data-theme="dark"] .dsbox,
-  html[data-theme="dark"] .cbox,
-  html[data-theme="dark"] .cbox2,
-  html[data-theme="dark"] .feature-entry,
-  html[data-theme="dark"] .spell-detail-row td,
-  html[data-theme="dark"] .wtbl,
-  html[data-theme="dark"] .stbl {
-    background-color: rgba(20,27,42,.22);
+  html[data-theme="dark"] .sheet .scorebox,
+  html[data-theme="dark"] .sheet .sb-card,
+  html[data-theme="dark"] .sheet .dsbox,
+  html[data-theme="dark"] .sheet .cbox,
+  html[data-theme="dark"] .sheet .cbox2,
+  html[data-theme="dark"] .sheet .feature-entry,
+  html[data-theme="dark"] .sheet .spell-detail-row td,
+  html[data-theme="dark"] .sheet .wtbl,
+  html[data-theme="dark"] .sheet .stbl {
+    background-color: rgba(255,253,245,.12);
   }
 
-  html[data-theme="dark"] .condition-chip {
-    background: rgba(20,27,42,.72);
+  html[data-theme="dark"] .sheet .condition-chip {
+    background: rgba(255,253,245,.72);
   }
 
-  html[data-theme="dark"] .condition-chip.active {
-    background: rgba(203,167,85,.42);
+  html[data-theme="dark"] .sheet .condition-chip.active {
+    background: var(--gold);
   }
 
   html[data-theme="dark"] .sheet-toolbar button,
