@@ -1407,9 +1407,9 @@ background-position: top center;
     padding: 145px 14px 36px;
     overflow-x: hidden;
 
-    /* Keep the parchment texture at a comfortable scale on mobile.
-       The sides are cropped instead of shrinking the image to the screen width. */
-    background-size: max(680px, 100%) auto;
+    /* Match the desktop texture scale on mobile.
+       The image stays wide and the sides are cropped rather than squeezed. */
+    background-size: 1000px auto;
     background-repeat: repeat-y;
     background-position: top center;
   }
@@ -1619,8 +1619,8 @@ background-position: top center;
   .sheet {
     padding: 125px 10px 28px;
 
-    /* Slightly tighter crop for narrow phones, without squeezing the texture. */
-    background-size: max(560px, 100%) auto;
+    /* Keep nearly the same desktop texture scale on narrow phones too. */
+    background-size: 900px auto;
     background-repeat: repeat-y;
     background-position: top center;
   }
