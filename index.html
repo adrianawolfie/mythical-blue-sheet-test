@@ -215,8 +215,99 @@ background-position: top center;
   font-size: 14px;
 }
 
-.hstat.conditions input {
+.hstat.conditions {
   min-width: 180px;
+  align-items: stretch;
+}
+
+.hstat.conditions label {
+  text-align: center;
+}
+
+.condition-picker {
+  width: 100%;
+  min-width: 180px;
+  height: 46px;
+  border: 1px solid var(--ink-soft);
+  border-radius: var(--r);
+  background: rgba(255,253,245,.72);
+  color: var(--ink);
+  font-family: 'IM Fell English', Georgia, serif;
+  font-size: 14px;
+  padding: 4px 8px;
+  outline: none;
+}
+
+.condition-picker:focus {
+  border-color: var(--gold);
+}
+
+.condition-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 0;
+  margin-top: 4px;
+}
+
+.condition-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--gold-deep);
+  border-radius: 12px;
+  background: rgba(255,253,245,.72);
+  color: var(--navy-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: .5px;
+  padding: 3px 5px 3px 7px;
+  cursor: pointer;
+}
+
+.condition-chip.active {
+  background: var(--gold);
+}
+
+.condition-chip-remove {
+  border: none;
+  background: transparent;
+  color: var(--navy-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.condition-explanation {
+  display: none;
+  margin: -2px 0 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--gold);
+  background: rgba(255,253,245,.58);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.condition-explanation.on {
+  display: block;
+}
+
+.condition-explanation strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--navy-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.condition-explanation ul {
+  margin: 0;
+  padding-left: 17px;
 }
 
 .hstat.exhaustion {
@@ -1270,7 +1361,8 @@ background-position: top center;
   }
 
   .hstat.wide input,
-  .hstat.conditions input {
+  .hstat.conditions input,
+  .hstat.conditions .condition-picker {
     min-width: 0;
     width: 100%;
   }
@@ -1541,10 +1633,32 @@ background-position: top center;
       </div>
 <div class="hdr-row r3">
   <div class="hstat"><label>Armor Class</label><input type="text" placeholder="—" /></div>
-  <div class="hstat"><label>HP Current</label><input type="text" placeholder="—" /></div>
-  <div class="hstat"><label>HP Max</label><input type="text" placeholder="—" /></div>
+  <div class="hstat"><label>HP Current</label><input id="hpCurrentInput" type="text" placeholder="—" /></div>
+  <div class="hstat"><label>HP Max</label><input id="hpMaxInput" type="text" placeholder="—" /></div>
   <div class="hstat"><label>Hit Dice</label><input type="text" placeholder="5d8" /></div>
-  <div class="hstat wide conditions"><label>Current Conditions</label><input type="text" placeholder="poisoned, stunned…" /></div>
+  <div class="hstat wide conditions">
+    <label>Current Conditions</label>
+    <input id="currentConditionsInput" type="hidden" value="" />
+    <select class="condition-picker" onchange="addSelectedCondition(this.value); this.value = '';">
+      <option value="">Add condition…</option>
+      <option value="Blinded">Blinded</option>
+      <option value="Charmed">Charmed</option>
+      <option value="Deafened">Deafened</option>
+      <option value="Exhaustion">Exhaustion</option>
+      <option value="Frightened">Frightened</option>
+      <option value="Grappled">Grappled</option>
+      <option value="Incapacitated">Incapacitated</option>
+      <option value="Invisible">Invisible</option>
+      <option value="Paralyzed">Paralyzed</option>
+      <option value="Petrified">Petrified</option>
+      <option value="Poisoned">Poisoned</option>
+      <option value="Prone">Prone</option>
+      <option value="Restrained">Restrained</option>
+      <option value="Stunned">Stunned</option>
+      <option value="Unconscious">Unconscious</option>
+    </select>
+    <div id="activeConditions" class="condition-chips"></div>
+  </div>
 <div class="hstat wide exhaustion">
   <label>Exhaustion</label>
 
@@ -1558,6 +1672,7 @@ background-position: top center;
   </div>
 </div>
 </div>
+<div id="conditionExplanation" class="condition-explanation"></div>
 
     <div class="tabs">
       <button class="tab on" onclick="sw('main',this)">⚓ Main</button>
@@ -2103,6 +2218,7 @@ resetSpellRows();
 </script>
 <script>
 let currentCharacterId = null;
+ let loadedCharacterUpdatedAt = null;
 
 const STORAGE_KEY = "mythicalBlueCharacters";
 
@@ -2114,10 +2230,186 @@ function saveCharacters(characters) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(characters));
 }
 
+const CONDITION_DETAILS = {
+  Blinded: [
+    "You cannot see and automatically fail ability checks that require sight.",
+    "Attack rolls against you have Advantage, and your attack rolls have Disadvantage."
+  ],
+  Charmed: [
+    "You cannot attack the charmer or target the charmer with damaging abilities or magical effects.",
+    "The charmer has Advantage on ability checks to interact with you socially."
+  ],
+  Deafened: [
+    "You cannot hear and automatically fail ability checks that require hearing."
+  ],
+  Exhaustion: [
+    "Exhaustion is cumulative. Each time you receive it, your Exhaustion level increases by 1.",
+    "D20 Tests are reduced by 2 per Exhaustion level.",
+    "Speed is reduced by 5 feet per Exhaustion level.",
+    "At level 6, you die. A Long Rest removes 1 level."
+  ],
+  Frightened: [
+    "You have Disadvantage on ability checks and attack rolls while the source of fear is within line of sight.",
+    "You cannot willingly move closer to the source of fear."
+  ],
+  Grappled: [
+    "Your Speed is 0 and cannot increase.",
+    "You have Disadvantage on attacks against targets other than the grappler.",
+    "The grappler can drag or carry you, usually at an extra movement cost."
+  ],
+  Incapacitated: [
+    "You cannot take actions, Bonus Actions, or Reactions.",
+    "Your Concentration ends, you cannot speak, and you have Disadvantage on Initiative if you are Incapacitated when rolling it."
+  ],
+  Invisible: [
+    "If you are Invisible when Initiative is rolled, you have Advantage on that roll.",
+    "Effects that require a visible target cannot affect you unless their creator can somehow see you.",
+    "Attack rolls against you have Disadvantage, and your attack rolls have Advantage, unless the other creature can somehow see you."
+  ],
+  Paralyzed: [
+    "You are Incapacitated, your Speed is 0, and you automatically fail Strength and Dexterity saving throws.",
+    "Attack rolls against you have Advantage.",
+    "A hit against you is a Critical Hit if the attacker is within 5 feet."
+  ],
+  Petrified: [
+    "You and your nonmagical worn or carried objects become a solid inanimate substance. Your weight increases tenfold, and you stop aging.",
+    "You are Incapacitated, your Speed is 0, attacks against you have Advantage, and you automatically fail Strength and Dexterity saving throws.",
+    "You have Resistance to all damage and Immunity to the Poisoned condition."
+  ],
+  Poisoned: [
+    "You have Disadvantage on attack rolls and ability checks."
+  ],
+  Prone: [
+    "Your movement options are crawling or spending half your Speed to stand up and end the condition.",
+    "Your attack rolls have Disadvantage. Attacks against you have Advantage within 5 feet and Disadvantage from farther away."
+  ],
+  Restrained: [
+    "Your Speed is 0 and cannot increase.",
+    "Attack rolls against you have Advantage, your attack rolls have Disadvantage, and you have Disadvantage on Dexterity saving throws."
+  ],
+  Stunned: [
+    "You are Incapacitated and automatically fail Strength and Dexterity saving throws.",
+    "Attack rolls against you have Advantage."
+  ],
+  Unconscious: [
+    "You are Incapacitated and Prone, drop what you are holding, and remain Prone when the condition ends.",
+    "Your Speed is 0, attacks against you have Advantage, and you automatically fail Strength and Dexterity saving throws.",
+    "A hit against you is a Critical Hit if the attacker is within 5 feet. You are unaware of your surroundings."
+  ]
+};
+
+let focusedCondition = "";
+
+function getSelectedConditions() {
+  const input = document.getElementById("currentConditionsInput");
+  if (!input || !input.value.trim()) return [];
+
+  const knownConditions = Object.keys(CONDITION_DETAILS);
+
+  return input.value
+    .split(",")
+    .map(value => value.trim())
+    .filter(Boolean)
+    .map(value =>
+      knownConditions.find(condition =>
+        condition.toLowerCase() === value.toLowerCase()
+      ) || value
+    )
+    .filter((value, index, array) =>
+      array.findIndex(item => item.toLowerCase() === value.toLowerCase()) === index
+    );
+}
+
+function setSelectedConditions(conditions) {
+  const input = document.getElementById("currentConditionsInput");
+  if (!input) return;
+
+  input.value = conditions.join(", ");
+}
+
+function addSelectedCondition(condition) {
+  if (!condition) return;
+
+  const conditions = getSelectedConditions();
+
+  if (!conditions.some(item => item.toLowerCase() === condition.toLowerCase())) {
+    conditions.push(condition);
+    setSelectedConditions(conditions);
+  }
+
+  focusedCondition = condition;
+  renderSelectedConditions();
+}
+
+function removeSelectedCondition(condition, event) {
+  if (event) event.stopPropagation();
+
+  const conditions = getSelectedConditions().filter(
+    item => item.toLowerCase() !== condition.toLowerCase()
+  );
+
+  setSelectedConditions(conditions);
+
+  if (focusedCondition.toLowerCase() === condition.toLowerCase()) {
+    focusedCondition = conditions[0] || "";
+  }
+
+  renderSelectedConditions();
+}
+
+function showConditionExplanation(condition) {
+  focusedCondition = condition;
+  renderSelectedConditions();
+}
+
+function renderSelectedConditions() {
+  const chips = document.getElementById("activeConditions");
+  const explanation = document.getElementById("conditionExplanation");
+  const conditions = getSelectedConditions();
+
+  if (!chips || !explanation) return;
+
+  chips.innerHTML = conditions.map(condition => `
+    <button
+      type="button"
+      class="condition-chip ${focusedCondition === condition ? "active" : ""}"
+      onclick="showConditionExplanation('${condition}')"
+    >
+      ${condition}
+      <span
+        class="condition-chip-remove"
+        onclick="removeSelectedCondition('${condition}', event)"
+        aria-label="Remove ${condition}"
+      >×</span>
+    </button>
+  `).join("");
+
+  if (!focusedCondition || !conditions.includes(focusedCondition)) {
+    focusedCondition = conditions[0] || "";
+  }
+
+  if (!focusedCondition || !CONDITION_DETAILS[focusedCondition]) {
+    explanation.classList.remove("on");
+    explanation.innerHTML = "";
+    return;
+  }
+
+  explanation.innerHTML = `
+    <strong>${focusedCondition}</strong>
+    <ul>
+      ${CONDITION_DETAILS[focusedCondition]
+        .map(detail => `<li>${detail}</li>`)
+        .join("")}
+    </ul>
+  `;
+  explanation.classList.add("on");
+}
+
 function getFields() {
   return Array.from(
     document.querySelectorAll(".sheet input, .sheet textarea, .sheet select")
   ).filter(field =>
+    !field.classList.contains("condition-picker") &&
     !field.closest(".feature-entry") &&
     !field.closest(".weapon-row") &&
     !field.closest(".spell-main-row") &&
@@ -2265,15 +2557,48 @@ function getValueByExactLabel(labelText) {
 
   return field ? field.value : "";
 }
+function getToggleStates(selector) {
+  return Array.from(document.querySelectorAll(selector)).map(element =>
+    element.classList.contains("on")
+  );
+}
+
+function applyToggleStates(selector, savedStates = []) {
+  document.querySelectorAll(selector).forEach((element, index) => {
+    element.classList.toggle("on", savedStates[index] === true);
+  });
+}
+
+function collectUiState() {
+  return {
+    inspiration: document.querySelector(".insp")?.textContent.trim() === "✦",
+    skillProficiencies: getToggleStates(".sk .dot"),
+    deathSaves: getToggleStates(".dsbox .svdie"),
+    exhaustion: getToggleStates(".exhaustion-row .svdie")
+  };
+}
+
+function applyUiState(uiState = {}) {
+  const inspiration = document.querySelector(".insp");
+  if (inspiration) {
+    inspiration.textContent = uiState.inspiration === true ? "✦" : "○";
+  }
+
+  applyToggleStates(".sk .dot", uiState.skillProficiencies || []);
+  applyToggleStates(".dsbox .svdie", uiState.deathSaves || []);
+  applyToggleStates(".exhaustion-row .svdie", uiState.exhaustion || []);
+}
+
 function collectCharacterData() {
   const fields = getFields().map((field, index) => ({
     index,
     value: field.type === "checkbox" ? field.checked : field.value
   }));
 
-  return {
-    id: currentCharacterId || crypto.randomUUID(),
-    updatedAt: new Date().toISOString(),
+return {
+  id: currentCharacterId || crypto.randomUUID(),
+  expectedUpdatedAt: loadedCharacterUpdatedAt,
+  updatedAt: new Date().toISOString(),
 summary: {
   name: getValueByExactLabel("Character Name") || "Unnamed Character",
   armorClass: getValueByExactLabel("Armor Class"),
@@ -2283,6 +2608,7 @@ summary: {
   currentConditions: getValueByExactLabel("Current Conditions")
 },
     fields,
+    uiState: collectUiState(),
 customLists: {
   feats: collectFeatureEntries("featList"),
   weapons: collectWeaponRows(),
@@ -2293,9 +2619,11 @@ customLists: {
 
 function loadCharacter(character) {
   currentCharacterId = character.id;
+  loadedCharacterUpdatedAt = character.updatedAt || null;
+  const savedFields = character.fields || [];
 
   getFields().forEach((field, index) => {
-    const saved = character.fields.find(f => f.index === index);
+    const saved = savedFields.find(f => f.index === index);
     if (!saved) return;
 
     if (field.type === "checkbox") {
@@ -2312,6 +2640,22 @@ function loadCharacter(character) {
 renderFeatureEntries("featList", character.customLists?.feats || []);
 resetWeaponRows(character.customLists?.weapons || DEFAULT_WEAPON_ROWS);
 resetSpellRows(character.customLists?.spells || DEFAULT_SPELL_ROWS);
+applyUiState(character.uiState || {});
+focusedCondition = "";
+renderSelectedConditions();
+
+// HP is also stored explicitly in the character summary.
+// Reapply it by id so layout changes cannot shift these two fields.
+const hpCurrentInput = document.getElementById("hpCurrentInput");
+const hpMaxInput = document.getElementById("hpMaxInput");
+
+if (hpCurrentInput && character.summary?.hpCurrent !== undefined) {
+  hpCurrentInput.value = character.summary.hpCurrent || "";
+}
+
+if (hpMaxInput && character.summary?.hpMax !== undefined) {
+  hpMaxInput.value = character.summary.hpMax || "";
+}
 
 showSheet();
 }
@@ -2330,17 +2674,18 @@ async function saveCurrentCharacter(showAlert = true) {
 
     const result = await response.json();
 
-    if (!response.ok) {
-      console.error(result);
-      alert("Failed to save character.");
-      return;
-    }
+if (!response.ok) {
+  console.error(result);
+  alert(result.error || "Failed to save character.");
+  return;
+}
 
-    currentCharacterId = data.id;
+currentCharacterId = data.id;
+loadedCharacterUpdatedAt = result.updatedAt || data.updatedAt;
 
-    if (showAlert) {
-      alert("Character saved!");
-    }
+if (showAlert) {
+  alert("Character saved!");
+}
 
     renderCharacterList();
 
@@ -2351,6 +2696,7 @@ async function saveCurrentCharacter(showAlert = true) {
 }
 function newCharacter() {
   currentCharacterId = crypto.randomUUID();
+  loadedCharacterUpdatedAt = null;
 
   getFields().forEach(field => {
     if (field.type === "checkbox") {
@@ -2363,6 +2709,9 @@ function newCharacter() {
 renderFeatureEntries("featList", []);
 resetWeaponRows();
 resetSpellRows();
+applyUiState({});
+focusedCondition = "";
+renderSelectedConditions();
 
 showSheet();
 }
@@ -2378,20 +2727,24 @@ async function deleteCurrentCharacter() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ id: currentCharacterId })
+body: JSON.stringify({
+  id: currentCharacterId,
+  expectedUpdatedAt: loadedCharacterUpdatedAt
+})
     });
 
     const result = await response.json();
 
     if (!response.ok) {
       console.error(result);
-      alert("Failed to delete character.");
+alert(result.error || "Failed to delete character.");
       return;
     }
 
-    currentCharacterId = null;
+currentCharacterId = null;
+loadedCharacterUpdatedAt = null;
 
-    await renderCharacterList();
+await renderCharacterList();
     showStartPage();
 
     alert("Character deleted!");
@@ -2407,8 +2760,20 @@ async function renderCharacterList() {
   let characters = [];
 
   try {
-    const response = await fetch(`https://raw.githubusercontent.com/adrianawolfie/mythical-blue-sheet/main/characters/character-index.json?cacheBust=${Date.now()}`);
-    characters = await response.json();
+    const response = await fetch(
+      `/.netlify/functions/get-character-index?cacheBust=${Date.now()}`,
+      {
+        cache: "no-store"
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Could not load character index.");
+    }
+
+    characters = result;
   } catch (error) {
     console.error(error);
     list.innerHTML = "<p>Could not load saved characters.</p>";
@@ -2421,7 +2786,7 @@ async function renderCharacterList() {
   }
 
   list.innerHTML = characters.map(character => `
-    <div class="character-card" data-file="${character.file}">
+    <div class="character-card" data-id="${character.id}">
       <strong>${character.name}</strong><br>
       Armor Class: ${character.armorClass || "—"}<br>
       Hit Points: ${character.hpCurrent || "—"} / ${character.hpMax || "—"}<br>
@@ -2432,9 +2797,27 @@ async function renderCharacterList() {
 
   document.querySelectorAll(".character-card").forEach(card => {
     card.addEventListener("click", async () => {
-      const response = await fetch(`https://raw.githubusercontent.com/adrianawolfie/mythical-blue-sheet/main/${card.dataset.file}?cacheBust=${Date.now()}`);
-      const character = await response.json();
-      loadCharacter(character);
+      try {
+        const response = await fetch(
+          `/.netlify/functions/get-character?id=${encodeURIComponent(
+            card.dataset.id
+          )}&cacheBust=${Date.now()}`,
+          {
+            cache: "no-store"
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Could not load character.");
+        }
+
+        loadCharacter(result);
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Could not load character.");
+      }
     });
   });
 }
@@ -2454,15 +2837,18 @@ function showSheet() {
 document.addEventListener("DOMContentLoaded", () => {
   renderCharacterList();
   showStartPage();
+  renderSelectedConditions();
    renderFeatureEntries("featList", []);
 
   document.getElementById("newCharacterBtn").addEventListener("click", newCharacter);
   document.getElementById("saveCharacterBtn").addEventListener("click", saveCurrentCharacter);
   document.getElementById("deleteCharacterBtn").addEventListener("click", deleteCurrentCharacter);
 
-document.getElementById("backToStartBtn").addEventListener("click", () => {
-  saveCurrentCharacter(false);
+document.getElementById("backToStartBtn").addEventListener("click", async () => {
+  currentCharacterId = null;
+  loadedCharacterUpdatedAt = null;
   showStartPage();
+  await renderCharacterList();
 });
 });
 </script>
