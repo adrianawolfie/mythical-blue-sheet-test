@@ -942,7 +942,7 @@ background-position: top center;
 }
 
 .feature-resource-area.has-resource .feature-resource-toggle {
-  color: var(--gold-deep);
+  display: none;
 }
 
 .feature-resource-box {
@@ -953,6 +953,26 @@ background-position: top center;
 
 .feature-resource-area.has-resource .feature-resource-box {
   display: flex;
+}
+
+.feature-resource-remove {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--gold-deep);
+  background: rgba(43,56,102,.9);
+  color: white;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.feature-list.editing .feature-resource-remove {
+  display: inline-flex;
 }
 
 .feature-resource-box label {
@@ -2484,12 +2504,13 @@ function addFeatureEntry(listId, data = {}) {
 
       <div class="feature-resource-area ${hasResource ? "has-resource" : ""}">
         <button type="button" class="feature-resource-toggle">
-          ${hasResource ? "Resource ✓" : "+ Has Resource"}
+          + Add Resource
         </button>
 
         <div class="feature-resource-box">
           <label>Resource</label>
           <input class="feature-resource" type="text" placeholder="2/3 Short Rest" value="${escapeHtml(data.resource || "")}" />
+          <button type="button" class="feature-resource-remove" aria-label="Remove resource tracker">X</button>
         </div>
       </div>
     </div>
@@ -2504,26 +2525,22 @@ function addFeatureEntry(listId, data = {}) {
   const resourceArea = entry.querySelector(".feature-resource-area");
   const resourceToggle = entry.querySelector(".feature-resource-toggle");
   const resourceInput = entry.querySelector(".feature-resource");
+  const resourceRemove = entry.querySelector(".feature-resource-remove");
 
   resourceToggle.addEventListener("click", () => {
-    const willShow = !resourceArea.classList.contains("has-resource");
+    resourceArea.classList.add("has-resource");
+    resourceInput.focus();
+  });
 
-    if (!willShow && resourceInput.value.trim()) {
-      const shouldRemove = confirm(
-        "Remove the resource tracker from this feature or trait?"
-      );
+  resourceRemove.addEventListener("click", () => {
+    const shouldRemove = confirm(
+      "Remove the resource tracker from this feature or trait?"
+    );
 
-      if (!shouldRemove) return;
-    }
+    if (!shouldRemove) return;
 
-    resourceArea.classList.toggle("has-resource", willShow);
-    resourceToggle.textContent = willShow ? "Resource ✓" : "+ Has Resource";
-
-    if (willShow) {
-      resourceInput.focus();
-    } else {
-      resourceInput.value = "";
-    }
+    resourceInput.value = "";
+    resourceArea.classList.remove("has-resource");
   });
 
   entry.querySelector(".feature-up").addEventListener("click", () => {
