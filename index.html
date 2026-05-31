@@ -226,9 +226,11 @@ background-position: top center;
 
 .condition-control {
   position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
   min-width: 180px;
-  height: 46px;
+  min-height: 46px;
   border: 1.5px solid var(--gold);
   border-radius: var(--r);
   background: rgba(255,253,245,.4);
@@ -242,37 +244,21 @@ background-position: top center;
 }
 
 .condition-display {
+  position: absolute;
+  inset: 0 30px 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding: 4px 30px 4px 10px;
-  overflow: hidden;
-  color: rgba(28,39,80,.68);
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .35px;
-  line-height: 1.1;
-  text-align: center;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.condition-display.placeholder {
   color: rgba(28,39,80,.75);
   font-family: 'IM Fell English', Georgia, serif;
   font-size: 14px;
   font-style: italic;
-  font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
+  pointer-events: none;
 }
 
 .condition-chevron {
   position: absolute;
+  z-index: 3;
   top: 50%;
   right: 10px;
   width: 8px;
@@ -285,6 +271,7 @@ background-position: top center;
 
 .condition-picker {
   position: absolute;
+  z-index: 1;
   inset: 0;
   width: 100%;
   height: 100%;
@@ -293,11 +280,15 @@ background-position: top center;
 }
 
 .condition-chips {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 4px;
-  min-height: 0;
-  margin-top: 4px;
+  width: 100%;
+  min-height: 44px;
+  padding: 5px 34px 5px 8px;
 }
 
 .condition-chip {
@@ -1690,7 +1681,8 @@ background-position: top center;
     <label>Current Conditions</label>
     <input id="currentConditionsInput" type="hidden" value="" />
     <div class="condition-control">
-      <div id="currentConditionsDisplay" class="condition-display placeholder">Add condition…</div>
+      <div id="currentConditionsDisplay" class="condition-display">Add condition…</div>
+      <div id="activeConditions" class="condition-chips"></div>
       <span class="condition-chevron"></span>
       <select class="condition-picker" aria-label="Add condition" onchange="addSelectedCondition(this.value); this.value = '';">
         <option value="">Add condition…</option>
@@ -1711,7 +1703,6 @@ background-position: top center;
         <option value="Unconscious">Unconscious</option>
       </select>
     </div>
-    <div id="activeConditions" class="condition-chips"></div>
   </div>
 <div class="hstat wide exhaustion">
   <label>Exhaustion</label>
@@ -2425,11 +2416,10 @@ function renderSelectedConditions() {
   if (!chips || !display || !explanation) return;
 
   if (conditions.length) {
-    display.textContent = conditions.join(", ");
-    display.classList.remove("placeholder");
+    display.style.display = "none";
   } else {
+    display.style.display = "flex";
     display.textContent = "Add condition…";
-    display.classList.add("placeholder");
   }
 
   chips.innerHTML = conditions.map(condition => `
