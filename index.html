@@ -81,7 +81,7 @@
     max-width: 1000px;
     margin: 0 auto;
     background-color: #ede1c0;
-    background-image: url('assets/parchment-seamless-v2.png');
+    background-image: url('assets/parchment-seamless.png');
 background-size: 100% auto;
 background-repeat: repeat-y;
 background-position: top center;
@@ -1107,6 +1107,13 @@ background-position: top center;
   padding: 0;
   border-top: 0;
   border-bottom: 0;
+}
+
+/* Keep the viewport stable when spell details expand or collapse. */
+.spell-main-row,
+.spell-details-row,
+.spell-details-panel {
+  overflow-anchor: none;
 }
 
 .spell-details-panel {
@@ -2249,9 +2256,22 @@ function addSR(data = {}) {
   tb.appendChild(detailsRow);
 
   mainRow.querySelector(".spell-details-toggle").addEventListener("click", event => {
+    event.preventDefault();
+
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
     const isOpening = detailsRow.style.display === "none";
+
     detailsRow.style.display = isOpening ? "" : "none";
     event.currentTarget.classList.toggle("open", isOpening);
+
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        left: scrollX,
+        top: scrollY,
+        behavior: "auto"
+      });
+    });
   });
 
   attachSpellRowControls(mainRow, detailsRow);
