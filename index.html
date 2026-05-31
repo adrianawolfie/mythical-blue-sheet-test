@@ -2244,8 +2244,14 @@ function addSR(data = {}) {
     makeEditCell();
 
   detailsRow.style.display = spell.open ? "" : "none";
+  const detailsColspan = document
+    .getElementById("spellTable")
+    ?.classList.contains("editing")
+      ? 10
+      : 9;
+
   detailsRow.innerHTML = `
-    <td colspan="10">
+    <td colspan="${detailsColspan}">
       <div class="spell-details-panel">
         <textarea class="spell-details" placeholder="Full spell rules, upcasting, components, area, duration, reminders...">${safeText(spell.details)}</textarea>
       </div>
@@ -2290,6 +2296,13 @@ function toggleTableEditMode(tableId, button) {
   if (!table) return;
 
   const isEditing = table.classList.toggle("editing");
+
+  if (tableId === "spellTable") {
+    table.querySelectorAll(".spell-details-row td").forEach(cell => {
+      cell.colSpan = isEditing ? 10 : 9;
+    });
+  }
+
   if (button) {
     button.classList.toggle("editing-active", isEditing);
   }
