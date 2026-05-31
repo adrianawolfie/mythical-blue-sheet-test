@@ -1355,6 +1355,129 @@ background-position: top center;
     text-transform: uppercase;
   }
 
+
+  /* OPTIONAL MOONLIT MODE
+     Explicit theme styling prevents a browser's generic dark-mode treatment
+     from leaving the parchment and decorative images visually mismatched. */
+  html {
+    color-scheme: light;
+  }
+
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  .theme-toggle {
+    margin-left: auto;
+  }
+
+  html[data-theme="dark"] body {
+    background: linear-gradient(#101727 0%, #18243a 52%, #25334d 100%);
+  }
+
+  html[data-theme="dark"] {
+    --navy:        #40558c;
+    --navy-deep:   #d9e2ff;
+    --navy-soft:   #a9b7df;
+    --gold:        #cba755;
+    --gold-deep:   #e3c675;
+    --gold-light:  #f0d88a;
+    --ink:         #eee4d2;
+    --ink-soft:    #c9bdab;
+  }
+
+  html[data-theme="dark"] .start-page,
+  html[data-theme="dark"] .sheet-toolbar {
+    background: #1c2638;
+    border-color: var(--gold);
+    color: var(--ink);
+    box-shadow: 0 8px 28px rgba(0,0,0,.28);
+  }
+
+  html[data-theme="dark"] .start-page h1 {
+    color: var(--gold-light);
+  }
+
+  html[data-theme="dark"] .character-card {
+    background: rgba(255,255,255,.055);
+    border-color: rgba(203,167,85,.8);
+  }
+
+  html[data-theme="dark"] .character-card:hover {
+    background: rgba(255,255,255,.11);
+  }
+
+  html[data-theme="dark"] .sheet {
+    background-color: #2a2526;
+    background-blend-mode: multiply;
+    box-shadow: 0 8px 46px rgba(0,0,0,.72), 0 2px 12px rgba(0,0,0,.55);
+  }
+
+  html[data-theme="dark"] .corner,
+  html[data-theme="dark"] .compass-watermark,
+  html[data-theme="dark"] .ship-art {
+    filter: brightness(.72) saturate(.82) contrast(1.06);
+  }
+
+  html[data-theme="dark"] .title-banner {
+    filter: brightness(.82) saturate(.88) contrast(1.05);
+  }
+
+  html[data-theme="dark"] input,
+  html[data-theme="dark"] textarea,
+  html[data-theme="dark"] select,
+  html[data-theme="dark"] .condition-control,
+  html[data-theme="dark"] .condition-chip,
+  html[data-theme="dark"] .condition-explanation,
+  html[data-theme="dark"] .feature-entry,
+  html[data-theme="dark"] .weapon-entry,
+  html[data-theme="dark"] .spell-detail-row td {
+    color: var(--ink);
+  }
+
+  html[data-theme="dark"] input,
+  html[data-theme="dark"] textarea,
+  html[data-theme="dark"] select,
+  html[data-theme="dark"] .condition-control {
+    background-color: rgba(17,23,38,.46);
+  }
+
+  html[data-theme="dark"] input::placeholder,
+  html[data-theme="dark"] textarea::placeholder {
+    color: rgba(238,228,210,.58);
+  }
+
+  html[data-theme="dark"] .scorebox,
+  html[data-theme="dark"] .sb-card,
+  html[data-theme="dark"] .dsbox,
+  html[data-theme="dark"] .cbox,
+  html[data-theme="dark"] .cbox2,
+  html[data-theme="dark"] .feature-entry,
+  html[data-theme="dark"] .spell-detail-row td,
+  html[data-theme="dark"] .wtbl,
+  html[data-theme="dark"] .stbl {
+    background-color: rgba(20,27,42,.22);
+  }
+
+  html[data-theme="dark"] .condition-chip {
+    background: rgba(20,27,42,.72);
+  }
+
+  html[data-theme="dark"] .condition-chip.active {
+    background: rgba(203,167,85,.42);
+  }
+
+  html[data-theme="dark"] .sheet-toolbar button,
+  html[data-theme="dark"] .start-page button {
+    background: #334978;
+    color: #fff8e9;
+  }
+
+  html[data-theme="dark"] .sheet-toolbar button:hover,
+  html[data-theme="dark"] .start-page button:hover {
+    background: #40598f;
+  }
+
   @media print {
     body { padding: 0; background: white; }
     .sheet { box-shadow: none; max-width: 100%; }
@@ -1691,12 +1814,14 @@ background-position: top center;
   <h1>Saved Characters</h1>
   <div id="characterList"></div>
   <button id="newCharacterBtn">+ New Character</button>
+  <button id="themeToggleStart" class="theme-toggle" type="button">☾ Moonlit Mode</button>
 </div>
 
 <div class="sheet-toolbar">
   <button id="backToStartBtn">← Character List</button>
   <button id="saveCharacterBtn">Save Character</button>
   <button id="deleteCharacterBtn">Delete Character</button>
+  <button id="themeToggleSheet" class="theme-toggle" type="button">☾ Moonlit Mode</button>
 </div>
 
 <div class="sheet">
@@ -2902,6 +3027,26 @@ async function renderCharacterList() {
   });
 }
 
+function applyTheme(theme) {
+  const normalizedTheme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = normalizedTheme;
+  localStorage.setItem("mythicalBlueTheme", normalizedTheme);
+
+  const label =
+    normalizedTheme === "dark"
+      ? "☀ Daylight Mode"
+      : "☾ Moonlit Mode";
+
+  document.querySelectorAll(".theme-toggle").forEach(button => {
+    button.textContent = label;
+  });
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.dataset.theme || "light";
+  applyTheme(currentTheme === "dark" ? "light" : "dark");
+}
+
 function showStartPage() {
   document.getElementById("startPage").style.display = "block";
   document.querySelector(".sheet").style.display = "none";
@@ -2915,6 +3060,7 @@ function showSheet() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  applyTheme(localStorage.getItem("mythicalBlueTheme") || "light");
   populateConditionDropdown();
   renderCharacterList();
   showStartPage();
@@ -2924,6 +3070,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("newCharacterBtn").addEventListener("click", newCharacter);
   document.getElementById("saveCharacterBtn").addEventListener("click", saveCurrentCharacter);
   document.getElementById("deleteCharacterBtn").addEventListener("click", deleteCurrentCharacter);
+  document.getElementById("themeToggleStart").addEventListener("click", toggleTheme);
+  document.getElementById("themeToggleSheet").addEventListener("click", toggleTheme);
 
 document.getElementById("backToStartBtn").addEventListener("click", async () => {
   currentCharacterId = null;
