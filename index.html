@@ -901,7 +901,7 @@ background-position: top center;
 
 .feature-meta-row {
   display: grid;
-  grid-template-columns: 1fr 210px;
+  grid-template-columns: 1fr auto;
   gap: 10px;
   align-items: start;
   margin-top: 8px;
@@ -915,10 +915,44 @@ background-position: top center;
   grid-column: 1 / -1;
 }
 
-.feature-resource-box {
+.feature-resource-area {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
+}
+
+.feature-resource-toggle {
+  border: none;
+  background: transparent;
+  color: var(--navy-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1.2;
+  padding: 2px 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.feature-resource-toggle:hover {
+  color: var(--gold-deep);
+}
+
+.feature-resource-area.has-resource .feature-resource-toggle {
+  color: var(--gold-deep);
+}
+
+.feature-resource-box {
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+
+.feature-resource-area.has-resource .feature-resource-box {
+  display: flex;
 }
 
 .feature-resource-box label {
@@ -933,6 +967,7 @@ background-position: top center;
 }
 
 .feature-resource-box input {
+  width: 130px;
   min-height: 26px;
   text-align: center;
   font-family: 'IM Fell English', serif;
@@ -2428,6 +2463,10 @@ function addFeatureEntry(listId, data = {}) {
   const list = document.getElementById(listId);
   if (!list) return;
 
+  const hasResource =
+    data.hasResource === true ||
+    Boolean(String(data.resource || "").trim());
+
   const entry = document.createElement("div");
   entry.className = "feature-entry";
 
@@ -2443,9 +2482,15 @@ function addFeatureEntry(listId, data = {}) {
         <textarea class="feature-details" placeholder="Full rules text, usage limits, recharge, source, notes...">${escapeHtml(data.details || "")}</textarea>
       </details>
 
-      <div class="feature-resource-box">
-        <label>Resource</label>
-        <input class="feature-resource" type="text" placeholder="2/3 Short Rest" value="${escapeHtml(data.resource || "")}" />
+      <div class="feature-resource-area ${hasResource ? "has-resource" : ""}">
+        <button type="button" class="feature-resource-toggle">
+          ${hasResource ? "Resource ✓" : "+ Has Resource"}
+        </button>
+
+        <div class="feature-resource-box">
+          <label>Resource</label>
+          <input class="feature-resource" type="text" placeholder="2/3 Short Rest" value="${escapeHtml(data.resource || "")}" />
+        </div>
       </div>
     </div>
 
@@ -2455,6 +2500,31 @@ function addFeatureEntry(listId, data = {}) {
       <button type="button" class="feature-edit-btn feature-delete delete-x">X</button>
     </div>
   `;
+
+  const resourceArea = entry.querySelector(".feature-resource-area");
+  const resourceToggle = entry.querySelector(".feature-resource-toggle");
+  const resourceInput = entry.querySelector(".feature-resource");
+
+  resourceToggle.addEventListener("click", () => {
+    const willShow = !resourceArea.classList.contains("has-resource");
+
+    if (!willShow && resourceInput.value.trim()) {
+      const shouldRemove = confirm(
+        "Remove the resource tracker from this feature or trait?"
+      );
+
+      if (!shouldRemove) return;
+    }
+
+    resourceArea.classList.toggle("has-resource", willShow);
+    resourceToggle.textContent = willShow ? "Resource ✓" : "+ Has Resource";
+
+    if (willShow) {
+      resourceInput.focus();
+    } else {
+      resourceInput.value = "";
+    }
+  });
 
   entry.querySelector(".feature-up").addEventListener("click", () => {
     const previous = entry.previousElementSibling;
@@ -2491,13 +2561,21 @@ function collectFeatureEntries(listId) {
   const list = document.getElementById(listId);
   if (!list) return [];
 
-return Array.from(list.querySelectorAll(".feature-entry")).map(entry => ({
-  name: entry.querySelector(".feature-name")?.value || "",
-  short: entry.querySelector(".feature-short")?.value || "",
-  resource: entry.querySelector(".feature-resource")?.value || "",
-  details: entry.querySelector(".feature-details")?.value || "",
-  open: entry.querySelector("details")?.open || false
-}));
+return Array.from(list.querySelectorAll(".feature-entry")).map(entry => {
+  const resourceArea = entry.querySelector(".feature-resource-area");
+  const hasResource = resourceArea?.classList.contains("has-resource") || false;
+
+  return {
+    name: entry.querySelector(".feature-name")?.value || "",
+    short: entry.querySelector(".feature-short")?.value || "",
+    hasResource,
+    resource: hasResource
+      ? entry.querySelector(".feature-resource")?.value || ""
+      : "",
+    details: entry.querySelector(".feature-details")?.value || "",
+    open: entry.querySelector("details")?.open || false
+  };
+});
 }
 
 function renderFeatureEntries(listId, entries = []) {
