@@ -1881,30 +1881,30 @@ background-position: top center;
 
     <div class="hdr-fields">
       <div class="hdr-row r1">
-        <div class="hfl"><label>Character Name</label><input type="text" placeholder="enter name…" /></div>
-        <div class="hfl"><label>Background</label><input type="text" placeholder="sailor, pirate, corsair…" /></div>
-        <div class="hfl"><label>Class & Level</label><input type="text" placeholder="swashbuckler 5" /></div>
-        <div class="hfl"><label>Experience</label><input type="text" placeholder="0 xp" /></div>
+        <div class="hfl"><label>Character Name</label><input type="text" placeholder="enter name…" / data-field="characterName"></div>
+        <div class="hfl"><label>Background</label><input type="text" placeholder="sailor, pirate, corsair…" / data-field="background"></div>
+        <div class="hfl"><label>Class & Level</label><input type="text" placeholder="swashbuckler 5" / data-field="classLevel"></div>
+        <div class="hfl"><label>Experience</label><input type="text" placeholder="0 xp" / data-field="experience"></div>
       </div>
       <div class="hdr-row r2">
-        <div class="hfl"><label>Species / Race</label><input type="text" placeholder="sea elf, human…" /></div>
-        <div class="hfl"><label>Subclass</label><input type="text" placeholder="…" /></div>
-        <div class="hfl"><label>Alignment</label><input type="text" placeholder="cn…" /></div>
+        <div class="hfl"><label>Species / Race</label><input type="text" placeholder="sea elf, human…" / data-field="speciesRace"></div>
+        <div class="hfl"><label>Subclass</label><input type="text" placeholder="…" / data-field="subclass"></div>
+        <div class="hfl"><label>Alignment</label><input type="text" placeholder="cn…" / data-field="alignment"></div>
 <div class="hmini-row">
-  <div class="hstat hmini"><label>Initiative</label><input type="text" placeholder="+0" /></div>
-  <div class="hstat hmini"><label>Speed</label><input type="text" placeholder="30" /></div>
+  <div class="hstat hmini"><label>Initiative</label><input type="text" placeholder="+0" / data-field="initiative"></div>
+  <div class="hstat hmini"><label>Speed</label><input type="text" placeholder="30" / data-field="speed"></div>
 </div>
       </div>
 <div class="hdr-row r3">
-  <div class="hstat"><label>Armor Class</label><input type="text" placeholder="—" /></div>
+  <div class="hstat"><label>Armor Class</label><input type="text" placeholder="—" / data-field="armorClass"></div>
   <div class="hstat hp-tracker">
     <label>Hit Points</label>
     <div class="hp-controls">
       <button class="hp-adj" onclick="adjustHP(-1)" title="Lose 1 HP">−</button>
       <div class="hp-readout">
-        <input class="hp-cur-input" id="hpCurrentInput" type="number" min="0" placeholder="0" oninput="updateHPBar()" />
+        <input class="hp-cur-input" id="hpCurrentInput" type="number" min="0" placeholder="0" oninput="updateHPBar()" / data-field="hpCurrent">
         <span class="hp-slash">/</span>
-        <input class="hp-max-input" id="hpMaxInput" type="number" min="0" placeholder="0" oninput="updateHPBar()" />
+        <input class="hp-max-input" id="hpMaxInput" type="number" min="0" placeholder="0" oninput="updateHPBar()" / data-field="hpMax">
       </div>
       <button class="hp-adj" onclick="adjustHP(+1)" title="Gain 1 HP">+</button>
     </div>
@@ -1912,10 +1912,10 @@ background-position: top center;
       <div class="hp-bar" id="hp-bar"></div>
     </div>
   </div>
-  <div class="hstat"><label>Temp HP</label><input id="tempHpInput" type="text" placeholder="—" /></div>
+  <div class="hstat"><label>Temp HP</label><input id="tempHpInput" type="text" placeholder="—" / data-field="tempHp"></div>
   <div class="hstat wide conditions">
     <label>Current Conditions</label>
-    <input id="currentConditionsInput" type="hidden" value="" />
+    <input id="currentConditionsInput" type="hidden" value="" / data-field="currentConditions">
     <div class="condition-control">
       <div id="currentConditionsDisplay" class="condition-display">Add condition…</div>
       <div id="activeConditions" class="condition-chips"></div>
@@ -1951,85 +1951,85 @@ background-position: top center;
 
         <div class="lp">
           <div class="bonrow">
-            <div class="bonbox"><label>Prof Bonus</label><input type="text" placeholder="+2" /></div>
-            <div class="bonbox"><label>Passive Perc.</label><input type="text" placeholder="10" /></div>
+            <div class="bonbox"><label>Prof Bonus</label><input type="text" placeholder="+2" / data-field="proficiencyBonus"></div>
+            <div class="bonbox"><label>Passive Perc.</label><input type="text" placeholder="10" / data-field="passivePerception"></div>
           </div>
 
           <div class="ab">
             <div class="abn">Strength</div>
             <div class="abs">
-              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" /></div></div>
-              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" /></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" / data-field="strengthModifier"></div></div>
+              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" / data-field="strengthScore"></div>
             </div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Saving Throw</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Athletics</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="strengthSavingThrow"><div class="sn">Saving Throw</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="athletics"><div class="sn">Athletics</div></div>
           </div>
 
           <div class="ab">
             <div class="abn">Dexterity</div>
             <div class="abs">
-              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" /></div></div>
-              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" /></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" / data-field="dexterityModifier"></div></div>
+              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" / data-field="dexterityScore"></div>
             </div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Saving Throw</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Acrobatics</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Sleight of Hand</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Stealth</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="dexteritySavingThrow"><div class="sn">Saving Throw</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="acrobatics"><div class="sn">Acrobatics</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="sleightOfHand"><div class="sn">Sleight of Hand</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="stealth"><div class="sn">Stealth</div></div>
           </div>
 
           <div class="ab">
             <div class="abn">Constitution</div>
             <div class="abs">
-              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" /></div></div>
-              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" /></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" / data-field="constitutionModifier"></div></div>
+              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" / data-field="constitutionScore"></div>
             </div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Saving Throw</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="constitutionSavingThrow"><div class="sn">Saving Throw</div></div>
           </div>
 
           <div class="ab">
             <div class="abn">Intelligence</div>
             <div class="abs">
-              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" /></div></div>
-              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" /></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" / data-field="intelligenceModifier"></div></div>
+              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" / data-field="intelligenceScore"></div>
             </div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Saving Throw</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Arcana</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">History</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Investigation</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Nature</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Religion</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="intelligenceSavingThrow"><div class="sn">Saving Throw</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="arcana"><div class="sn">Arcana</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="history"><div class="sn">History</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="investigation"><div class="sn">Investigation</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="nature"><div class="sn">Nature</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="religion"><div class="sn">Religion</div></div>
           </div>
 
           <div class="ab">
             <div class="abn">Wisdom</div>
             <div class="abs">
-              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" /></div></div>
-              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" /></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" / data-field="wisdomModifier"></div></div>
+              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" / data-field="wisdomScore"></div>
             </div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Saving Throw</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Animal Handling</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Insight</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Medicine</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Perception</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Survival</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="wisdomSavingThrow"><div class="sn">Saving Throw</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="animalHandling"><div class="sn">Animal Handling</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="insight"><div class="sn">Insight</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="medicine"><div class="sn">Medicine</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="perception"><div class="sn">Perception</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="survival"><div class="sn">Survival</div></div>
           </div>
 
           <div class="ab">
             <div class="abn">Charisma</div>
             <div class="abs">
-              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" /></div></div>
-              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" /></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Mod</div><div class="modcircle"><input type="text" placeholder="+0" / data-field="charismaModifier"></div></div>
+              <div class="scorebox" style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="abl">Score</div><input type="text" placeholder="10" / data-field="charismaScore"></div>
             </div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Saving Throw</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Deception</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Intimidation</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Performance</div></div>
-            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" /><div class="sn">Persuasion</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="charismaSavingThrow"><div class="sn">Saving Throw</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="deception"><div class="sn">Deception</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="intimidation"><div class="sn">Intimidation</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="performance"><div class="sn">Performance</div></div>
+            <div class="sk"><div class="dot" onclick="this.classList.toggle('on')"></div><input class="sb" type="text" placeholder="+0" / data-field="persuasion"><div class="sn">Persuasion</div></div>
           </div>
 
           <div class="sb-card inventory-card">
             <div class="sb-hdr">Equipment & Proficiencies</div>
-            <textarea placeholder="Armor: Light, Medium&#10;Weapons: Martial, Simple&#10;Tools: Navigator's Tools&#10;          Thieves' Tools"></textarea>
+            <textarea placeholder="Armor: Light, Medium&#10;Weapons: Martial, Simple&#10;Tools: Navigator's Tools&#10;          Thieves' Tools" data-field="equipmentProficiencies"></textarea>
           </div>
         </div>
 
@@ -2040,8 +2040,8 @@ background-position: top center;
               <div class="svrow"><div class="svlbl">Successes</div><div class="svdie" onclick="this.classList.toggle('on')"></div><div class="svdie" onclick="this.classList.toggle('on')"></div><div class="svdie" onclick="this.classList.toggle('on')"></div></div>
               <div class="svrow"><div class="svlbl">Failures</div><div class="svdie fail" onclick="this.classList.toggle('on')"></div><div class="svdie fail" onclick="this.classList.toggle('on')"></div><div class="svdie fail" onclick="this.classList.toggle('on')"></div></div>
             </div>
-            <div class="cbox"><label>Hit Dice</label><input id="hitDiceInput" type="text" placeholder="5d8" /></div>
-            <div class="cbox"><label>HD Spent</label><input type="text" placeholder="—" /></div>
+            <div class="cbox"><label>Hit Dice</label><input id="hitDiceInput" type="text" placeholder="5d8" / data-field="hitDice"></div>
+            <div class="cbox"><label>HD Spent</label><input type="text" placeholder="—" / data-field="hitDiceSpent"></div>
             <div class="cbox"><label>Inspiration</label><div class="insp" onclick="this.textContent = this.textContent === '✦' ? '○' : '✦'">○</div></div>
           </div>
 
@@ -2070,13 +2070,13 @@ background-position: top center;
 <div class="sb-card treasure-card">
   <div class="sb-hdr">Treasure & Coinage</div>
   <div class="coinsrow">
-    <div class="cbox2"><label>CP</label><input type="text" placeholder="0" /></div>
-    <div class="cbox2"><label>SP</label><input type="text" placeholder="0" /></div>
-    <div class="cbox2"><label>EP</label><input type="text" placeholder="0" /></div>
-    <div class="cbox2 gold-coin"><label>GP</label><input type="text" placeholder="0" /></div>
-    <div class="cbox2"><label>PP</label><input type="text" placeholder="0" /></div>
+    <div class="cbox2"><label>CP</label><input type="text" placeholder="0" / data-field="copperPieces"></div>
+    <div class="cbox2"><label>SP</label><input type="text" placeholder="0" / data-field="silverPieces"></div>
+    <div class="cbox2"><label>EP</label><input type="text" placeholder="0" / data-field="electrumPieces"></div>
+    <div class="cbox2 gold-coin"><label>GP</label><input type="text" placeholder="0" / data-field="goldPieces"></div>
+    <div class="cbox2"><label>PP</label><input type="text" placeholder="0" / data-field="platinumPieces"></div>
   </div>
-  <textarea placeholder="Notable loot, ship's cargo manifest…"></textarea>
+  <textarea placeholder="Notable loot, ship's cargo manifest…" data-field="treasureNotes"></textarea>
 </div>
 
 <div class="sb-card features-traits-main">
@@ -2104,23 +2104,23 @@ background-position: top center;
         <div class="sb-card">
           <div class="sb-hdr">Spellcasting</div>
           <div class="spell-stats">
-            <div class="cbox"><label>Ability</label><input type="text" placeholder="WIS" /></div>
-            <div class="cbox"><label>Save DC</label><input type="text" placeholder="14" /></div>
-            <div class="cbox"><label>Atk Bonus</label><input type="text" placeholder="+6" /></div>
+            <div class="cbox"><label>Ability</label><input type="text" placeholder="WIS" / data-field="spellcastingAbility"></div>
+            <div class="cbox"><label>Save DC</label><input type="text" placeholder="14" / data-field="spellSaveDc"></div>
+            <div class="cbox"><label>Atk Bonus</label><input type="text" placeholder="+6" / data-field="spellAttackBonus"></div>
           </div>
         </div>
         <div class="sb-card">
           <div class="sb-hdr">Spell Slots</div>
           <div class="slot-grid">
-            <div class="slotbox"><span>1ST</span><input type="text" placeholder="4/4" /></div>
-            <div class="slotbox"><span>2ND</span><input type="text" placeholder="3/3" /></div>
-            <div class="slotbox"><span>3RD</span><input type="text" placeholder="3/3" /></div>
-            <div class="slotbox"><span>4TH</span><input type="text" placeholder="1/1" /></div>
-            <div class="slotbox"><span>5TH</span><input type="text" placeholder="—" /></div>
-            <div class="slotbox"><span>6TH</span><input type="text" placeholder="—" /></div>
-            <div class="slotbox"><span>7TH</span><input type="text" placeholder="—" /></div>
-            <div class="slotbox"><span>8TH</span><input type="text" placeholder="—" /></div>
-            <div class="slotbox"><span>9TH</span><input type="text" placeholder="—" /></div>
+            <div class="slotbox"><span>1ST</span><input type="text" placeholder="4/4" / data-field="spellSlotsLevel1"></div>
+            <div class="slotbox"><span>2ND</span><input type="text" placeholder="3/3" / data-field="spellSlotsLevel2"></div>
+            <div class="slotbox"><span>3RD</span><input type="text" placeholder="3/3" / data-field="spellSlotsLevel3"></div>
+            <div class="slotbox"><span>4TH</span><input type="text" placeholder="1/1" / data-field="spellSlotsLevel4"></div>
+            <div class="slotbox"><span>5TH</span><input type="text" placeholder="—" / data-field="spellSlotsLevel5"></div>
+            <div class="slotbox"><span>6TH</span><input type="text" placeholder="—" / data-field="spellSlotsLevel6"></div>
+            <div class="slotbox"><span>7TH</span><input type="text" placeholder="—" / data-field="spellSlotsLevel7"></div>
+            <div class="slotbox"><span>8TH</span><input type="text" placeholder="—" / data-field="spellSlotsLevel8"></div>
+            <div class="slotbox"><span>9TH</span><input type="text" placeholder="—" / data-field="spellSlotsLevel9"></div>
           </div>
         </div>
       </div>
@@ -2156,15 +2156,15 @@ background-position: top center;
 
     <div id="pg-journal" class="pg">
       <div class="two-col">
-        <div class="sb-card"><div class="sb-hdr">Backstory</div><textarea placeholder="Where did your character come from? What drove them to the sea? What unfinished business waits on shore?" style="min-height:240px;"></textarea></div>
-        <div class="sb-card"><div class="sb-hdr">Personality, Ideals & Bonds</div><textarea placeholder="Personality traits, ideals, bonds, flaws, mannerisms…" style="min-height:240px;"></textarea></div>
+        <div class="sb-card"><div class="sb-hdr">Backstory</div><textarea placeholder="Where did your character come from? What drove them to the sea? What unfinished business waits on shore?" style="min-height:240px;" data-field="backstory"></textarea></div>
+        <div class="sb-card"><div class="sb-hdr">Personality, Ideals & Bonds</div><textarea placeholder="Personality traits, ideals, bonds, flaws, mannerisms…" style="min-height:240px;" data-field="personalityIdealsBonds"></textarea></div>
       </div>
       <div class="three-col" style="margin-top:12px;">
-        <div class="sb-card"><div class="sb-hdr">Appearance</div><textarea placeholder="Height, weight, eye color, scars, tattoos, attire…" style="min-height:140px;"></textarea></div>
-        <div class="sb-card"><div class="sb-hdr">Languages</div><textarea placeholder="Common, Elvish, Aquan, Thieves' Cant…" style="min-height:140px;"></textarea></div>
-        <div class="sb-card"><div class="sb-hdr">Attunement</div><textarea placeholder="◆ ___________&#10;◆ ___________&#10;◆ ___________" style="min-height:140px;"></textarea></div>
+        <div class="sb-card"><div class="sb-hdr">Appearance</div><textarea placeholder="Height, weight, eye color, scars, tattoos, attire…" style="min-height:140px;" data-field="appearance"></textarea></div>
+        <div class="sb-card"><div class="sb-hdr">Languages</div><textarea placeholder="Common, Elvish, Aquan, Thieves' Cant…" style="min-height:140px;" data-field="languages"></textarea></div>
+        <div class="sb-card"><div class="sb-hdr">Attunement</div><textarea placeholder="◆ ___________&#10;◆ ___________&#10;◆ ___________" style="min-height:140px;" data-field="attunement"></textarea></div>
       </div>
-      <div class="sb-card" style="margin-top:12px;"><div class="sb-hdr">Equipment & Inventory</div><textarea placeholder="List your gear, ship equipment, rations, tools, trinkets, and special items…" style="min-height:140px;"></textarea></div>
+      <div class="sb-card" style="margin-top:12px;"><div class="sb-hdr">Equipment & Inventory</div><textarea placeholder="List your gear, ship equipment, rations, tools, trinkets, and special items…" style="min-height:140px;" data-field="equipmentInventory"></textarea></div>
     </div>
 
     <div class="ftr">
@@ -2514,6 +2514,92 @@ let currentCharacterId = null;
  let loadedCharacterUpdatedAt = null;
 
 const STORAGE_KEY = "mythicalBlueCharacters";
+const CURRENT_SCHEMA_VERSION = 2;
+
+// Legacy positional mapping used only to read pre-migration saves.
+// New saves use stable data-field names, so future layout changes will not
+// shift values into the wrong fields.
+const LEGACY_FIELD_KEYS = [
+  "characterName",
+  "background",
+  "classLevel",
+  "experience",
+  "speciesRace",
+  "subclass",
+  "alignment",
+  "initiative",
+  "speed",
+  "armorClass",
+  "hpCurrent",
+  "hpMax",
+  "tempHp",
+  "currentConditions",
+  "proficiencyBonus",
+  "passivePerception",
+  "strengthModifier",
+  "strengthScore",
+  "strengthSavingThrow",
+  "athletics",
+  "dexterityModifier",
+  "dexterityScore",
+  "dexteritySavingThrow",
+  "acrobatics",
+  "sleightOfHand",
+  "stealth",
+  "constitutionModifier",
+  "constitutionScore",
+  "constitutionSavingThrow",
+  "intelligenceModifier",
+  "intelligenceScore",
+  "intelligenceSavingThrow",
+  "arcana",
+  "history",
+  "investigation",
+  "nature",
+  "religion",
+  "wisdomModifier",
+  "wisdomScore",
+  "wisdomSavingThrow",
+  "animalHandling",
+  "insight",
+  "medicine",
+  "perception",
+  "survival",
+  "charismaModifier",
+  "charismaScore",
+  "charismaSavingThrow",
+  "deception",
+  "intimidation",
+  "performance",
+  "persuasion",
+  "equipmentProficiencies",
+  "hitDice",
+  "hitDiceSpent",
+  "copperPieces",
+  "silverPieces",
+  "electrumPieces",
+  "goldPieces",
+  "platinumPieces",
+  "treasureNotes",
+  "spellcastingAbility",
+  "spellSaveDc",
+  "spellAttackBonus",
+  "spellSlotsLevel1",
+  "spellSlotsLevel2",
+  "spellSlotsLevel3",
+  "spellSlotsLevel4",
+  "spellSlotsLevel5",
+  "spellSlotsLevel6",
+  "spellSlotsLevel7",
+  "spellSlotsLevel8",
+  "spellSlotsLevel9",
+  "backstory",
+  "personalityIdealsBonds",
+  "appearance",
+  "languages",
+  "attunement",
+  "equipmentInventory"
+];
 
 function getCharacters() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
@@ -2652,14 +2738,71 @@ function renderSelectedConditions() {
 
 function getFields() {
   return Array.from(
-    document.querySelectorAll(".sheet input, .sheet textarea, .sheet select")
-  ).filter(field =>
-    !field.classList.contains("condition-picker") &&
-    !field.closest(".feature-entry") &&
-    !field.closest(".weapon-row") &&
-    !field.closest(".spell-main-row") &&
-    !field.closest(".spell-details-row")
+    document.querySelectorAll(".sheet [data-field]")
   );
+}
+
+function readFieldValue(field) {
+  return field.type === "checkbox" ? field.checked : field.value;
+}
+
+function setFieldValue(field, value) {
+  if (!field) return;
+
+  if (field.type === "checkbox") {
+    field.checked = value === true;
+    return;
+  }
+
+  field.value = typeof value === "boolean" ? "" : (value ?? "");
+}
+
+function collectNamedFields() {
+  return Object.fromEntries(
+    getFields().map(field => [
+      field.dataset.field,
+      readFieldValue(field)
+    ])
+  );
+}
+
+function normalizeSavedFields(character = {}) {
+  const savedFields = character.fields || {};
+
+  if (
+    character.schemaVersion >= CURRENT_SCHEMA_VERSION &&
+    savedFields &&
+    !Array.isArray(savedFields)
+  ) {
+    return savedFields;
+  }
+
+  // Temporary backwards-compatible reader for schema v1 saves.
+  // Once an old character is saved again, it is written as schema v2.
+  if (Array.isArray(savedFields)) {
+    return Object.fromEntries(
+      savedFields
+        .map(item => [LEGACY_FIELD_KEYS[item.index], item.value])
+        .filter(([key]) => Boolean(key))
+    );
+  }
+
+  return {};
+}
+
+function applyNamedFields(namedFields = {}) {
+  getFields().forEach(field => {
+    if (!Object.prototype.hasOwnProperty.call(namedFields, field.dataset.field)) {
+      return;
+    }
+
+    setFieldValue(field, namedFields[field.dataset.field]);
+  });
+}
+
+function getFieldValue(fieldKey) {
+  const field = document.querySelector(`[data-field="${fieldKey}"]`);
+  return field ? readFieldValue(field) : "";
 }
 
 function findFieldByNearbyText(possibleTexts) {
@@ -2875,24 +3018,22 @@ function applyUiState(uiState = {}) {
 }
 
 function collectCharacterData() {
-  const fields = getFields().map((field, index) => ({
-    index,
-    value: field.type === "checkbox" ? field.checked : field.value
-  }));
+  const fields = collectNamedFields();
 
 return {
+  schemaVersion: CURRENT_SCHEMA_VERSION,
   id: currentCharacterId || crypto.randomUUID(),
   expectedUpdatedAt: loadedCharacterUpdatedAt,
   updatedAt: new Date().toISOString(),
 summary: {
-  name: getValueByExactLabel("Character Name") || "Unnamed Character",
-  armorClass: getValueByExactLabel("Armor Class"),
-  hpCurrent: document.getElementById("hpCurrentInput")?.value || "",
-  hpMax: document.getElementById("hpMaxInput")?.value || "",
-  tempHp: document.getElementById("tempHpInput")?.value || "",
-  hitDice: document.getElementById("hitDiceInput")?.value || "",
-  passivePerception: getValueByExactLabel("Passive Perc."),
-  currentConditions: getValueByExactLabel("Current Conditions")
+  name: getFieldValue("characterName") || "Unnamed Character",
+  armorClass: getFieldValue("armorClass"),
+  hpCurrent: getFieldValue("hpCurrent"),
+  hpMax: getFieldValue("hpMax"),
+  tempHp: getFieldValue("tempHp"),
+  hitDice: getFieldValue("hitDice"),
+  passivePerception: getFieldValue("passivePerception"),
+  currentConditions: getFieldValue("currentConditions")
 },
     fields,
     uiState: collectUiState(),
@@ -2907,22 +3048,9 @@ customLists: {
 function loadCharacter(character) {
   currentCharacterId = character.id;
   loadedCharacterUpdatedAt = character.updatedAt || null;
-  const savedFields = character.fields || [];
 
-  getFields().forEach((field, index) => {
-    const saved = savedFields.find(f => f.index === index);
-    if (!saved) return;
-
-    if (field.type === "checkbox") {
-      field.checked = saved.value === true;
-    } else {
-      if (typeof saved.value === "boolean") {
-        field.value = "";
-      } else {
-        field.value = saved.value ?? "";
-      }
-    }
-  });
+  const savedFields = normalizeSavedFields(character);
+  applyNamedFields(savedFields);
 
 renderFeatureEntries("featList", character.customLists?.feats || []);
 resetWeaponRows(character.customLists?.weapons || DEFAULT_WEAPON_ROWS);
