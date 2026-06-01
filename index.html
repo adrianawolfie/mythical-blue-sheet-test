@@ -197,7 +197,7 @@ background-position: top center;
   .hdr-row.r1 { grid-template-columns: 2fr 1.5fr 1.2fr 1fr; }
 .hdr-row.r2 { grid-template-columns: 1.5fr 1.5fr 1fr; }
 .hdr-row.r3 {
-  grid-template-columns: auto 78px 1fr 95px;
+  grid-template-columns: auto 78px 78px 1fr 95px;
   gap: 10px;
   margin-top: 0;
   align-items: start;
@@ -1455,22 +1455,19 @@ background-position: top center;
   }
 
   .hdr-row.r3 {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
 
-  /* Bar fills the flexible middle column */
-  .hp-bar-wrap {
-    width: 100%;
-  }
+  /* HP tracker spans full width; circles sit in the row below */
+  .hp-tracker { grid-column: 1 / -1; }
+
+  /* Bar fills the tracker width */
+  .hp-bar-wrap { width: 100%; }
 
   /* Tighten the controls so they fit on a narrow phone */
-  .hp-controls {
-    gap: 6px;
-  }
-
-  .hp-cur-input { width: 42px; font-size: 19px; }
-  .hp-max-input { width: 34px; font-size: 13px; }
+  .hp-controls { gap: 6px; }
+  .hp-cur-input { width: 50px; font-size: 22px; }
 
   .hstat {
     min-width: 0;
@@ -1666,7 +1663,7 @@ background-position: top center;
   }
 
   .hdr-row.r3 {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr 1fr;
   }
 
   .slot-grid {
@@ -1716,7 +1713,15 @@ background-position: top center;
 
 
 /* ─── HP TRACKER ─────────────────────────────────────────────── */
-.hp-tracker { align-items: center; gap: 7px; }
+.hp-tracker { align-items: center; gap: 4px; }
+
+/* hp-inner wraps controls + bar so both stay the same width */
+.hp-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+}
 
 .hp-controls {
   display: flex;
@@ -1744,14 +1749,7 @@ background-position: top center;
 }
 .hp-adj:hover { background: var(--navy-soft); }
 
-.hp-readout {
-  display: flex;
-  align-items: baseline;
-  gap: 2px;
-}
-
-.hp-cur-input,
-.hp-max-input {
+.hp-cur-input {
   background: transparent;
   border: none;
   font-family: 'Cinzel', serif;
@@ -1760,18 +1758,14 @@ background-position: top center;
   text-align: center;
   outline: none;
   -moz-appearance: textfield;
+  width: 56px;
+  font-size: 26px;
 }
 .hp-cur-input::-webkit-outer-spin-button,
-.hp-cur-input::-webkit-inner-spin-button,
-.hp-max-input::-webkit-outer-spin-button,
-.hp-max-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-.hp-cur-input  { width: 50px; font-size: 22px; }
-.hp-slash      { font-family: 'Cinzel', serif; font-size: 15px; color: var(--gold); font-weight: 700; padding: 0 2px; }
-.hp-max-input  { width: 40px; font-size: 15px; opacity: .7; }
+.hp-cur-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
 .hp-bar-wrap {
-  width: 120px;
+  width: 100%;
   height: 5px;
   background: rgba(43,56,102,.15);
   border-radius: 3px;
@@ -1807,59 +1801,33 @@ background-position: top center;
   margin: 14px 0 10px;
 }
 
-/* ─── AC WITH BONUS FIELD ────────────────────────────────────── */
-.ac-bonus {
-  margin-top: 5px;
-  display: flex;
-  flex-direction: column;
+/* ─── AC CIRCLE WITH CORNER BADGE ───────────────────────────── */
+.ac-wrap {
+  position: relative;
+  display: inline-flex;
   align-items: center;
-  gap: 3px;
+  justify-content: center;
 }
-.ac-bonus > label {
+.ac-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  width: 24px;
+  height: 18px;
   font-family: 'Cinzel', serif;
-  font-size: 7px;
-  letter-spacing: 1px;
-  color: var(--navy);
-  opacity: .65;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-.ac-bonus > input {
-  background: rgba(255,253,245,.4);
-  border: 1px dashed var(--gold);
-  border-radius: var(--r);
-  color: var(--navy-deep);
-  font-family: 'IM Fell English', serif;
-  font-size: 11px;
-  font-style: italic;
-  text-align: center;
-  width: 60px;
-  height: 22px;
-  outline: none;
-  padding: 0 4px;
-}
-.ac-bonus > input::placeholder { color: rgba(64,78,136,.3); }
-.ac-bonus > input:focus { border-style: solid; border-color: var(--gold-deep); }
-
-/* ─── MAX HP MODIFIER (inline, after max HP input) ───────────── */
-.hp-mod-input {
-  background: transparent;
-  border: none;
-  border-bottom: 1px dashed var(--gold);
-  font-family: 'Cinzel', serif;
-  font-size: 12px;
+  font-size: 9px;
   font-weight: 700;
-  color: var(--gold-deep);
   text-align: center;
-  width: 34px;
+  background: rgba(255, 253, 245, .95);
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  color: var(--navy-deep);
   outline: none;
-  margin-left: 4px;
-  -moz-appearance: textfield;
+  padding: 0;
+  line-height: 18px;
 }
-.hp-mod-input::-webkit-outer-spin-button,
-.hp-mod-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.hp-mod-input::placeholder { color: rgba(138,105,24,.3); font-size: 10px; font-weight: 400; }
-.hp-mod-input:focus { border-bottom-style: solid; }
+.ac-badge::placeholder { color: rgba(64,78,136,.3); font-size: 8px; }
+.ac-badge:focus { border-color: var(--gold-deep); }
 </style>
 </head>
 <body>
@@ -1909,30 +1877,27 @@ background-position: top center;
   <div class="hstat hmini"><label>Speed</label><input type="text" placeholder="30" /></div>
   <div class="hstat">
     <label>Armor Class</label>
-    <input type="text" placeholder="—" />
-    <div class="ac-bonus">
-      <label>Shield / Bonus</label>
-      <input id="acBonusInput" type="text" placeholder="note…" />
+    <div class="ac-wrap">
+      <input type="text" placeholder="—" />
+      <input id="acBonusInput" class="ac-badge" type="text" placeholder="+0" />
     </div>
   </div>
 </div>
 <div class="hdr-row r3">
   <div class="hstat hp-tracker">
     <label>Hit Points</label>
-    <div class="hp-controls">
-      <button class="hp-adj" onclick="adjustHP(-1)" title="Lose 1 HP">−</button>
-      <div class="hp-readout">
+    <div class="hp-inner">
+      <div class="hp-controls">
+        <button class="hp-adj" onclick="adjustHP(-1)" title="Lose 1 HP">−</button>
         <input class="hp-cur-input" id="hpCurrentInput" type="number" min="0" placeholder="0" oninput="updateHPBar()" />
-        <span class="hp-slash">/</span>
-        <input class="hp-max-input" id="hpMaxInput" type="number" min="0" placeholder="0" oninput="updateHPBar()" />
-        <input class="hp-mod-input" id="hpMaxModInput" type="text" placeholder="+mod" oninput="updateHPBar()" />
+        <button class="hp-adj" onclick="adjustHP(+1)" title="Gain 1 HP">+</button>
       </div>
-      <button class="hp-adj" onclick="adjustHP(+1)" title="Gain 1 HP">+</button>
-    </div>
-    <div class="hp-bar-wrap">
-      <div class="hp-bar" id="hp-bar"></div>
+      <div class="hp-bar-wrap">
+        <div class="hp-bar" id="hp-bar"></div>
+      </div>
     </div>
   </div>
+  <div class="hstat"><label>Max HP</label><input id="hpMaxInput" type="text" placeholder="—" oninput="updateHPBar()" /></div>
   <div class="hstat"><label>Temp HP</label><input id="tempHpInput" type="text" placeholder="—" /></div>
   <div class="hstat wide conditions">
     <label>Current Conditions</label>
@@ -2910,7 +2875,6 @@ summary: {
   armorClass: getValueByExactLabel("Armor Class"),
   hpCurrent: document.getElementById("hpCurrentInput")?.value || "",
   hpMax: document.getElementById("hpMaxInput")?.value || "",
-  hpMaxMod: document.getElementById("hpMaxModInput")?.value || "",
   acBonus: document.getElementById("acBonusInput")?.value || "",
   tempHp: document.getElementById("tempHpInput")?.value || "",
   hitDice: document.getElementById("hitDiceInput")?.value || "",
@@ -2970,16 +2934,12 @@ if (hpMaxInput && character.summary?.hpMax !== undefined) {
 // Load Temp HP and Hit Dice by ID so they survive DOM reordering
 const tempHpInput = document.getElementById("tempHpInput");
 const hitDiceInput = document.getElementById("hitDiceInput");
-const hpMaxModInput = document.getElementById("hpMaxModInput");
 const acBonusInput = document.getElementById("acBonusInput");
 if (tempHpInput && character.summary?.tempHp !== undefined) {
   tempHpInput.value = character.summary.tempHp || "";
 }
 if (hitDiceInput && character.summary?.hitDice !== undefined) {
   hitDiceInput.value = character.summary.hitDice || "";
-}
-if (hpMaxModInput && character.summary?.hpMaxMod !== undefined) {
-  hpMaxModInput.value = character.summary.hpMaxMod || "";
 }
 if (acBonusInput && character.summary?.acBonus !== undefined) {
   acBonusInput.value = character.summary.acBonus || "";
@@ -3195,21 +3155,13 @@ document.getElementById("backToStartBtn").addEventListener("click", async () => 
 
 // ─── HP TRACKER LOGIC ────────────────────────────────────────────────────────
 
-function parseModifier(str) {
-  if (!str || !str.trim()) return 0;
-  const n = parseInt(str.trim());
-  return isNaN(n) ? 0 : n;
-}
-
 function adjustHP(delta) {
   const cur = document.getElementById("hpCurrentInput");
   const max = document.getElementById("hpMaxInput");
-  const mod = document.getElementById("hpMaxModInput");
   if (!cur || !max) return;
   let c = parseInt(cur.value) || 0;
   let m = parseInt(max.value) || 0;
-  const effectiveMax = Math.max(0, m + parseModifier(mod?.value)) || 9999;
-  c = Math.max(0, Math.min(effectiveMax, c + delta));
+  c = Math.max(0, Math.min(m || 9999, c + delta));
   cur.value = c;
   updateHPBar();
 }
@@ -3218,14 +3170,11 @@ function updateHPBar() {
   const bar = document.getElementById("hp-bar");
   const cur = document.getElementById("hpCurrentInput");
   const max = document.getElementById("hpMaxInput");
-  const mod = document.getElementById("hpMaxModInput");
   if (!bar || !cur || !max) return;
   const c = parseInt(cur.value) || 0;
   const m = parseInt(max.value) || 0;
-  const effectiveMax = m + parseModifier(mod?.value);
-  const pct = effectiveMax > 0 ? Math.round((c / effectiveMax) * 100) : 0;
+  const pct = m > 0 ? Math.round((c / m) * 100) : 0;
   bar.style.width = pct + "%";
-  // green above 50 %, red at 50 % and below
   bar.classList.toggle("danger", pct > 0 && pct <= 50);
 }
 </script>
