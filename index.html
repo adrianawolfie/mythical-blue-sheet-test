@@ -197,7 +197,7 @@ background-position: top center;
   .hdr-row.r1 { grid-template-columns: 2fr 1.5fr 1.2fr 1fr; }
 .hdr-row.r2 { grid-template-columns: 1.5fr 1.5fr 1fr 2fr; }
 .hdr-row.r3 {
-  grid-template-columns: repeat(4, 78px) 1fr 95px;
+  grid-template-columns: 78px auto 78px 1fr 95px;
   gap: 10px;
   margin-top: 16px;
   align-items: start;
@@ -1459,12 +1459,6 @@ background-position: top center;
     gap: 10px;
   }
 
-  /* HP tracker: no longer needs to span 2 desktop columns */
-  .hp-tracker {
-    grid-column: auto;
-    min-width: 0;
-  }
-
   /* Bar fills the flexible middle column */
   .hp-bar-wrap {
     width: 100%;
@@ -1722,7 +1716,7 @@ background-position: top center;
 
 
 /* ─── HP TRACKER ─────────────────────────────────────────────── */
-.hp-tracker { align-items: center; gap: 7px; grid-column: span 2; }
+.hp-tracker { align-items: center; gap: 7px; }
 
 .hp-controls {
   display: flex;
