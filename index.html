@@ -1857,6 +1857,7 @@ background-position: top center;
   <h1>Saved Characters</h1>
   <div id="characterList"></div>
   <button id="newCharacterBtn">+ New Character</button>
+  <button id="resetTestDataBtn" type="button" style="display:none;">Reset Test Data</button>
 </div>
 
 <div class="sheet-toolbar">
@@ -2509,6 +2510,8 @@ resetWeaponRows();
 resetSpellRows();
 </script>
 <script src="conditions.js"></script>
+<script src="js/storage-config.js"></script>
+<script src="js/storage-adapter.js"></script>
 <script>
 let currentCharacterId = null;
  let loadedCharacterUpdatedAt = null;
@@ -2516,9 +2519,8 @@ let currentCharacterId = null;
 const STORAGE_KEY = "mythicalBlueCharacters";
 const CURRENT_SCHEMA_VERSION = 2;
 
-// Legacy positional mapping used only to read pre-migration saves.
-// New saves use stable data-field names, so future layout changes will not
-// shift values into the wrong fields.
+// Legacy positional mapping used only to read old schema-v1 characters.
+// New saves use stable data-field names so layout changes cannot shift values.
 const LEGACY_FIELD_KEYS = [
   "characterName",
   "background",
@@ -2737,9 +2739,7 @@ function renderSelectedConditions() {
 }
 
 function getFields() {
-  return Array.from(
-    document.querySelectorAll(".sheet [data-field]")
-  );
+  return Array.from(document.querySelectorAll(".sheet [data-field]"));
 }
 
 function readFieldValue(field) {
@@ -2759,10 +2759,7 @@ function setFieldValue(field, value) {
 
 function collectNamedFields() {
   return Object.fromEntries(
-    getFields().map(field => [
-      field.dataset.field,
-      readFieldValue(field)
-    ])
+    getFields().map(field => [field.dataset.field, readFieldValue(field)])
   );
 }
 
@@ -2777,8 +2774,7 @@ function normalizeSavedFields(character = {}) {
     return savedFields;
   }
 
-  // Temporary backwards-compatible reader for schema v1 saves.
-  // Once an old character is saved again, it is written as schema v2.
+  // Temporary backwards-compatible reader for schema-v1 positional saves.
   if (Array.isArray(savedFields)) {
     return Object.fromEntries(
       savedFields
@@ -2792,10 +2788,7 @@ function normalizeSavedFields(character = {}) {
 
 function applyNamedFields(namedFields = {}) {
   getFields().forEach(field => {
-    if (!Object.prototype.hasOwnProperty.call(namedFields, field.dataset.field)) {
-      return;
-    }
-
+    if (!Object.prototype.hasOwnProperty.call(namedFields, field.dataset.field)) return;
     setFieldValue(field, namedFields[field.dataset.field]);
   });
 }
@@ -3049,8 +3042,7 @@ function loadCharacter(character) {
   currentCharacterId = character.id;
   loadedCharacterUpdatedAt = character.updatedAt || null;
 
-  const savedFields = normalizeSavedFields(character);
-  applyNamedFields(savedFields);
+  applyNamedFields(normalizeSavedFields(character));
 
 renderFeatureEntries("featList", character.customLists?.feats || []);
 resetWeaponRows(character.customLists?.weapons || DEFAULT_WEAPON_ROWS);
@@ -3091,34 +3083,19 @@ async function saveCurrentCharacter(showAlert = true) {
   const data = collectCharacterData();
 
   try {
-    const response = await fetch("/.netlify/functions/save-character", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    });
+    const result = await characterStorage.saveCharacterData(data);
 
-    const result = await response.json();
+    currentCharacterId = data.id;
+    loadedCharacterUpdatedAt = result.updatedAt || data.updatedAt;
 
-if (!response.ok) {
-  console.error(result);
-  alert(result.error || "Failed to save character.");
-  return;
-}
+    if (showAlert) {
+      alert("Character saved!");
+    }
 
-currentCharacterId = data.id;
-loadedCharacterUpdatedAt = result.updatedAt || data.updatedAt;
-
-if (showAlert) {
-  alert("Character saved!");
-}
-
-    renderCharacterList();
-
+    await renderCharacterList();
   } catch (error) {
     console.error(error);
-    alert("Error saving character.");
+    alert(error.message || "Error saving character.");
   }
 }
 function newCharacter() {
@@ -3145,39 +3122,23 @@ showSheet();
 
 async function deleteCurrentCharacter() {
   if (!currentCharacterId) return;
-
   if (!confirm("Delete this character?")) return;
 
   try {
-    const response = await fetch("/.netlify/functions/delete-character", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-body: JSON.stringify({
-  id: currentCharacterId,
-  expectedUpdatedAt: loadedCharacterUpdatedAt
-})
+    await characterStorage.deleteCharacterData({
+      id: currentCharacterId,
+      expectedUpdatedAt: loadedCharacterUpdatedAt
     });
 
-    const result = await response.json();
+    currentCharacterId = null;
+    loadedCharacterUpdatedAt = null;
 
-    if (!response.ok) {
-      console.error(result);
-alert(result.error || "Failed to delete character.");
-      return;
-    }
-
-currentCharacterId = null;
-loadedCharacterUpdatedAt = null;
-
-await renderCharacterList();
+    await renderCharacterList();
     showStartPage();
-
     alert("Character deleted!");
   } catch (error) {
     console.error(error);
-    alert("Error deleting character.");
+    alert(error.message || "Error deleting character.");
   }
 }
 
@@ -3187,20 +3148,7 @@ async function renderCharacterList() {
   let characters = [];
 
   try {
-    const response = await fetch(
-      `/.netlify/functions/get-character-index?cacheBust=${Date.now()}`,
-      {
-        cache: "no-store"
-      }
-    );
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.error || "Could not load character index.");
-    }
-
-    characters = result;
+    characters = await characterStorage.listCharacterData();
   } catch (error) {
     console.error(error);
     list.innerHTML = "<p>Could not load saved characters.</p>";
@@ -3235,21 +3183,7 @@ async function renderCharacterList() {
   document.querySelectorAll(".character-card").forEach(card => {
     card.addEventListener("click", async () => {
       try {
-        const response = await fetch(
-          `/.netlify/functions/get-character?id=${encodeURIComponent(
-            card.dataset.id
-          )}&cacheBust=${Date.now()}`,
-          {
-            cache: "no-store"
-          }
-        );
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.error || "Could not load character.");
-        }
-
+        const result = await characterStorage.loadCharacterData(card.dataset.id);
         loadCharacter(result);
       } catch (error) {
         console.error(error);
@@ -3271,23 +3205,45 @@ function showSheet() {
   document.querySelector(".sheet-toolbar").style.display = "flex";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   populateConditionDropdown();
-  renderCharacterList();
   showStartPage();
   renderSelectedConditions();
-   renderFeatureEntries("featList", []);
+  renderFeatureEntries("featList", []);
 
   document.getElementById("newCharacterBtn").addEventListener("click", newCharacter);
   document.getElementById("saveCharacterBtn").addEventListener("click", saveCurrentCharacter);
   document.getElementById("deleteCharacterBtn").addEventListener("click", deleteCurrentCharacter);
 
-document.getElementById("backToStartBtn").addEventListener("click", async () => {
-  currentCharacterId = null;
-  loadedCharacterUpdatedAt = null;
-  showStartPage();
-  await renderCharacterList();
-});
+  document.getElementById("backToStartBtn").addEventListener("click", async () => {
+    currentCharacterId = null;
+    loadedCharacterUpdatedAt = null;
+    showStartPage();
+    await renderCharacterList();
+  });
+
+  try {
+    await characterStorage.init();
+
+    const resetButton = document.getElementById("resetTestDataBtn");
+    if (characterStorage.canReset && resetButton) {
+      resetButton.style.display = "inline-block";
+      resetButton.addEventListener("click", async () => {
+        if (!confirm("Reset local test data to the repository seed characters?")) return;
+        await characterStorage.resetTestData();
+        currentCharacterId = null;
+        loadedCharacterUpdatedAt = null;
+        showStartPage();
+        await renderCharacterList();
+        alert("Local test data reset.");
+      });
+    }
+
+    await renderCharacterList();
+  } catch (error) {
+    console.error(error);
+    alert(error.message || "Could not initialize character storage.");
+  }
 });
 
 // ─── HP TRACKER LOGIC ────────────────────────────────────────────────────────
