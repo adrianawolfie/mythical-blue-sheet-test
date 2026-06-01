@@ -1802,6 +1802,10 @@ background-position: top center;
 }
 
 /* ─── AC CIRCLE WITH CORNER BADGE ───────────────────────────── */
+.ac-stat {
+  padding-top: 8px; /* push label down to align with Initiative/Speed labels,
+                       offsetting the space the badge takes above the circle */
+}
 .ac-wrap {
   position: relative;
   display: inline-flex;
@@ -1810,15 +1814,15 @@ background-position: top center;
 }
 .ac-badge {
   position: absolute;
-  top: -6px;
-  right: -10px;
-  width: 24px;
+  top: -9px;
+  right: -12px;
+  width: 26px;
   height: 18px;
   font-family: 'Cinzel', serif;
   font-size: 9px;
   font-weight: 700;
   text-align: center;
-  background: rgba(255, 253, 245, .95);
+  background: rgba(255, 253, 245, .97);
   border: 1px solid var(--gold);
   border-radius: 3px;
   color: var(--navy-deep);
@@ -1875,7 +1879,7 @@ background-position: top center;
 <div class="hdr-row r-combat">
   <div class="hstat hmini"><label>Initiative</label><input type="text" placeholder="+0" /></div>
   <div class="hstat hmini"><label>Speed</label><input type="text" placeholder="30" /></div>
-  <div class="hstat">
+  <div class="hstat ac-stat">
     <label>Armor Class</label>
     <div class="ac-wrap">
       <input type="text" placeholder="—" />
@@ -1897,8 +1901,8 @@ background-position: top center;
       </div>
     </div>
   </div>
-  <div class="hstat"><label>Max HP</label><input id="hpMaxInput" type="text" placeholder="—" oninput="updateHPBar()" /></div>
   <div class="hstat"><label>Temp HP</label><input id="tempHpInput" type="text" placeholder="—" /></div>
+  <div class="hstat"><label>Max HP</label><input id="hpMaxInput" type="text" placeholder="—" oninput="updateHPBar()" /></div>
   <div class="hstat wide conditions">
     <label>Current Conditions</label>
     <input id="currentConditionsInput" type="hidden" value="" />
