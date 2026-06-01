@@ -1,42 +1,35 @@
 [
   {
-    "id": "e5af15cf-478c-4d61-bbf3-0c2ce4a83201",
-    "name": "Test",
-    "armorClass": "14",
-    "hpCurrent": "22",
-    "hpMax": "30",
-    "passivePerception": "",
-    "file": "characters/e5af15cf-478c-4d61-bbf3-0c2ce4a83201.json",
-    "updatedAt": "2026-05-19T03:45:45.117Z"
+    "id": "a0f2d0e2-3dc5-46ab-9b65-8ce9d0e8b5f1",
+    "name": "Nimue",
+    "armorClass": "13",
+    "hpCurrent": "8",
+    "hpMax": "8",
+    "passivePerception": "11",
+    "currentConditions": "",
+    "file": "characters/a0f2d0e2-3dc5-46ab-9b65-8ce9d0e8b5f1.json",
+    "updatedAt": "2026-05-31T10:07:49.144Z"
   },
   {
-    "id": "d6caff9b-abf2-410c-a688-55b4218a43a8",
-    "name": "Test2",
-    "armorClass": "19",
-    "hpCurrent": "2",
-    "hpMax": "30",
-    "passivePerception": "",
-    "file": "characters/d6caff9b-abf2-410c-a688-55b4218a43a8.json",
-    "updatedAt": "2026-05-19T07:46:41.903Z"
+    "id": "c6c1c2a0-92d9-41b8-85a1-1d5f2fe7e6db",
+    "name": "Lillith",
+    "armorClass": "15",
+    "hpCurrent": "9",
+    "hpMax": "9",
+    "passivePerception": "14",
+    "currentConditions": "",
+    "file": "characters/c6c1c2a0-92d9-41b8-85a1-1d5f2fe7e6db.json",
+    "updatedAt": "2026-05-31T09:47:58.157818Z"
   },
   {
-    "id": "af8967c8-8cde-4107-8eda-faa1dff00147",
-    "name": "Test",
-    "armorClass": "1e",
-    "hpCurrent": "22",
-    "hpMax": "30",
-    "passivePerception": "12",
-    "file": "characters/af8967c8-8cde-4107-8eda-faa1dff00147.json",
-    "updatedAt": "2026-05-19T05:26:41.393Z"
-  },
-  {
-    "id": "23c03e6f-b0bb-4ad7-be37-c917fd216c93",
-    "name": "Unnamed Character",
+    "id": "f7399244-4d80-4b0d-9dd1-c2d4ea53d26a",
+    "name": "Mara Flint",
     "armorClass": "",
     "hpCurrent": "",
     "hpMax": "",
     "passivePerception": "",
-    "file": "characters/23c03e6f-b0bb-4ad7-be37-c917fd216c93.json",
-    "updatedAt": "2026-05-19T08:38:24.823Z"
+    "currentConditions": "",
+    "file": "characters/f7399244-4d80-4b0d-9dd1-c2d4ea53d26a.json",
+    "updatedAt": "2026-05-31T09:47:58.157818Z"
   }
 ]
