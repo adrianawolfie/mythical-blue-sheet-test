@@ -1461,8 +1461,47 @@ background-position: top center;
   }
 
   .hdr-row.r3 {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 70px minmax(0, 1fr) 70px;
     gap: 10px;
+    align-items: start;
+  }
+
+  /* Keep the HP tracker visually centered between Armor Class and Temp HP. */
+  .hp-tracker {
+    width: 100%;
+    justify-self: center;
+    align-items: center;
+  }
+
+  .hp-controls {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hp-bar-wrap {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Align Initiative and Speed with the same outer columns above. */
+  .hmini-row {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr) 70px;
+    gap: 10px;
+    width: 100%;
+    align-items: end;
+  }
+
+  .hmini-row .hmini:first-child {
+    grid-column: 1;
+  }
+
+  .hmini-row .hmini:last-child {
+    grid-column: 3;
+  }
+
+  .hmini {
+    min-width: 0;
   }
 
   /* Bar fills the flexible middle column */
@@ -1675,8 +1714,10 @@ background-position: top center;
     grid-column: 1 / -1;
   }
 
-  .hdr-row.r3 {
-    grid-template-columns: auto 1fr auto;
+  .hdr-row.r3,
+  .hmini-row {
+    grid-template-columns: 64px minmax(0, 1fr) 64px;
+    gap: 8px;
   }
 
   .slot-grid {
