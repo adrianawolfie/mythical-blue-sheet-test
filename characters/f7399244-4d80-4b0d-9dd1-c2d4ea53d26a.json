@@ -1,0 +1,570 @@
+{
+  "id": "f7399244-4d80-4b0d-9dd1-c2d4ea53d26a",
+  "updatedAt": "2026-05-31T17:44:26.578Z",
+  "summary": {
+    "name": "Mara Flint",
+    "armorClass": "",
+    "hpCurrent": "",
+    "hpMax": "",
+    "passivePerception": "",
+    "currentConditions": ""
+  },
+  "fields": [
+    {
+      "index": 0,
+      "value": "Mara Flint"
+    },
+    {
+      "index": 1,
+      "value": "Pirate"
+    },
+    {
+      "index": 2,
+      "value": "Ranger"
+    },
+    {
+      "index": 3,
+      "value": ""
+    },
+    {
+      "index": 4,
+      "value": "Selkie"
+    },
+    {
+      "index": 5,
+      "value": "Navigator"
+    },
+    {
+      "index": 6,
+      "value": "chaotic neutral"
+    },
+    {
+      "index": 7,
+      "value": ""
+    },
+    {
+      "index": 8,
+      "value": "30"
+    },
+    {
+      "index": 9,
+      "value": ""
+    },
+    {
+      "index": 10,
+      "value": ""
+    },
+    {
+      "index": 11,
+      "value": ""
+    },
+    {
+      "index": 12,
+      "value": "1d10"
+    },
+    {
+      "index": 13,
+      "value": ""
+    },
+    {
+      "index": 14,
+      "value": "+2"
+    },
+    {
+      "index": 15,
+      "value": ""
+    },
+    {
+      "index": 16,
+      "value": ""
+    },
+    {
+      "index": 17,
+      "value": ""
+    },
+    {
+      "index": 18,
+      "value": ""
+    },
+    {
+      "index": 19,
+      "value": ""
+    },
+    {
+      "index": 20,
+      "value": ""
+    },
+    {
+      "index": 21,
+      "value": ""
+    },
+    {
+      "index": 22,
+      "value": ""
+    },
+    {
+      "index": 23,
+      "value": ""
+    },
+    {
+      "index": 24,
+      "value": ""
+    },
+    {
+      "index": 25,
+      "value": ""
+    },
+    {
+      "index": 26,
+      "value": ""
+    },
+    {
+      "index": 27,
+      "value": ""
+    },
+    {
+      "index": 28,
+      "value": ""
+    },
+    {
+      "index": 29,
+      "value": ""
+    },
+    {
+      "index": 30,
+      "value": ""
+    },
+    {
+      "index": 31,
+      "value": ""
+    },
+    {
+      "index": 32,
+      "value": ""
+    },
+    {
+      "index": 33,
+      "value": ""
+    },
+    {
+      "index": 34,
+      "value": ""
+    },
+    {
+      "index": 35,
+      "value": ""
+    },
+    {
+      "index": 36,
+      "value": ""
+    },
+    {
+      "index": 37,
+      "value": ""
+    },
+    {
+      "index": 38,
+      "value": ""
+    },
+    {
+      "index": 39,
+      "value": ""
+    },
+    {
+      "index": 40,
+      "value": ""
+    },
+    {
+      "index": 41,
+      "value": ""
+    },
+    {
+      "index": 42,
+      "value": ""
+    },
+    {
+      "index": 43,
+      "value": ""
+    },
+    {
+      "index": 44,
+      "value": ""
+    },
+    {
+      "index": 45,
+      "value": ""
+    },
+    {
+      "index": 46,
+      "value": ""
+    },
+    {
+      "index": 47,
+      "value": ""
+    },
+    {
+      "index": 48,
+      "value": ""
+    },
+    {
+      "index": 49,
+      "value": ""
+    },
+    {
+      "index": 50,
+      "value": ""
+    },
+    {
+      "index": 51,
+      "value": ""
+    },
+    {
+      "index": 52,
+      "value": "Darkvision: 60 ft.\nSpeed (Swimming): 20–40 ft.\nWeapons: Simple & Martial\nArmor: Light & Medium & Shields"
+    },
+    {
+      "index": 53,
+      "value": ""
+    },
+    {
+      "index": 54,
+      "value": ""
+    },
+    {
+      "index": 55,
+      "value": ""
+    },
+    {
+      "index": 56,
+      "value": ""
+    },
+    {
+      "index": 57,
+      "value": ""
+    },
+    {
+      "index": 58,
+      "value": ""
+    },
+    {
+      "index": 59,
+      "value": ""
+    },
+    {
+      "index": 60,
+      "value": "Choose A or B: (A) Studded Leather Armor, Scimitar, Shortsword, Longbow, 20 Arrows, Quiver, Druidic Focus (sprig of mistletoe), Explorer's Pack and 7 GP; or (B) 150 GP"
+    },
+    {
+      "index": 61,
+      "value": "WIS"
+    },
+    {
+      "index": 62,
+      "value": ""
+    },
+    {
+      "index": 63,
+      "value": ""
+    },
+    {
+      "index": 64,
+      "value": "2/2"
+    },
+    {
+      "index": 65,
+      "value": ""
+    },
+    {
+      "index": 66,
+      "value": ""
+    },
+    {
+      "index": 67,
+      "value": ""
+    },
+    {
+      "index": 68,
+      "value": ""
+    },
+    {
+      "index": 69,
+      "value": ""
+    },
+    {
+      "index": 70,
+      "value": ""
+    },
+    {
+      "index": 71,
+      "value": ""
+    },
+    {
+      "index": 72,
+      "value": ""
+    },
+    {
+      "index": 73,
+      "value": ""
+    },
+    {
+      "index": 74,
+      "value": ""
+    },
+    {
+      "index": 75,
+      "value": ""
+    },
+    {
+      "index": 76,
+      "value": ""
+    },
+    {
+      "index": 77,
+      "value": ""
+    },
+    {
+      "index": 78,
+      "value": ""
+    }
+  ],
+  "uiState": {
+    "inspiration": false,
+    "skillProficiencies": [
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "deathSaves": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "exhaustion": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "customLists": {
+    "feats": [
+      {
+        "name": "Natural Blubber",
+        "short": "Cold Resistance",
+        "resource": "",
+        "details": "As the Selkie became one with their seal friends, they adapted to the chilling cold of the water by adopting a thin layer of natural blubber below their skin, granting them resistance to cold damage.",
+        "open": false
+      },
+      {
+        "name": "Friend of Fauna",
+        "short": "Able to speak to all animals.",
+        "resource": "",
+        "details": "The Selkie are fey that are naturally friendly towards animals. Although they’ve bonded specifically with seals, they are innately able to speak with all animals.",
+        "open": false
+      },
+      {
+        "name": "Fey Ancestry",
+        "short": "Advantage on saving throws against Charmed. ",
+        "resource": "",
+        "details": "Selkies are a type of fey. Therefore, they have Advantage on saving throws that they make to avoid or end the Charmed condition.",
+        "open": false
+      },
+      {
+        "name": "Natural Adept",
+        "short": "Advantage on foraging and can sleep with no shelter.",
+        "resource": "",
+        "details": "Selkies have abandoned the Frontier of Dawn, willingly choosing to survive in the harsh circumstances of the Material Plane in order to live with their chosen companions: the seals. Therefore, Selkies have become adept at survival. They have Advantage on foraging and are used to sleeping outside without shelter.",
+        "open": false
+      },
+      {
+        "name": "Selkie's Nature",
+        "short": "Wis or Seal; swim of 40, AC13+Wis, Temp hp 3xlvl",
+        "resource": "",
+        "details": "Though it began with donning the pelts of seals that they had befriended, forced evolution caused the Selkies to bond with the pelts and companions on a genetic level. In the present day, Selkies can choose to follow their instincts or fight them with a Wisdom saving throw (DC 10), as they are instinctually driven to transform into a seal when they enter a body of water.\n\nTransforming into a seal, they gain the ability to breathe underwater for up to an hour and gain a swimming speed of 40 ft.\n\nWhile in the shape of a seal, the Selkie’s Armor Class is equal to 13 + their Wisdom modifier if that total is higher than the Natural Seal’s AC of 15. In addition, Selkies gain a number of Temporary Hit Points equal to three times their level.",
+        "open": false
+      },
+      {
+        "name": "Favored Enemy",
+        "short": "Cast Hunter's Mark without spell slot. ",
+        "resource": "2/2 Long Rest",
+        "details": "You always have the Hunter's Mark spell prepared.\nYou can cast it twice without expending a spell slot, and you regain all expended uses of this ability when you finish a Long Rest.\n\nThe number of times you can cast the spell without a spell slot increases when you reach certain Ranger Levels, as shown in the Favored Enemy column of the Ranger Features table.",
+        "open": false
+      },
+      {
+        "name": "Weapon Mastery",
+        "short": "Mastery of two weapons:",
+        "resource": "",
+        "details": "Your training with weapons allows you to use the mastery properties of two kinds of weapons of your choice with which you have proficiency, such as Longbows and Shortswords.\n\nWhenever you finish a Long Rest, you can change the kinds of weapons you chose. For Example, you could switch to using the mastery properties of Scimitars and Longswords.",
+        "open": false
+      }
+    ],
+    "weapons": [
+      {
+        "name": "Cutlass",
+        "atk": "+5",
+        "damage": "1d6+3 slashing",
+        "notes": "Finesse"
+      },
+      {
+        "name": "",
+        "atk": "",
+        "damage": "",
+        "notes": ""
+      },
+      {
+        "name": "",
+        "atk": "",
+        "damage": "",
+        "notes": ""
+      },
+      {
+        "name": "",
+        "atk": "",
+        "damage": "",
+        "notes": ""
+      },
+      {
+        "name": "",
+        "atk": "",
+        "damage": "",
+        "notes": ""
+      }
+    ],
+    "spells": [
+      {
+        "level": "1",
+        "name": "Hunter's Mark",
+        "castTime": "Bonus Action",
+        "range": "90 ft",
+        "concentration": true,
+        "ritual": false,
+        "material": false,
+        "effect": "1d6 force damage with every hit. Adv. on any Wis check to find target.",
+        "details": "Level 1 Divination (Ranger)\n\nCasting Time: Bonus Action\nRange: 90 feet\nComponents: V\nDuration: Concentration, up to 1 hour\n\nYou magically mark one creature you can see within range as your quarry. Until the spell ends, you deal an extra 1d6 Force damage to the target whenever you hit it with an attack roll. You also have Advantage on any Wisdom (Perception or Survival) check you make to find it.\n\nIf the target drops to 0 Hit Points before this spell ends, you can take a Bonus Action to move the mark to a new creature you can see within range.\n\nUsing a Higher-Level Spell Slot. Your Concentration can last longer with a spell slot of level 3–4 (up to 8 hours) or 5+ (up to 24 hours).",
+        "open": false
+      },
+      {
+        "level": "1",
+        "name": "",
+        "castTime": "",
+        "range": "",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "level": "1",
+        "name": "",
+        "castTime": "",
+        "range": "",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "level": "",
+        "name": "",
+        "castTime": "",
+        "range": "",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "level": "",
+        "name": "",
+        "castTime": "",
+        "range": "",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "level": "",
+        "name": "",
+        "castTime": "",
+        "range": "",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "level": "",
+        "name": "",
+        "castTime": "",
+        "range": "",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "level": "",
+        "name": "",
+        "castTime": "",
+        "range": "",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "level": "",
+        "name": "",
+        "castTime": "",
+        "range": "",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "",
+        "details": "",
+        "open": false
+      }
+    ]
+  }
+}
