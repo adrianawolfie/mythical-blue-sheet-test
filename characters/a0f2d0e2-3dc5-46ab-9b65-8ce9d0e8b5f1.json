@@ -1,332 +1,97 @@
 {
   "id": "a0f2d0e2-3dc5-46ab-9b65-8ce9d0e8b5f1",
-  "updatedAt": "2026-06-01T07:09:19.587Z",
+  "updatedAt": "2026-06-01T17:08:10.694Z",
   "summary": {
     "name": "Nimue",
     "armorClass": "13",
     "hpCurrent": "8",
     "hpMax": "8",
+    "tempHp": "",
+    "hitDice": "1d6",
     "passivePerception": "11",
     "currentConditions": ""
   },
-  "fields": [
-    {
-      "index": 0,
-      "value": "Nimue"
-    },
-    {
-      "index": 1,
-      "value": "Golden Goose"
-    },
-    {
-      "index": 2,
-      "value": "Sorcerer 1"
-    },
-    {
-      "index": 3,
-      "value": ""
-    },
-    {
-      "index": 4,
-      "value": "Aeternian"
-    },
-    {
-      "index": 5,
-      "value": "Thalassic"
-    },
-    {
-      "index": 6,
-      "value": ""
-    },
-    {
-      "index": 7,
-      "value": "+3"
-    },
-    {
-      "index": 8,
-      "value": "30"
-    },
-    {
-      "index": 9,
-      "value": "13"
-    },
-    {
-      "index": 10,
-      "value": "8"
-    },
-    {
-      "index": 11,
-      "value": "8"
-    },
-    {
-      "index": 12,
-      "value": "1d6"
-    },
-    {
-      "index": 13,
-      "value": ""
-    },
-    {
-      "index": 14,
-      "value": "2"
-    },
-    {
-      "index": 15,
-      "value": "11"
-    },
-    {
-      "index": 16,
-      "value": "+0"
-    },
-    {
-      "index": 17,
-      "value": "10"
-    },
-    {
-      "index": 18,
-      "value": "+0"
-    },
-    {
-      "index": 19,
-      "value": "+0"
-    },
-    {
-      "index": 20,
-      "value": "+3"
-    },
-    {
-      "index": 21,
-      "value": "16"
-    },
-    {
-      "index": 22,
-      "value": "+3"
-    },
-    {
-      "index": 23,
-      "value": "+3"
-    },
-    {
-      "index": 24,
-      "value": "+3"
-    },
-    {
-      "index": 25,
-      "value": "+3"
-    },
-    {
-      "index": 26,
-      "value": "+2"
-    },
-    {
-      "index": 27,
-      "value": "14"
-    },
-    {
-      "index": 28,
-      "value": "+4"
-    },
-    {
-      "index": 29,
-      "value": "+2"
-    },
-    {
-      "index": 30,
-      "value": "14"
-    },
-    {
-      "index": 31,
-      "value": "+2"
-    },
-    {
-      "index": 32,
-      "value": "+4"
-    },
-    {
-      "index": 33,
-      "value": "+2"
-    },
-    {
-      "index": 34,
-      "value": "+2"
-    },
-    {
-      "index": 35,
-      "value": "+2"
-    },
-    {
-      "index": 36,
-      "value": "+2"
-    },
-    {
-      "index": 37,
-      "value": "+1"
-    },
-    {
-      "index": 38,
-      "value": "13"
-    },
-    {
-      "index": 39,
-      "value": "+1"
-    },
-    {
-      "index": 40,
-      "value": "+1"
-    },
-    {
-      "index": 41,
-      "value": "+1"
-    },
-    {
-      "index": 42,
-      "value": "+1"
-    },
-    {
-      "index": 43,
-      "value": "+1"
-    },
-    {
-      "index": 44,
-      "value": "+1"
-    },
-    {
-      "index": 45,
-      "value": "+4"
-    },
-    {
-      "index": 46,
-      "value": "18"
-    },
-    {
-      "index": 47,
-      "value": "+6"
-    },
-    {
-      "index": 48,
-      "value": "+6"
-    },
-    {
-      "index": 49,
-      "value": "+4"
-    },
-    {
-      "index": 50,
-      "value": "+6"
-    },
-    {
-      "index": 51,
-      "value": "+6"
-    },
-    {
-      "index": 52,
-      "value": "Darkvision: 60ft\nSpeed: 30ft Swimming\nWeapons: Simple\nTools: Calligrapher's Supplies"
-    },
-    {
-      "index": 53,
-      "value": ""
-    },
-    {
-      "index": 54,
-      "value": ""
-    },
-    {
-      "index": 55,
-      "value": ""
-    },
-    {
-      "index": 56,
-      "value": ""
-    },
-    {
-      "index": 57,
-      "value": ""
-    },
-    {
-      "index": 58,
-      "value": "28"
-    },
-    {
-      "index": 59,
-      "value": ""
-    },
-    {
-      "index": 60,
-      "value": "Calligrapher's Supplies\nFine Clothes\nBook about Thalassic Mythology\nArcane Focus (crystal)\nDungeoneer's Pack"
-    },
-    {
-      "index": 61,
-      "value": "cha"
-    },
-    {
-      "index": 62,
-      "value": "14"
-    },
-    {
-      "index": 63,
-      "value": "+6"
-    },
-    {
-      "index": 64,
-      "value": "2/2"
-    },
-    {
-      "index": 65,
-      "value": ""
-    },
-    {
-      "index": 66,
-      "value": ""
-    },
-    {
-      "index": 67,
-      "value": ""
-    },
-    {
-      "index": 68,
-      "value": ""
-    },
-    {
-      "index": 69,
-      "value": ""
-    },
-    {
-      "index": 70,
-      "value": ""
-    },
-    {
-      "index": 71,
-      "value": ""
-    },
-    {
-      "index": 72,
-      "value": ""
-    },
-    {
-      "index": 73,
-      "value": ""
-    },
-    {
-      "index": 74,
-      "value": "Zodiac: Sahet - the Twin Koi"
-    },
-    {
-      "index": 75,
-      "value": "Average Height, Violet Eyes, Blue Hair"
-    },
-    {
-      "index": 76,
-      "value": "Common\nAequor\n"
-    },
-    {
-      "index": 77,
-      "value": ""
-    },
-    {
-      "index": 78,
-      "value": "Spear, 2 Daggers, Backpack, Caltrops, Crowbar, 2 flasks of Oil, 10 days of Rations, Rope, Tinderbox, 10 Torches, and Waterskin."
-    }
-  ],
+  "fields": {
+    "characterName": "Nimue",
+    "background": "Golden Goose",
+    "classLevel": "Sorcerer 1",
+    "experience": "",
+    "speciesRace": "Aeternian",
+    "subclass": "Thalassic",
+    "alignment": "",
+    "initiative": "+3",
+    "speed": "30",
+    "armorClass": "13",
+    "hpCurrent": "8",
+    "hpMax": "8",
+    "tempHp": "",
+    "currentConditions": "",
+    "proficiencyBonus": "2",
+    "passivePerception": "11",
+    "strengthModifier": "+0",
+    "strengthScore": "10",
+    "strengthSavingThrow": "+0",
+    "athletics": "+0",
+    "dexterityModifier": "+3",
+    "dexterityScore": "16",
+    "dexteritySavingThrow": "+3",
+    "acrobatics": "+3",
+    "sleightOfHand": "+3",
+    "stealth": "+3",
+    "constitutionModifier": "+2",
+    "constitutionScore": "14",
+    "constitutionSavingThrow": "+4",
+    "intelligenceModifier": "+2",
+    "intelligenceScore": "14",
+    "intelligenceSavingThrow": "+2",
+    "arcana": "+4",
+    "history": "+2",
+    "investigation": "+2",
+    "nature": "+2",
+    "religion": "+2",
+    "wisdomModifier": "+1",
+    "wisdomScore": "13",
+    "wisdomSavingThrow": "+1",
+    "animalHandling": "+1",
+    "insight": "+1",
+    "medicine": "+1",
+    "perception": "+1",
+    "survival": "+1",
+    "charismaModifier": "+4",
+    "charismaScore": "18",
+    "charismaSavingThrow": "+6",
+    "deception": "+6",
+    "intimidation": "+4",
+    "performance": "+6",
+    "persuasion": "+6",
+    "equipmentProficiencies": "Darkvision: 60ft\nSpeed: 30ft Swimming\nWeapons: Simple\nTools: Calligrapher's Supplies",
+    "hitDice": "1d6",
+    "hitDiceSpent": "",
+    "copperPieces": "",
+    "silverPieces": "",
+    "electrumPieces": "",
+    "goldPieces": "28",
+    "platinumPieces": "",
+    "treasureNotes": "Calligrapher's Supplies\nFine Clothes\nBook about Thalassic Mythology\nArcane Focus (crystal)\nDungeoneer's Pack",
+    "spellcastingAbility": "cha",
+    "spellSaveDc": "14",
+    "spellAttackBonus": "+6",
+    "spellSlotsLevel1": "2/2",
+    "spellSlotsLevel2": "",
+    "spellSlotsLevel3": "",
+    "spellSlotsLevel4": "",
+    "spellSlotsLevel5": "",
+    "spellSlotsLevel6": "",
+    "spellSlotsLevel7": "",
+    "spellSlotsLevel8": "",
+    "spellSlotsLevel9": "",
+    "backstory": "",
+    "personalityIdealsBonds": "Zodiac: Sahet - the Twin Koi",
+    "appearance": "Average Height, Violet Eyes, Blue Hair",
+    "languages": "Common\nAequor\n",
+    "attunement": "",
+    "equipmentInventory": "Spear, 2 Daggers, Backpack, Caltrops, Crowbar, 2 flasks of Oil, 10 days of Rations, Rope, Tinderbox, 10 Torches, and Waterskin."
+  },
   "uiState": {
     "inspiration": true,
     "skillProficiencies": [
@@ -615,5 +380,6 @@
         "open": false
       }
     ]
-  }
+  },
+  "schemaVersion": 2
 }
