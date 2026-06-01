@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="color-scheme" content="only light" />
 <title>Mythical Blue · The Great Depth — Character Sheet</title>
-<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet" />
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -18,7 +18,7 @@
     --gold-light:  #d6a838;
     --ink:         #1f2952;
     --ink-soft:    #404e88;
-    --small-text-font: 'Alegreya', Georgia, serif;
+    --small-italic-font: 'Lora', Georgia, serif;
     --r: 3px;
   }
 
@@ -252,9 +252,9 @@ background-position: top center;
   align-items: center;
   justify-content: center;
   color: rgba(28,39,80,.75);
-  font-family: var(--small-text-font);
-  font-size: 15px;
-  font-style: normal;
+  font-family: var(--small-italic-font);
+  font-size: 14px;
+  font-style: italic;
   pointer-events: none;
 }
 
@@ -384,16 +384,16 @@ background-position: top center;
     border: none;
     border-bottom: 1px solid var(--ink-soft);
     color: var(--ink);
-    font-family: var(--small-text-font);
-    font-size: 15px;
+    font-family: var(--small-italic-font);
+    font-size: 14px;
     padding: 2px 3px 3px;
     outline: none;
-    font-style: normal;
+    font-style: italic;
   }
   .hfl > input::placeholder {
-    color: rgba(64,78,136,.55);
-    font-size: 13px;
-    font-style: normal;
+    color: rgba(64,78,136,.45);
+    font-size: 12px;
+    font-style: italic;
   }
   .hfl > input:focus { border-bottom-color: var(--gold); }
 
@@ -550,19 +550,19 @@ background-position: top center;
     border-bottom: 1px dotted var(--navy);
     width: 28px;
     text-align: center;
-    font-family: var(--small-text-font);
-    font-size: 13px;
+    font-family: var(--small-italic-font);
+    font-size: 12px;
     color: var(--ink);
     outline: none;
     font-weight: 600;
-    font-style: normal;
+    font-style: italic;
   }
   .sn {
-    font-family: var(--small-text-font);
-    font-size: 13px;
+    font-family: var(--small-italic-font);
+    font-size: 12px;
     color: var(--navy-deep);
     flex: 1;
-    font-style: normal;
+    font-style: italic;
   }
 
   .bonrow { display: flex; gap: 9px; }
@@ -654,7 +654,7 @@ background-position: top center;
     z-index: 1;
   }
   .sb-card textarea:focus { background: rgba(255,253,240,.25); }
-  .sb-card textarea::placeholder { color: rgba(64,78,136,.58); font-style: normal; }
+  .sb-card textarea::placeholder { color: rgba(64,78,136,.5); font-style: italic; }
 
   .combrow { display: flex; gap: 9px; align-items: stretch; }
   .cbox {
@@ -758,13 +758,13 @@ background-position: top center;
   .wtbl td input {
     background: transparent;
     border: none;
-    font-family: var(--small-text-font);
-    font-size: 14px;
+    font-family: var(--small-italic-font);
+    font-size: 13px;
     color: var(--ink);
     padding: 6px 8px;
     width: 100%;
     outline: none;
-    font-style: normal;
+    font-style: italic;
   }
   .wtbl td input:focus { background: rgba(255,253,240,.3); }
 
@@ -992,9 +992,9 @@ background-position: top center;
   width: 130px;
   min-height: 26px;
   text-align: center;
-  font-family: var(--small-text-font);
-  font-size: 13px;
-  font-style: normal;
+  font-family: var(--small-italic-font);
+  font-size: 12px;
+  font-style: italic;
   padding: 4px 6px;
 }
 
@@ -1292,13 +1292,13 @@ background-position: top center;
   .stbl td input[type="text"] {
     background: transparent;
     border: none;
-    font-family: var(--small-text-font);
-    font-size: 13px;
+    font-family: var(--small-italic-font);
+    font-size: 12px;
     color: var(--ink);
     padding: 4px 7px;
     width: 100%;
     outline: none;
-    font-style: normal;
+    font-style: italic;
   }
   .stbl td input[type="checkbox"] { accent-color: var(--gold); }
 
@@ -1456,31 +1456,8 @@ background-position: top center;
   }
 
   .hdr-row.r3 {
-    grid-template-columns: 70px minmax(0, 1fr) 70px;
+    grid-template-columns: auto 1fr auto;
     gap: 10px;
-    align-items: start;
-  }
-
-  /* Align Initiative and Speed with the outer stat columns below.
-     This keeps Hit Points centered between them on mobile. */
-  .hmini-row {
-    display: grid;
-    grid-template-columns: 70px minmax(0, 1fr) 70px;
-    gap: 10px;
-    width: 100%;
-    align-items: end;
-  }
-
-  .hmini-row .hmini:first-child {
-    grid-column: 1;
-  }
-
-  .hmini-row .hmini:last-child {
-    grid-column: 3;
-  }
-
-  .hmini {
-    min-width: 0;
   }
 
   /* Bar fills the flexible middle column */
@@ -1689,10 +1666,8 @@ background-position: top center;
     grid-column: 1 / -1;
   }
 
-  .hdr-row.r3,
-  .hmini-row {
-    grid-template-columns: 64px minmax(0, 1fr) 64px;
-    gap: 8px;
+  .hdr-row.r3 {
+    grid-template-columns: auto 1fr auto;
   }
 
   .slot-grid {
