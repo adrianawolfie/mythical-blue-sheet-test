@@ -874,25 +874,35 @@ background-position: top center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--gold-deep);
-  background: rgba(43,56,102,.9);
-  color: white;
+  border: 1px solid rgba(184,144,44,.72);
+  background: transparent;
+  color: var(--gold-deep);
   cursor: pointer;
   font-family: 'Cinzel', serif;
-  font-size: 10px;
   font-weight: 700;
   line-height: 1;
   flex-shrink: 0;
+  transition:
+    background .16s ease,
+    border-color .16s ease,
+    color .16s ease,
+    opacity .16s ease;
 }
 
 .proficiency-add-row {
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 17px;
+  border-radius: 2px;
+  font-size: 10px;
+  opacity: .78;
 }
 
-.proficiency-remove-row {
-  width: 20px;
-  height: 20px;
+.proficiency-add-row:hover,
+.proficiency-add-row:focus-visible {
+  background: rgba(214,168,56,.12);
+  border-color: var(--gold-deep);
+  color: var(--navy-deep);
+  opacity: 1;
 }
 
 .proficiency-values-cell {
@@ -902,13 +912,12 @@ background-position: top center;
 .proficiency-values {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .proficiency-value-row {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  position: relative;
+  min-height: 28px;
 }
 
 .proficiency-value-row input {
@@ -921,7 +930,7 @@ background-position: top center;
   font-size: 12px;
   font-style: italic;
   outline: none;
-  padding: 4px 2px;
+  padding: 5px 22px 5px 2px;
 }
 
 .proficiency-value-row:last-child input {
@@ -930,6 +939,25 @@ background-position: top center;
 
 .proficiency-value-row input:focus {
   background: rgba(255,253,240,.3);
+}
+
+.proficiency-remove-row {
+  position: absolute;
+  top: 4px;
+  right: 1px;
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  font-size: 11px;
+  opacity: .42;
+}
+
+.proficiency-value-row:hover .proficiency-remove-row,
+.proficiency-remove-row:focus-visible {
+  background: rgba(214,168,56,.10);
+  color: var(--gold-deep);
+  opacity: .9;
 }
 
 .main-equipment-card {
@@ -1781,6 +1809,18 @@ background-position: top center;
 
   .main-equipment-card textarea {
     min-height: 240px;
+  }
+
+  .proficiency-add-row {
+    width: 19px;
+    height: 19px;
+  }
+
+  .proficiency-remove-row {
+    width: 18px;
+    height: 18px;
+    top: 4px;
+    opacity: .58;
   }
 
   .ftr {
