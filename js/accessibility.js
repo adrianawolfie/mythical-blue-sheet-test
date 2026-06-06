@@ -1,11 +1,16 @@
 (() => {
-  const STORAGE_KEY = "mythicalBlueFontScale";
+  const STORAGE_KEY = "mythicalBlueFontScaleV2";
+  const LEGACY_STORAGE_KEYS = [
+    "mythicalBlueFontScale",
+    "mythicalBluePageScale"
+  ];
+
   const FONT_SCALE_LEVELS = [0.9, 1, 1.1, 1.2, 1.3];
   const DEFAULT_INDEX = 1;
   const BASE_ROOT_FONT_SIZE = 16;
 
+  const scalableRules = [];
   let currentIndex = getStoredScaleIndex();
-  const scaledRules = [];
 
   function getStoredScaleIndex() {
     const storedScale = Number(localStorage.getItem(STORAGE_KEY));
@@ -13,15 +18,23 @@
     return index >= 0 ? index : DEFAULT_INDEX;
   }
 
+  function clearLegacyScaling() {
+    LEGACY_STORAGE_KEYS.forEach(key => localStorage.removeItem(key));
+
+    document.documentElement.style.removeProperty("--app-font-scale");
+    document.documentElement.style.removeProperty("--app-page-scale");
+    document.body?.style.removeProperty("zoom");
+  }
+
   function collectScalableRules() {
-    scaledRules.length = 0;
+    scalableRules.length = 0;
 
     Array.from(document.styleSheets).forEach(styleSheet => {
       const href = styleSheet.href || "";
 
-      // Scale the main application stylesheet only.
-      // Keep the accessibility controls themselves at a stable size.
-      if (!href.endsWith("/css/styles.css")) return;
+      // Scale only the main app stylesheet.
+      // The toolbar-control styling stays a stable size.
+      if (!href.includes("/css/styles.css")) return;
 
       let rules;
 
@@ -46,7 +59,7 @@
 
       if (!match) return;
 
-      scaledRules.push({
+      scalableRules.push({
         rule,
         originalPixels: Number(match[1])
       });
@@ -57,11 +70,11 @@
     const scale = FONT_SCALE_LEVELS[currentIndex];
 
     // Scale inherited/default text and rem-based text.
+    // Dimensions, padding, images and parchment are unchanged.
     document.documentElement.style.fontSize =
       `${BASE_ROOT_FONT_SIZE * scale}px`;
 
-    // Scale the explicit px font sizes in the app stylesheet.
-    scaledRules.forEach(({ rule, originalPixels }) => {
+    scalableRules.forEach(({ rule, originalPixels }) => {
       rule.style.fontSize = `${originalPixels * scale}px`;
     });
 
@@ -89,7 +102,8 @@
     applyFontScale();
   }
 
-  window.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", () => {
+    clearLegacyScaling();
     collectScalableRules();
 
     document.querySelectorAll(".accessibility-size-btn").forEach(button => {
