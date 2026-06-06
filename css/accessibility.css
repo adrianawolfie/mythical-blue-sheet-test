@@ -1,11 +1,12 @@
-/* ─── ACCESSIBILITY: FONT SIZE CONTROLS ─────────────────────────
-   Increase or decrease text size without scaling the parchment layout,
-   decorative images, boxes or spacing. */
-:root {
-  --app-font-scale: 1;
-}
+/* ─── ACCESSIBILITY: TEXT-SIZE TOOLBAR ─────────────────────────
+   Text-size controls live in the normal toolbar flow.
+   They scroll away with the menu and never float above the character sheet. */
 
 .accessibility-controls {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  z-index: auto;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -46,38 +47,14 @@
   outline: none;
 }
 
-/* Scale text only. Decorative layout dimensions stay unchanged. */
-.sheet input,
-.sheet textarea,
-.sheet select,
-.sheet button,
-.sheet label,
-.sheet th,
-.sheet td,
-.sheet span,
-.sheet div,
-.sheet summary,
-.sheet strong,
-.sheet li,
-.start-page,
-.start-page button,
-.sheet-toolbar button,
-.accessibility-controls,
-.accessibility-controls button {
-  font-size: calc(1em * var(--app-font-scale));
-}
-
-/* Keep the accessibility control itself stable instead of compounding scale. */
-.accessibility-controls,
-.accessibility-controls * {
-  font-size: revert;
-}
-
+/* On mobile this becomes a calm second toolbar row between
+   the menu buttons and the character sheet. */
 @media (max-width: 768px) {
   .accessibility-controls {
+    flex: 1 0 100%;
     width: 100%;
     margin-left: 0;
-    padding: 5px 0 0;
+    padding: 7px 0 1px;
     border-left: none;
     border-top: 1px solid rgba(184,144,44,.45);
     justify-content: center;
