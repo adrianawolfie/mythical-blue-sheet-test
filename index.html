@@ -426,14 +426,36 @@
 <script src="js/app.js"></script>
 <script src="js/calendar.js"></script>
 <script>
-  // Hook the calendar bar into showSheet() without touching app.js.
-  // app.js is already loaded above, so showSheet is available to patch here.
+  // Hooks the calendar into the character save/load cycle — no app.js edits needed.
+  // app.js is already loaded above, so all its functions are patchable here.
   (function () {
-    var _orig = showSheet;
+
+    // 1. When the character sheet opens, refresh the calendar bar.
+    var _origShowSheet = showSheet;
     showSheet = function () {
-      _orig();
+      _origShowSheet();
       if (typeof renderCalendarOnSheet === 'function') renderCalendarOnSheet();
     };
+
+    // 2. When a character is saved, include the current calendar date in the data.
+    var _origCollect = collectCharacterData;
+    collectCharacterData = function () {
+      var data = _origCollect();
+      if (window.MatteraCalendar) {
+        data.calendar = window.MatteraCalendar.getDate();
+      }
+      return data;
+    };
+
+    // 3. When a character is loaded, restore its saved calendar date.
+    var _origLoad = loadCharacter;
+    loadCharacter = function (character) {
+      _origLoad(character);
+      if (window.MatteraCalendar && character.calendar) {
+        window.MatteraCalendar.setDate(character.calendar);
+      }
+    };
+
   }());
 </script>
 <script src="js/accessibility.js"></script>
