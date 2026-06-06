@@ -339,6 +339,77 @@ let indexPollTimer = null;
 let sheetHPPollTimer = null;
 const cardHPAutoSaveTimers = new Map();
 
+const HP_SYNC_CHANNEL_NAME = "mythical-blue-hp-sync-v1";
+const HP_SYNC_STORAGE_KEY = "mythicalBlueHPBroadcastV1";
+const hpSyncChannel =
+  typeof BroadcastChannel !== "undefined"
+    ? new BroadcastChannel(HP_SYNC_CHANNEL_NAME)
+    : null;
+
+function createHPUpdatePayload({ id, hpCurrent, hpMax, tempHp, updatedAt }) {
+  return {
+    type: "hp-updated",
+    id: String(id || ""),
+    hpCurrent: hpCurrent ?? "",
+    hpMax: hpMax ?? "",
+    tempHp: tempHp ?? "",
+    updatedAt: updatedAt || new Date().toISOString(),
+    nonce:
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random()}`
+  };
+}
+
+function publishHPUpdate(update) {
+  const payload = createHPUpdatePayload(update);
+
+  try {
+    hpSyncChannel?.postMessage(payload);
+  } catch (error) {
+    console.warn("Could not broadcast HP update:", error);
+  }
+
+  // Fallback for browsers that do not support BroadcastChannel.
+  // The storage event fires in other tabs on the same origin.
+  try {
+    localStorage.setItem(HP_SYNC_STORAGE_KEY, JSON.stringify(payload));
+  } catch (error) {
+    console.warn("Could not publish HP update through localStorage:", error);
+  }
+}
+
+function receiveHPUpdate(payload) {
+  if (!payload || payload.type !== "hp-updated" || !payload.id) return;
+
+  applyIndexHPUpdates([payload]);
+
+  if (currentCharacterId === payload.id) {
+    applySheetHPUpdates({
+      updatedAt: payload.updatedAt,
+      summary: {
+        hpCurrent: payload.hpCurrent,
+        hpMax: payload.hpMax,
+        tempHp: payload.tempHp
+      }
+    });
+  }
+}
+
+hpSyncChannel?.addEventListener("message", event => {
+  receiveHPUpdate(event.data);
+});
+
+window.addEventListener("storage", event => {
+  if (event.key !== HP_SYNC_STORAGE_KEY || !event.newValue) return;
+
+  try {
+    receiveHPUpdate(JSON.parse(event.newValue));
+  } catch (error) {
+    console.warn("Could not parse HP sync event:", error);
+  }
+});
+
 const STORAGE_KEY = "mythicalBlueCharacters";
 const CURRENT_SCHEMA_VERSION = 2;
 
@@ -1185,7 +1256,6 @@ async function deleteCurrentCharacter() {
 }
 
 async function renderCharacterList() {
-  cardHPAutoSaveTimers.clear();
   const list = document.getElementById("characterList");
 
   let characters = [];
@@ -1237,6 +1307,9 @@ async function renderCharacterList() {
       </div>
     </div>`;
   }).join("");
+
+  if (list.dataset.hpHandlersBound === "true") return;
+  list.dataset.hpHandlersBound = "true";
 
   list.addEventListener("click", async (event) => {
     const btn = event.target.closest(".card-hp-adj");
@@ -1298,9 +1371,18 @@ function scheduleCardHPAutoSave(id, hpCurrent, hpMax, tempHp) {
     cardHPAutoSaveTimers.delete(id);
     try {
       const result = await characterStorage.saveHPOnly({ id, hpCurrent, hpMax, tempHp });
+
       if (result?.updatedAt && currentCharacterId === id) {
         loadedCharacterUpdatedAt = result.updatedAt;
       }
+
+      publishHPUpdate({
+        id,
+        hpCurrent,
+        hpMax,
+        tempHp,
+        updatedAt: result?.updatedAt
+      });
     } catch (err) {
       console.warn("Card HP auto-save failed:", err.message);
     }
@@ -1410,6 +1492,14 @@ function scheduleHPAutoSave() {
         tempHp:    document.getElementById("tempHpInput")?.value ?? ""
       });
       if (result?.updatedAt) loadedCharacterUpdatedAt = result.updatedAt;
+
+      publishHPUpdate({
+        id: currentCharacterId,
+        hpCurrent: document.getElementById("hpCurrentInput")?.value ?? "",
+        hpMax: document.getElementById("hpMaxInput")?.value ?? "",
+        tempHp: document.getElementById("tempHpInput")?.value ?? "",
+        updatedAt: result?.updatedAt
+      });
     } catch (err) {
       console.warn("HP auto-save failed:", err.message);
     }
@@ -1429,7 +1519,7 @@ function stopIndexPolling() {
 }
 
 function scheduleIndexPoll() {
-  const ms = document.hidden ? 30000 : 10000;
+  const ms = document.hidden ? 30000 : 5000;
   indexPollTimer = setTimeout(async () => {
     await pollIndexHP();
     if (indexPollTimer !== null) scheduleIndexPoll();
@@ -1492,7 +1582,7 @@ function stopSheetHPPolling() {
 }
 
 function scheduleSheetHPPoll() {
-  const ms = document.hidden ? 30000 : 10000;
+  const ms = document.hidden ? 30000 : 5000;
   sheetHPPollTimer = setTimeout(async () => {
     await pollSheetHP();
     if (sheetHPPollTimer !== null) scheduleSheetHPPoll();
