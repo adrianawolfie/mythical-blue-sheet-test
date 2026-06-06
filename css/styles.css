@@ -2198,28 +2198,31 @@ background-position: top center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 13px;
-  height: 13px;
-  min-width: 13px;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
   padding: 0;
   border: none;
-  border-radius: 0;
+  border-radius: 50%;
   background: transparent;
   color: var(--gold-deep);
   cursor: pointer;
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   line-height: 1;
+  flex-shrink: 0;
   opacity: .42;
   transition:
+    background .16s ease,
+    border-color .16s ease,
     color .16s ease,
     opacity .16s ease;
 }
 
 .card-condition-chip:hover .card-condition-remove,
 .card-condition-remove:focus-visible {
-  background: transparent;
+  background: rgba(214,168,56,.10);
   color: var(--gold-deep);
   opacity: .9;
   outline: none;
@@ -2251,16 +2254,57 @@ background-position: top center;
   }
 
   .start-page .character-card button.card-condition-remove {
-    flex: 0 0 14px !important;
-    width: 14px !important;
-    min-width: 14px !important;
-    max-width: 14px !important;
-    height: 14px !important;
+    flex: 0 0 16px !important;
+    width: 16px !important;
+    min-width: 16px !important;
+    max-width: 16px !important;
+    height: 16px !important;
     padding: 0 !important;
     margin: 0 !important;
-    border-radius: 0 !important;
+    border: none !important;
+    border-radius: 50% !important;
     background: transparent !important;
-    font-size: 10px !important;
-    opacity: .52;
+    box-shadow: none !important;
+    color: var(--gold-deep) !important;
+    font-family: 'Cinzel', serif !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    opacity: .58;
   }
+}
+
+
+/* ─── CONDITION REMOVE × — SAME VISUAL LOGIC AS PROFICIENCIES ─
+   This rule intentionally appears last so the generic start-page button
+   styling cannot turn the tiny × into a dark action button. */
+.start-page .character-card .card-condition-chip button.card-condition-remove {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 16px !important;
+  width: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
+  height: 16px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--gold-deep) !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  opacity: .42;
+}
+
+.start-page .character-card .card-condition-chip:hover button.card-condition-remove,
+.start-page .character-card .card-condition-chip button.card-condition-remove:focus-visible {
+  background: rgba(214,168,56,.10) !important;
+  color: var(--gold-deep) !important;
+  opacity: .9;
+  outline: none !important;
 }
