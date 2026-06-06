@@ -10,12 +10,6 @@
 <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-<div class="accessibility-controls" role="group" aria-label="Page size controls">
-  <span class="accessibility-label" aria-hidden="true">Text size</span>
-  <button type="button" class="accessibility-size-btn" data-size-action="decrease" aria-label="Decrease page size">A−</button>
-  <button type="button" class="accessibility-size-btn" data-size-action="reset" aria-label="Reset page size">A</button>
-  <button type="button" class="accessibility-size-btn" data-size-action="increase" aria-label="Increase page size">A+</button>
-</div>
 
 <div id="startPage" class="start-page">
   <h1>Saved Characters</h1>
@@ -28,6 +22,13 @@
   <button id="backToStartBtn">← Character List</button>
   <button id="saveCharacterBtn">Save Character</button>
   <button id="deleteCharacterBtn">Delete Character</button>
+
+  <div class="accessibility-controls" role="group" aria-label="Text size controls">
+    <span class="accessibility-label">Text Size</span>
+    <button type="button" class="accessibility-size-btn" data-size-action="decrease" aria-label="Decrease text size">A−</button>
+    <button type="button" class="accessibility-size-btn" data-size-action="reset" aria-label="Reset text size">A</button>
+    <button type="button" class="accessibility-size-btn" data-size-action="increase" aria-label="Increase text size">A+</button>
+  </div>
 </div>
 
 <div class="sheet">
