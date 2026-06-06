@@ -90,10 +90,6 @@
     "languages": "",
     "attunement": "",
     "equipmentInventory": "",
-    "weaponProficiencies": "Simple & Martial",
-    "armorProficiencies": "Light & Medium & Shields",
-    "otherProficiencies": "Darkvision: 60 ft. · Speed (Swimming): 20–40 ft.",
-    "toolProficiencies": "",
     "equipment": ""
   },
   "uiState": {
@@ -341,7 +337,19 @@
         "details": "",
         "open": false
       }
-    ]
+    ],
+    "proficiencies": {
+      "armor": [
+        "Light & Medium & Shields"
+      ],
+      "weapons": [
+        "Simple & Martial"
+      ],
+      "tools": [],
+      "other": [
+        "Darkvision: 60 ft. · Speed (Swimming): 20–40 ft."
+      ]
+    }
   },
   "schemaVersion": 2
 }

@@ -90,10 +90,6 @@
     "languages": "Common\nAequor\n",
     "attunement": "",
     "equipmentInventory": "Spear, 2 Daggers, Backpack, Caltrops, Crowbar, 2 flasks of Oil, 10 days of Rations, Rope, Tinderbox, 10 Torches, and Waterskin.",
-    "weaponProficiencies": "Simple",
-    "toolProficiencies": "Calligrapher's Supplies",
-    "otherProficiencies": "Darkvision: 60ft · Speed: 30ft Swimming",
-    "armorProficiencies": "",
     "equipment": ""
   },
   "uiState": {
@@ -383,7 +379,19 @@
         "details": "Spell Level: 1st\nCasting Time: 1 Action\nRange/Area: 90 ft. — 5 ft. square\nComponents: S, M*\n*A small vial of water\n\nDuration: Instantaneous\nSchool: Conjuration\nAttack/Save: Dexterity Save\nDamage/Effect: Cold & Control\n\nDescription\nAs you spin around your vial of water, a whirlpool comes to be. Uncorking the vial will release said whirlpool upon a target within range (90 ft.). The target must make a Dexterity saving throw or experience the full effect of the spell. The effect of the spell differs depending on whether the target is on the surface or below it:\n\nOn Land\nThe target takes 3d8 cold damage and falls prone. On a successful save, the target takes half the damage and does not fall prone.\n\nUnder Water\nThe target takes 3d10 cold damage and is pushed downward by 30 ft. On a successful save, the target takes half the damage and is not pushed downward.\n\nHigher-Level Spell Slot\nFor each spell slot above level 1, an extra whirlpool is created. ",
         "open": false
       }
-    ]
+    ],
+    "proficiencies": {
+      "armor": [],
+      "weapons": [
+        "Simple"
+      ],
+      "tools": [
+        "Calligrapher's Supplies"
+      ],
+      "other": [
+        "Darkvision: 60ft · Speed: 30ft Swimming"
+      ]
+    }
   },
   "schemaVersion": 2
 }

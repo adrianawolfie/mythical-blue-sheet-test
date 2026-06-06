@@ -90,10 +90,6 @@
     "languages": "",
     "attunement": "",
     "equipmentInventory": "",
-    "armorProficiencies": "",
-    "weaponProficiencies": "",
-    "toolProficiencies": "",
-    "otherProficiencies": "",
     "equipment": ""
   },
   "uiState": {
@@ -300,7 +296,13 @@
         "details": "",
         "open": false
       }
-    ]
+    ],
+    "proficiencies": {
+      "armor": [],
+      "weapons": [],
+      "tools": [],
+      "other": []
+    }
   },
   "schemaVersion": 2
 }
