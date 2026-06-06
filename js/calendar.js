@@ -13,20 +13,20 @@
   // ── CALENDAR DATA ──────────────────────────────────────────────────────────
 
   var MONTHS = [
-    { num:  1, name: 'Akhus',   god: 'Akhlys',   season: 'Winter (Hiver)',          meaning: 'Misery & Revenge' },
-    { num:  2, name: 'Abzutus', god: 'Abzutarus', season: 'Winter (Hiver)',          meaning: 'The Void' },
-    { num:  3, name: 'Trelus',  god: 'Trel',      season: 'Winter (Hiver)',          meaning: 'Hope & Nautic Origin' },
-    { num:  4, name: 'Sahetru', god: 'Sahet',     season: 'Between Winter & Spring', meaning: 'The Tides' },
-    { num:  5, name: 'Lahman',  god: 'Lahmu',     season: 'Spring (Len)',            meaning: 'Destructive Nature of Water' },
-    { num:  6, name: 'Lahaman', god: 'Lahamu',    season: 'Spring (Len)',            meaning: 'Healing Nature of Water' },
-    { num:  7, name: 'Aeru',    god: 'Aerie',     season: 'Between Spring & Summer', meaning: 'Purity' },
-    { num:  8, name: 'Thalsa',  god: 'Thalassa',  season: 'Summer (Sumor)',          meaning: 'The Origin of Life' },
-    { num:  9, name: 'Amarsa',  god: 'Amaru',     season: 'Summer (Sumor)',          meaning: 'Unconditional Love' },
+    { num:  1, name: 'Akhus',   god: 'Akhlys',   season: 'Winter (Hiver)',           meaning: 'Misery & Revenge' },
+    { num:  2, name: 'Abzutus', god: 'Abzutarus', season: 'Winter (Hiver)',           meaning: 'The Void' },
+    { num:  3, name: 'Trelus',  god: 'Trel',      season: 'Winter (Hiver)',           meaning: 'Hope & Nautic Origin' },
+    { num:  4, name: 'Sahetru', god: 'Sahet',     season: 'Between Winter & Spring',  meaning: 'The Tides' },
+    { num:  5, name: 'Lahman',  god: 'Lahmu',     season: 'Spring (Len)',             meaning: 'Destructive Nature of Water' },
+    { num:  6, name: 'Lahaman', god: 'Lahamu',    season: 'Spring (Len)',             meaning: 'Healing Nature of Water' },
+    { num:  7, name: 'Aeru',    god: 'Aerie',     season: 'Between Spring & Summer',  meaning: 'Purity' },
+    { num:  8, name: 'Thalsa',  god: 'Thalassa',  season: 'Summer (Sumor)',           meaning: 'The Origin of Life' },
+    { num:  9, name: 'Amarsa',  god: 'Amaru',     season: 'Summer (Sumor)',           meaning: 'Unconditional Love' },
     // ── Intercalis (leap day) falls between month 9 and 10 ──
-    { num: 10, name: 'Lotan',   god: 'Lotaru',    season: 'Between Summer & Autumn', meaning: 'Chaos' },
-    { num: 11, name: 'Basen',   god: 'Basmu',     season: 'Autumn (Autumnus)',       meaning: 'Decay' },
-    { num: 12, name: 'Haden',   god: 'Hadad',     season: 'Autumn (Autumnus)',       meaning: 'Tempest & Rain' },
-    { num: 13, name: 'Gahen',   god: 'Gahakan',   season: 'Autumn (Autumnus)',       meaning: 'Trickery' }
+    { num: 10, name: 'Lotan',   god: 'Lotaru',    season: 'Between Summer & Autumn',  meaning: 'Chaos' },
+    { num: 11, name: 'Basen',   god: 'Basmu',     season: 'Autumn (Autumnus)',        meaning: 'Decay' },
+    { num: 12, name: 'Haden',   god: 'Hadad',     season: 'Autumn (Autumnus)',        meaning: 'Tempest & Rain' },
+    { num: 13, name: 'Gahen',   god: 'Gahakan',   season: 'Autumn (Autumnus)',        meaning: 'Trickery' }
     // ── Aenaris (Day Out of Time) falls after month 13 ──
   ];
 
@@ -93,11 +93,9 @@
 
   // ── DATE ARITHMETIC ────────────────────────────────────────────────────────
 
-  // Convert {year, month, day, special} → absolute day number (from year 1 day 1).
   function toAbs(d) {
     var abs = 0, y, m;
     for (y = 1; y < d.year; y++) abs += daysInYear(y);
-
     if (d.special === 'intercalis') {
       for (m = 1; m <= 9; m++) abs += 28;
       abs += 1;
@@ -115,7 +113,6 @@
     return abs;
   }
 
-  // Convert absolute day number → {year, month, day, special}.
   function fromAbs(abs) {
     if (abs < 1) abs = 1;
     var rem = abs, year = 1, m;
@@ -137,34 +134,21 @@
 
   // ── DATE INFO ──────────────────────────────────────────────────────────────
 
-  // Returns a rich info object for any date.
   function getInfo(date) {
     var zod = getZodiac(date.year);
-
     if (date.special === 'intercalis') {
-      return {
-        isSpecial:   true,
-        specialName: 'Intercalis',
-        specialSub:  'The Repair of Time · The Start of the Beginning',
-        year: date.year,
-        zodiac: zod
-      };
+      return { isSpecial: true, specialName: 'Intercalis',
+               specialSub: 'The Repair of Time · The Start of the Beginning',
+               year: date.year, zodiac: zod };
     }
     if (date.special === 'aenaris') {
-      return {
-        isSpecial:   true,
-        specialName: 'Aenaris',
-        specialSub:  'The Day Out of Time · The Turning of Time',
-        year: date.year,
-        zodiac: zod
-      };
+      return { isSpecial: true, specialName: 'Aenaris',
+               specialSub: 'The Day Out of Time · The Turning of Time',
+               year: date.year, zodiac: zod };
     }
-
     var month = MONTHS[date.month - 1];
     var wd    = getWeekday(date.day);
     var occ   = weekOcc(date.day);
-    var week  = Math.ceil(date.day / 7);
-
     return {
       isSpecial: false,
       year:      date.year,
@@ -173,7 +157,7 @@
       weekday:   wd,
       day:       date.day,
       occurrence: occ,
-      weekNum:   week,
+      weekNum:   Math.ceil(date.day / 7),
       dayLabel:  occ + ' ' + wd.scripture + ' of ' + month.name + ' (the ' + ordinal(date.day) + ')'
     };
   }
@@ -185,7 +169,6 @@
       var s = localStorage.getItem(STORAGE_KEY);
       if (s) {
         var parsed = JSON.parse(s);
-        // Validate shape
         if (typeof parsed.year === 'number') return parsed;
       }
     } catch (e) {}
@@ -197,7 +180,7 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
   }
 
-  // ── RENDER: INDEX PAGE WIDGET ──────────────────────────────────────────────
+  // ── RENDER ─────────────────────────────────────────────────────────────────
 
   function setText(id, val) {
     var el = document.getElementById(id);
@@ -207,46 +190,39 @@
   function renderWidget(date) {
     var info = getInfo(date);
     var zod  = info.zodiac;
-
-    setText('calWidgetYear',  info.year + ' EM');
-    setText('calWidgetSign',  'Year of the ' + zod.form + ' · ' + zod.sign);
-
+    setText('calWidgetYear', info.year + ' EM');
+    setText('calWidgetSign', 'Year of the ' + zod.form + ' · ' + zod.sign);
     if (info.isSpecial) {
-      setText('calWidgetWeekday',    info.specialName);
-      setText('calWidgetWdDesc',     info.specialSub);
-      setText('calWidgetDay',        '');
-      setText('calWidgetMonth',      '');
-      setText('calWidgetMeaning',    '');
-      setText('calWidgetSeason',     '');
-      setText('calWidgetWeek',       '');
+      setText('calWidgetWeekday', info.specialName);
+      setText('calWidgetWdDesc',  info.specialSub);
+      setText('calWidgetDay',     '');
+      setText('calWidgetMonth',   '');
+      setText('calWidgetMeaning', '');
+      setText('calWidgetSeason',  '');
+      setText('calWidgetWeek',    '');
     } else {
-      setText('calWidgetWeekday',    info.weekday.scripture + ' · ' + info.weekday.common);
-      setText('calWidgetWdDesc',     info.weekday.desc);
-      setText('calWidgetDay',        'the ' + ordinal(info.day));
-      setText('calWidgetMonth',      'of ' + info.month.name);
-      setText('calWidgetMeaning',    info.month.meaning);
-      setText('calWidgetSeason',     info.month.season);
-      setText('calWidgetWeek',       'Week ' + info.weekNum + ' of 4');
+      setText('calWidgetWeekday', info.weekday.scripture + ' · ' + info.weekday.common);
+      setText('calWidgetWdDesc',  info.weekday.desc);
+      setText('calWidgetDay',     'the ' + ordinal(info.day));
+      setText('calWidgetMonth',   'of ' + info.month.name);
+      setText('calWidgetMeaning', info.month.meaning);
+      setText('calWidgetSeason',  info.month.season);
+      setText('calWidgetWeek',    'Week ' + info.weekNum + ' of 4');
     }
   }
-
-  // ── RENDER: CHARACTER SHEET BAR ────────────────────────────────────────────
 
   function renderSheetBar(date) {
     var el = document.getElementById('calSheetDisplay');
     if (!el) return;
-    var info = getInfo(date);
-    var zod  = info.zodiac;
-    var label;
-    if (info.isSpecial) {
-      label = info.year + ' EM  ·  ' + zod.form + ' Year  ·  ' + info.specialName;
-    } else {
-      label = info.year + ' EM  ·  ' + zod.form + ' Year  ·  ' + info.dayLabel;
-    }
+    var info  = getInfo(date);
+    var zod   = info.zodiac;
+    var label = info.isSpecial
+      ? info.year + ' EM  ·  ' + zod.form + ' Year  ·  ' + info.specialName
+      : info.year + ' EM  ·  ' + zod.form + ' Year  ·  ' + info.dayLabel;
     el.textContent = label;
   }
 
-  // ── INIT: INDEX WIDGET ─────────────────────────────────────────────────────
+  // ── INIT WIDGET ────────────────────────────────────────────────────────────
 
   function initWidget() {
     var prevBtn  = document.getElementById('calPrevDay');
@@ -282,10 +258,24 @@
     }
   }
 
-  // ── PUBLIC: called by app.js when the character sheet opens ───────────────
+  // ── PUBLIC API ─────────────────────────────────────────────────────────────
 
+  // Called by the inline patch in index.html when a character sheet opens.
   global.renderCalendarOnSheet = function () {
     renderSheetBar(load());
+  };
+
+  // Called by the inline patch to restore a saved calendar date when
+  // a character is loaded, and to read the current date when saving.
+  global.MatteraCalendar = {
+    getDate: load,
+    setDate: function (date) {
+      if (date && typeof date.year === 'number') {
+        save(date);
+        renderWidget(date);
+        renderSheetBar(date);
+      }
+    }
   };
 
   // ── BOOT ───────────────────────────────────────────────────────────────────
