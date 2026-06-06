@@ -1,6 +1,6 @@
-/* ─── ACCESSIBILITY: TEXT-SIZE TOOLBAR ─────────────────────────
-   Text-size controls live in the normal toolbar flow.
-   They scroll away with the menu and never float above the character sheet. */
+/* ─── ACCESSIBILITY: COMPACT TEXT-SIZE TOOLBAR ──────────────────
+   Text-size controls stay in the normal toolbar flow.
+   They are intentionally subtle and scroll away with the menu. */
 
 .accessibility-controls {
   position: static !important;
@@ -9,63 +9,78 @@
   z-index: auto;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   margin-left: auto;
-  padding: 4px 5px;
-  border-left: 1px solid rgba(184,144,44,.65);
+  padding: 3px 5px;
+  border: 1px solid rgba(184,144,44,.42);
+  border-radius: 999px;
+  background: rgba(255,253,245,.22);
   color: var(--navy-deep, #1c2750);
 }
 
 .accessibility-label {
-  margin-right: 3px;
+  margin: 0 3px 0 2px;
   font-family: 'Cinzel', Georgia, serif;
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: .8px;
+  opacity: .72;
   text-transform: uppercase;
 }
 
 .accessibility-size-btn {
-  min-width: 28px;
-  height: 25px;
-  border: 1px solid rgba(138,105,24,.72);
-  border-radius: 2px;
-  background: rgba(255,253,245,.58);
-  color: var(--navy-deep, #1c2750);
+  min-width: 22px;
+  height: 22px;
+  padding: 0 4px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(28,39,80,.78);
   cursor: pointer;
   font-family: Georgia, serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   line-height: 1;
+  transition:
+    background .16s ease,
+    color .16s ease,
+    opacity .16s ease;
 }
 
 .accessibility-size-btn:hover,
-.accessibility-size-btn:focus-visible,
-.accessibility-size-btn[aria-pressed="true"] {
-  border-color: var(--gold-deep, #8a6918);
-  background: rgba(214,168,56,.22);
+.accessibility-size-btn:focus-visible {
+  background: rgba(214,168,56,.14);
+  color: var(--navy-deep, #1c2750);
   outline: none;
 }
 
-/* On mobile this becomes a calm second toolbar row between
-   the menu buttons and the character sheet. */
+.accessibility-size-btn[aria-pressed="true"] {
+  background: rgba(214,168,56,.18);
+  color: var(--navy-deep, #1c2750);
+}
+
+/* On mobile, keep the control compact and centered below the main buttons.
+   It should not stretch across the full toolbar width. */
 @media (max-width: 768px) {
   .accessibility-controls {
-    flex: 1 0 100%;
-    width: 100%;
-    margin-left: 0;
-    padding: 7px 0 1px;
-    border-left: none;
-    border-top: 1px solid rgba(184,144,44,.45);
+    flex: 0 0 auto;
+    width: auto;
+    max-width: max-content;
+    margin: 3px auto 0;
+    padding: 4px 6px;
+    border: 1px solid rgba(184,144,44,.38);
     justify-content: center;
   }
 
   .accessibility-label {
     display: inline-block;
+    font-size: 7px;
+    letter-spacing: .7px;
   }
 
   .accessibility-size-btn {
-    min-width: 30px;
-    height: 29px;
+    min-width: 24px;
+    height: 24px;
+    font-size: 12px;
   }
 }
