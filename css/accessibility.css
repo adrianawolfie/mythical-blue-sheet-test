@@ -1,6 +1,31 @@
-/* ─── ACCESSIBILITY: COMPACT TEXT-SIZE TOOLBAR ──────────────────
-   Text-size controls stay in the normal toolbar flow.
-   They are intentionally subtle and scroll away with the menu. */
+/* ─── ACCESSIBILITY: SUBTLE TEXT-SIZE PILLS ─────────────────────
+   Text-size controls live in normal document flow and scroll away naturally.
+   The controls are compact pills on desktop and mobile. */
+
+.start-page-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.start-page-heading-row h1 {
+  margin-bottom: 0;
+}
+
+.accessibility-row {
+  display: flex;
+  align-items: center;
+}
+
+.index-accessibility-row {
+  margin-left: auto;
+}
+
+.sheet-toolbar .sheet-accessibility-row {
+  margin-left: auto;
+}
 
 .accessibility-controls {
   position: static !important;
@@ -8,79 +33,99 @@
   right: auto !important;
   z-index: auto;
   display: inline-flex;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  max-width: max-content;
   align-items: center;
   gap: 2px;
-  margin-left: auto;
   padding: 3px 5px;
   border: 1px solid rgba(184,144,44,.42);
   border-radius: 999px;
-  background: rgba(255,253,245,.22);
+  background: rgba(255,253,245,.20);
   color: var(--navy-deep, #1c2750);
 }
 
 .accessibility-label {
   margin: 0 3px 0 2px;
+  color: rgba(28,39,80,.70);
   font-family: 'Cinzel', Georgia, serif;
   font-size: 7px;
   font-weight: 700;
-  letter-spacing: .8px;
-  opacity: .72;
+  letter-spacing: .75px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.accessibility-size-btn {
-  min-width: 22px;
-  height: 22px;
-  padding: 0 4px;
-  border: none;
-  border-radius: 999px;
-  background: transparent;
-  color: rgba(28,39,80,.78);
+/* High specificity and !important are intentional:
+   the main toolbar and start-page button styles should not turn these
+   small accessibility buttons into large dark-blue action buttons. */
+.accessibility-controls .accessibility-size-btn {
+  flex: 0 0 auto !important;
+  min-width: 22px !important;
+  width: auto !important;
+  height: 22px !important;
+  margin: 0 !important;
+  padding: 0 4px !important;
+  border: none !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: rgba(28,39,80,.68) !important;
   cursor: pointer;
-  font-family: Georgia, serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
+  font-family: Georgia, serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
   transition:
     background .16s ease,
     color .16s ease,
     opacity .16s ease;
 }
 
-.accessibility-size-btn:hover,
-.accessibility-size-btn:focus-visible {
-  background: rgba(214,168,56,.14);
-  color: var(--navy-deep, #1c2750);
+.accessibility-controls .accessibility-size-btn:hover,
+.accessibility-controls .accessibility-size-btn:focus-visible {
+  background: rgba(214,168,56,.13) !important;
+  color: var(--navy-deep, #1c2750) !important;
   outline: none;
 }
 
-.accessibility-size-btn[aria-pressed="true"] {
-  background: rgba(214,168,56,.18);
-  color: var(--navy-deep, #1c2750);
+.accessibility-controls .accessibility-size-btn[aria-pressed="true"] {
+  background: rgba(214,168,56,.17) !important;
+  color: var(--navy-deep, #1c2750) !important;
 }
 
-/* On mobile, keep the control compact and centered below the main buttons.
-   It should not stretch across the full toolbar width. */
+/* Mobile: the toolbar gets a separate row, but only the row spans the width.
+   The visible text-size control remains a compact centered pill. */
 @media (max-width: 768px) {
-  .accessibility-controls {
-    flex: 0 0 auto;
-    width: auto;
-    max-width: max-content;
-    margin: 3px auto 0;
-    padding: 4px 6px;
-    border: 1px solid rgba(184,144,44,.38);
+  .start-page-heading-row {
+    align-items: flex-start;
+  }
+
+  .index-accessibility-row {
+    margin-left: auto;
+  }
+
+  .sheet-toolbar .sheet-accessibility-row {
+    flex: 1 0 100%;
+    width: 100%;
+    margin: 3px 0 0;
     justify-content: center;
   }
 
-  .accessibility-label {
-    display: inline-block;
-    font-size: 7px;
-    letter-spacing: .7px;
+  .accessibility-controls {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: max-content;
+    padding: 4px 6px;
   }
 
-  .accessibility-size-btn {
-    min-width: 24px;
-    height: 24px;
-    font-size: 12px;
+  .accessibility-label {
+    font-size: 7px;
+    letter-spacing: .65px;
+  }
+
+  .accessibility-controls .accessibility-size-btn {
+    min-width: 24px !important;
+    height: 24px !important;
+    font-size: 12px !important;
   }
 }
