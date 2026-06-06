@@ -8,6 +8,7 @@
   const FONT_SCALE_LEVELS = [0.9, 1, 1.1, 1.2, 1.3];
   const DEFAULT_INDEX = 1;
   const BASE_ROOT_FONT_SIZE = 16;
+  const MOBILE_QUERY = "(max-width: 768px)";
 
   const scalableRules = [];
   let currentIndex = getStoredScaleIndex();
@@ -33,7 +34,7 @@
       const href = styleSheet.href || "";
 
       // Scale only the main app stylesheet.
-      // The toolbar-control styling stays a stable size.
+      // Accessibility controls stay a stable size.
       if (!href.includes("/css/styles.css")) return;
 
       let rules;
@@ -69,8 +70,6 @@
   function applyFontScale() {
     const scale = FONT_SCALE_LEVELS[currentIndex];
 
-    // Scale inherited/default text and rem-based text.
-    // Dimensions, padding, images and parchment are unchanged.
     document.documentElement.style.fontSize =
       `${BASE_ROOT_FONT_SIZE * scale}px`;
 
@@ -102,15 +101,48 @@
     applyFontScale();
   }
 
+  function syncPopoutState() {
+    const isMobile = window.matchMedia(MOBILE_QUERY).matches;
+
+    document.querySelectorAll(".accessibility-controls").forEach(control => {
+      if (!isMobile) {
+        control.classList.add("open");
+      } else {
+        control.classList.remove("open");
+      }
+
+      control.querySelector(".accessibility-toggle")?.setAttribute(
+        "aria-expanded",
+        String(!isMobile)
+      );
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     clearLegacyScaling();
     collectScalableRules();
+    syncPopoutState();
+
+    document.querySelectorAll(".accessibility-toggle").forEach(toggle => {
+      toggle.addEventListener("click", () => {
+        const control = toggle.closest(".accessibility-controls");
+        if (!control) return;
+
+        // Desktop remains expanded. Mobile uses a compact pop-out.
+        if (!window.matchMedia(MOBILE_QUERY).matches) return;
+
+        const isOpen = control.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", String(isOpen));
+      });
+    });
 
     document.querySelectorAll(".accessibility-size-btn").forEach(button => {
       button.addEventListener("click", () => {
         changeFontScale(button.dataset.sizeAction);
       });
     });
+
+    window.matchMedia(MOBILE_QUERY).addEventListener?.("change", syncPopoutState);
 
     applyFontScale();
   });
