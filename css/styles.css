@@ -2111,3 +2111,47 @@ background-position: top center;
     flex: 0 0 auto;
   }
 }
+
+
+/* ─── MOBILE SAVED-CHARACTER HP CONTROLS — HARD OVERRIDE ─────
+   The general mobile .start-page button rule makes every button flexible.
+   Force the small HP adjustment controls back into compact circles. */
+@media (max-width: 768px) {
+  .start-page .character-card .card-hp-controls {
+    display: inline-flex !important;
+    width: auto !important;
+    max-width: max-content !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+  }
+
+  .start-page .character-card button.card-hp-adj {
+    flex: 0 0 28px !important;
+    min-width: 28px !important;
+    max-width: 28px !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 50% !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+  }
+
+  .start-page .character-card .card-hp-readout {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  .start-page .character-card .card-hp-cur {
+    width: 36px !important;
+    min-width: 36px !important;
+  }
+
+  .start-page .character-card .card-hp-max {
+    width: 30px !important;
+    min-width: 30px !important;
+  }
+}
