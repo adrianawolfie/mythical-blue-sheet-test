@@ -64,7 +64,6 @@
     "intimidation": "+1",
     "performance": "+1",
     "persuasion": "+3",
-    "equipmentProficiencies": "",
     "hitDice": "",
     "hitDiceSpent": "",
     "copperPieces": "",
@@ -90,7 +89,12 @@
     "appearance": "Slightly below average height, lean, too long white hair, deep dark purple/black eyes, wearing a scrambled together ensamble of cloth leather and blade. \n\nLillith carries a dark iron spear shaped like a harpoon, its haft wrapped in salt-stained leather and threaded with small shells, broken beads, and scraps of sea-worn bone.",
     "languages": "",
     "attunement": "",
-    "equipmentInventory": ""
+    "equipmentInventory": "",
+    "armorProficiencies": "",
+    "weaponProficiencies": "",
+    "toolProficiencies": "",
+    "otherProficiencies": "",
+    "equipment": ""
   },
   "uiState": {
     "inspiration": false,

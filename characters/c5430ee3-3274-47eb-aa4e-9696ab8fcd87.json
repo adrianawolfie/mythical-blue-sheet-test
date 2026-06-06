@@ -64,7 +64,6 @@
     "intimidation": "",
     "performance": "",
     "persuasion": "",
-    "equipmentProficiencies": "",
     "hitDice": "",
     "hitDiceSpent": "",
     "copperPieces": "",
@@ -90,7 +89,12 @@
     "appearance": "",
     "languages": "",
     "attunement": "",
-    "equipmentInventory": ""
+    "equipmentInventory": "",
+    "armorProficiencies": "",
+    "weaponProficiencies": "",
+    "toolProficiencies": "",
+    "otherProficiencies": "",
+    "equipment": ""
   },
   "uiState": {
     "inspiration": false,

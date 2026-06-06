@@ -64,7 +64,6 @@
     "intimidation": "",
     "performance": "",
     "persuasion": "",
-    "equipmentProficiencies": "Darkvision: 60 ft.\nSpeed (Swimming): 20–40 ft.\nWeapons: Simple & Martial\nArmor: Light & Medium & Shields",
     "hitDice": "1d10",
     "hitDiceSpent": "",
     "copperPieces": "",
@@ -90,7 +89,12 @@
     "appearance": "",
     "languages": "",
     "attunement": "",
-    "equipmentInventory": ""
+    "equipmentInventory": "",
+    "weaponProficiencies": "Simple & Martial",
+    "armorProficiencies": "Light & Medium & Shields",
+    "otherProficiencies": "Darkvision: 60 ft. · Speed (Swimming): 20–40 ft.",
+    "toolProficiencies": "",
+    "equipment": ""
   },
   "uiState": {
     "inspiration": false,

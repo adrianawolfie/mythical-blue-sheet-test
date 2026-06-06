@@ -64,7 +64,6 @@
     "intimidation": "+4",
     "performance": "+6",
     "persuasion": "+6",
-    "equipmentProficiencies": "Darkvision: 60ft\nSpeed: 30ft Swimming\nWeapons: Simple\nTools: Calligrapher's Supplies",
     "hitDice": "1d6",
     "hitDiceSpent": "",
     "copperPieces": "",
@@ -90,7 +89,12 @@
     "appearance": "Average Height, Violet Eyes, Blue Hair",
     "languages": "Common\nAequor\n",
     "attunement": "",
-    "equipmentInventory": "Spear, 2 Daggers, Backpack, Caltrops, Crowbar, 2 flasks of Oil, 10 days of Rations, Rope, Tinderbox, 10 Torches, and Waterskin."
+    "equipmentInventory": "Spear, 2 Daggers, Backpack, Caltrops, Crowbar, 2 flasks of Oil, 10 days of Rations, Rope, Tinderbox, 10 Torches, and Waterskin.",
+    "weaponProficiencies": "Simple",
+    "toolProficiencies": "Calligrapher's Supplies",
+    "otherProficiencies": "Darkvision: 60ft · Speed: 30ft Swimming",
+    "armorProficiencies": "",
+    "equipment": ""
   },
   "uiState": {
     "inspiration": true,
