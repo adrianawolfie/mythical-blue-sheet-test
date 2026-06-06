@@ -12,7 +12,17 @@
 <body>
 
 <div id="startPage" class="start-page">
-  <h1>Saved Characters</h1>
+  <div class="start-page-heading-row">
+    <h1>Saved Characters</h1>
+    <div class="accessibility-row index-accessibility-row">
+      <div class="accessibility-controls" role="group" aria-label="Text size controls">
+      <span class="accessibility-label">Text Size</span>
+      <button type="button" class="accessibility-size-btn" data-size-action="decrease" aria-label="Decrease text size">A−</button>
+      <button type="button" class="accessibility-size-btn" data-size-action="reset" aria-label="Reset text size">A</button>
+      <button type="button" class="accessibility-size-btn" data-size-action="increase" aria-label="Increase text size">A+</button>
+    </div>
+    </div>
+  </div>
   <div id="characterList"></div>
   <button id="newCharacterBtn">+ New Character</button>
   <button id="resetTestDataBtn" type="button" style="display:none;">Reset Test Data</button>
@@ -23,11 +33,13 @@
   <button id="saveCharacterBtn">Save Character</button>
   <button id="deleteCharacterBtn">Delete Character</button>
 
-  <div class="accessibility-controls" role="group" aria-label="Text size controls">
-    <span class="accessibility-label">Text Size</span>
-    <button type="button" class="accessibility-size-btn" data-size-action="decrease" aria-label="Decrease text size">A−</button>
-    <button type="button" class="accessibility-size-btn" data-size-action="reset" aria-label="Reset text size">A</button>
-    <button type="button" class="accessibility-size-btn" data-size-action="increase" aria-label="Increase text size">A+</button>
+  <div class="accessibility-row sheet-accessibility-row">
+    <div class="accessibility-controls" role="group" aria-label="Text size controls">
+      <span class="accessibility-label">Text Size</span>
+      <button type="button" class="accessibility-size-btn" data-size-action="decrease" aria-label="Decrease text size">A−</button>
+      <button type="button" class="accessibility-size-btn" data-size-action="reset" aria-label="Reset text size">A</button>
+      <button type="button" class="accessibility-size-btn" data-size-action="increase" aria-label="Increase text size">A+</button>
+    </div>
   </div>
 </div>
 
