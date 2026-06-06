@@ -1,0 +1,74 @@
+/* ─── ACCESSIBILITY: PAGE SIZE CONTROLS ─────────────────────────
+   The app uses many fixed pixel dimensions for its decorative layout.
+   Scaling the whole interface keeps text, controls and spacing consistent. */
+:root {
+  --app-page-scale: 1;
+}
+
+body {
+  zoom: var(--app-page-scale);
+}
+
+.accessibility-controls {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 6px;
+  border: 1px solid rgba(184,144,44,.8);
+  border-radius: 3px;
+  background: rgba(237,225,192,.92);
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+  color: var(--navy-deep, #1c2750);
+}
+
+.accessibility-label {
+  margin-right: 3px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.accessibility-size-btn {
+  min-width: 28px;
+  height: 25px;
+  border: 1px solid rgba(138,105,24,.72);
+  border-radius: 2px;
+  background: rgba(255,253,245,.58);
+  color: var(--navy-deep, #1c2750);
+  cursor: pointer;
+  font-family: Georgia, serif;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.accessibility-size-btn:hover,
+.accessibility-size-btn:focus-visible,
+.accessibility-size-btn[aria-pressed="true"] {
+  border-color: var(--gold-deep, #8a6918);
+  background: rgba(214,168,56,.22);
+  outline: none;
+}
+
+@media (max-width: 768px) {
+  .accessibility-controls {
+    top: 5px;
+    right: 5px;
+    padding: 4px;
+  }
+
+  .accessibility-label {
+    display: none;
+  }
+
+  .accessibility-size-btn {
+    min-width: 30px;
+    height: 29px;
+  }
+}
