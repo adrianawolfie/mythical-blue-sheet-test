@@ -134,9 +134,9 @@
     <div class="hp-controls">
       <button class="hp-adj" onclick="adjustHP(-1)" title="Lose 1 HP">−</button>
       <div class="hp-readout">
-        <input class="hp-cur-input" id="hpCurrentInput" type="number" min="0" placeholder="0" oninput="updateHPBar()" data-field="hpCurrent">
+        <input class="hp-cur-input" id="hpCurrentInput" type="number" min="0" placeholder="0" oninput="onHPInput()" data-field="hpCurrent">
         <span class="hp-slash">/</span>
-        <input class="hp-max-input" id="hpMaxInput" type="number" min="0" placeholder="0" oninput="updateHPBar()" data-field="hpMax">
+        <input class="hp-max-input" id="hpMaxInput" type="number" min="0" placeholder="0" oninput="onHPInput()" data-field="hpMax">
       </div>
       <button class="hp-adj" onclick="adjustHP(+1)" title="Gain 1 HP">+</button>
     </div>
@@ -144,7 +144,7 @@
       <div class="hp-bar" id="hp-bar"></div>
     </div>
   </div>
-  <div class="hstat"><label>Temp HP</label><input id="tempHpInput" type="text" placeholder="—" data-field="tempHp"></div>
+  <div class="hstat"><label>Temp HP</label><input id="tempHpInput" type="text" placeholder="—" oninput="scheduleHPAutoSave()" data-field="tempHp"></div>
   <div class="hstat wide conditions">
     <label>Current Conditions</label>
     <input id="currentConditionsInput" type="hidden" value="" data-field="currentConditions">
