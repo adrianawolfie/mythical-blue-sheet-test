@@ -1,0 +1,335 @@
+{
+  "schemaVersion": 2,
+  "id": "c2d9f7e6-44d2-4777-8608-47cf157bcb98",
+  "updatedAt": "2026-06-03T21:31:15.865Z",
+  "summary": {
+    "name": "Crowley",
+    "armorClass": "15",
+    "hpCurrent": "9",
+    "hpMax": "10",
+    "tempHp": "",
+    "hitDice": "1d8",
+    "passivePerception": "13",
+    "currentConditions": ""
+  },
+  "fields": {
+    "characterName": "Crowley",
+    "background": "Drifter",
+    "classLevel": "Bard 1",
+    "experience": "0",
+    "speciesRace": "Anansi",
+    "subclass": "-",
+    "alignment": "Chaotic Good",
+    "initiative": "+6",
+    "speed": "30",
+    "armorClass": "15",
+    "hpCurrent": "9",
+    "hpMax": "10",
+    "tempHp": "",
+    "currentConditions": "",
+    "proficiencyBonus": "+2",
+    "passivePerception": "13",
+    "strengthModifier": "-1",
+    "strengthScore": "8",
+    "strengthSavingThrow": "-1",
+    "athletics": "-1",
+    "dexterityModifier": "+4",
+    "dexterityScore": "18",
+    "dexteritySavingThrow": "+6",
+    "acrobatics": "+4",
+    "sleightOfHand": "+6",
+    "stealth": "+6",
+    "constitutionModifier": "+2",
+    "constitutionScore": "14",
+    "constitutionSavingThrow": "+2",
+    "intelligenceModifier": "-1",
+    "intelligenceScore": "9",
+    "intelligenceSavingThrow": "-1",
+    "arcana": "-1",
+    "history": "-1",
+    "investigation": "-1",
+    "nature": "-1",
+    "religion": "-1",
+    "wisdomModifier": "+1",
+    "wisdomScore": "12",
+    "wisdomSavingThrow": "+1",
+    "animalHandling": "+1",
+    "insight": "+1",
+    "medicine": "+1",
+    "perception": "+3",
+    "survival": "+3",
+    "charismaModifier": "+4",
+    "charismaScore": "18",
+    "charismaSavingThrow": "+6",
+    "deception": "+6",
+    "intimidation": "+4",
+    "performance": "+6",
+    "persuasion": "+4",
+    "hitDice": "1d8",
+    "hitDiceSpent": "",
+    "copperPieces": "3",
+    "silverPieces": "3",
+    "electrumPieces": "",
+    "goldPieces": "3",
+    "platinumPieces": "",
+    "treasureNotes": "4 daggers, leather armour, 15 caltrops, 3 beads of nourishment.",
+    "spellcastingAbility": "CHA",
+    "spellSaveDc": "14",
+    "spellAttackBonus": "+6",
+    "spellSlotsLevel1": "0/2",
+    "spellSlotsLevel2": "-",
+    "spellSlotsLevel3": "-",
+    "spellSlotsLevel4": "-",
+    "spellSlotsLevel5": "",
+    "spellSlotsLevel6": "",
+    "spellSlotsLevel7": "",
+    "spellSlotsLevel8": "",
+    "spellSlotsLevel9": "",
+    "backstory": "",
+    "personalityIdealsBonds": "",
+    "appearance": "",
+    "languages": "",
+    "attunement": "",
+    "equipmentInventory": "",
+    "equipment": "Rapier, Leather Armour, Rope, Waterskin, Bedroll, Rations x5, Hunting Trap, Net, Cook's Utensils."
+  },
+  "uiState": {
+    "inspiration": false,
+    "skillProficiencies": [
+      false,
+      false,
+      true,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      false
+    ],
+    "deathSaves": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "exhaustion": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "customLists": {
+    "feats": [
+      {
+        "name": "Bardic Inspiration (Class)",
+        "short": "1 creature receives 1d6 for D20 Test.",
+        "hasResource": true,
+        "resource": "(3/4) 4/1 Long Rest",
+        "details": "As a Bonus Action, you can inspire another creature within 60 ft. that can see or hear you. That creature gains one of your Bardic Inspiration dice (1d6). Once within the next hour, when the creature fails a D20 Test, the creature can roll the Bardic Inspiration die and add the number rolled to the total, potentially turning the failure into a success.",
+        "open": false
+      },
+      {
+        "name": "Darkvision (Species)",
+        "short": "Yay not a human",
+        "hasResource": false,
+        "resource": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "name": "Reactive (Background)",
+        "short": "PB to Initiative",
+        "hasResource": false,
+        "resource": "",
+        "details": "Your survival instincts sharpen your reflexes- add PB to Initiative (+2 at Level 1). ",
+        "open": false
+      },
+      {
+        "name": "Poison Resilience (Species)",
+        "short": "Resilience to poison.",
+        "hasResource": false,
+        "resource": "",
+        "details": "Advantage on saving throws to avoid or end the poisoned condition, plus resistance to poison damage.",
+        "open": false
+      },
+      {
+        "name": "Spider Sense (Species)",
+        "short": "Buzz Buzz",
+        "hasResource": false,
+        "resource": "",
+        "details": "Extra pair of eyes grants proficiency in Perception. ",
+        "open": false
+      },
+      {
+        "name": "Spider Climb (Species)",
+        "short": "Upwards and Onwards",
+        "hasResource": false,
+        "resource": "",
+        "details": "Climb speed equal to walking speed. At level 3 you can move up, down, and across vertical surfaces and ceilings while keeping your hands free. ",
+        "open": false
+      },
+      {
+        "name": "Arachnid Bite (Species)",
+        "short": "Nom Nom",
+        "hasResource": false,
+        "resource": "",
+        "details": "Must grapple target first, then use bonus action for a poisonous bite,. Damage is 1d6+CON modifier. Target risks being poisoned for 1 minute unless they pass a Constitution save (DC = 8 + PB + CON modifier). ",
+        "open": false
+      },
+      {
+        "name": "Arachnid Casting (Species)",
+        "short": "Pew Pew",
+        "hasResource": false,
+        "resource": "",
+        "details": "Level 1: Mending Cantrip\nLevel 3: Ray of Sickness spell\nLevel 5: Web spell\n\nSpellcasting ability is Charisma. ",
+        "open": false
+      },
+      {
+        "name": "Everything is Edible (Background)",
+        "short": "Nom Nom x2",
+        "hasResource": true,
+        "resource": "1/1 Long Rest",
+        "details": "Once per long rest, spend 1 hour foraging to craft a number of rations equal to your PB (2 at Level 1). When a creature eats one during a short rest they gain a d4 they can add to one saving throw after rolling but before knowing the outcome. Lasts until long rest. Rations spoil after 24 hours.",
+        "open": false
+      }
+    ],
+    "weapons": [
+      {
+        "name": "Rapier",
+        "atk": "+6",
+        "damage": "1d8+4",
+        "notes": "Finesse"
+      },
+      {
+        "name": "Scimitar",
+        "atk": "+6",
+        "damage": "1d6+4",
+        "notes": "Finesse"
+      },
+      {
+        "name": "Dagger",
+        "atk": "+6",
+        "damage": "1d4+4",
+        "notes": "Finesse"
+      },
+      {
+        "name": "",
+        "atk": "",
+        "damage": "",
+        "notes": ""
+      },
+      {
+        "name": "",
+        "atk": "",
+        "damage": "",
+        "notes": ""
+      }
+    ],
+    "spells": [
+      {
+        "level": "C",
+        "name": "Vicious Mockery",
+        "castTime": "1A",
+        "range": "60 ft",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "DC WIS 14 / 1d6 Psychic",
+        "details": "Casting Time: Action\nRange: 60 feet\nComponents: V\nDuration: Instantaneous\n\nYou unleash a string of insults laced with subtle enchantments at one creature you can see or hear within range. The target must succeed on a Wisdom saving throw or take 1d6 Psychic damage and have Disadvantage on the next attack roll it makes before the end of its next turn.\n\nCantrip Upgrade. The damage increases by 1d6 when you reach levels 5 (2d6), 11 (3d6), and 17 (4d6).",
+        "open": false
+      },
+      {
+        "level": "C",
+        "name": "Message",
+        "castTime": "1A",
+        "range": "120 ft",
+        "concentration": false,
+        "ritual": false,
+        "material": true,
+        "effect": "M: Copper Wire",
+        "details": "Casting Time: Action\nRange: 120 feet\nComponents: S, M (a copper wire)\nDuration: 1 round\n\nYou point toward a creature within range and whisper a message. The target (and only the target) hears the message and can reply in a whisper that only you can hear.\n\nYou can cast this spell through solid objects if you are familiar with the target and know it is beyond the barrier. Magical silence; 1 foot of stone, metal, or wood; or a thin sheet of lead blocks the spell.",
+        "open": false
+      },
+      {
+        "level": "1",
+        "name": "Siren's Call",
+        "castTime": "1A",
+        "range": "15 ft Cone",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "V&S / Self",
+        "details": "",
+        "open": false
+      },
+      {
+        "level": "1",
+        "name": "Bane",
+        "castTime": "1A",
+        "range": "30 ft",
+        "concentration": true,
+        "ritual": false,
+        "material": false,
+        "effect": "DC CHA 14",
+        "details": "Casting Time: Action\nRange: 30 feet\nComponents: V, S, M (a drop of blood)\nDuration: Concentration, up to 1 minute\n\nUp to three creatures of your choice that you can see within range must each make a Charisma saving throw. Whenever a target that fails this save makes an attack roll or a saving throw before the spell ends, the target must subtract 1d4 from the attack roll or save.\n\nUsing a Higher-Level Spell Slot. You can target one additional creature for each spell slot level above 1.",
+        "open": false
+      },
+      {
+        "level": "1",
+        "name": "Thunderwave",
+        "castTime": "1A",
+        "range": "15 ft Cube",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "DC CON 14 / Self",
+        "details": "Casting Time: Action\nRange: Self\nComponents: V, S\nDuration: Instantaneous\n\nYou unleash a wave of thunderous energy. Each creature in a 15-foot Cube originating from you makes a Constitution saving throw. On a failed save, a creature takes 2d8 Thunder damage and is pushed 10 feet away from you. On a successful save, a creature takes half as much damage only.\n\nIn addition, unsecured objects that are entirely within the Cube are pushed 10 feet away from you, and a thunderous boom is audible within 300 feet.\n\nUsing a Higher-Level Spell Slot. The damage increases by 1d8 for each spell slot level above 1.",
+        "open": false
+      },
+      {
+        "level": "1",
+        "name": "Healing Word",
+        "castTime": "1BA",
+        "range": "60 ft",
+        "concentration": false,
+        "ritual": false,
+        "material": false,
+        "effect": "2d4+CHA",
+        "details": "Casting Time: Bonus Action\nRange: 60 feet\nComponents: V\nDuration: Instantaneous\n\nA creature of your choice that you can see within range regains Hit Points equal to 2d4 plus your spellcasting ability modifier.\n\nUsing a Higher-Level Spell Slot. The healing increases by 2d4 for each spell slot level above 1.",
+        "open": false
+      }
+    ],
+    "proficiencies": {
+      "armor": [
+        "Light Armour"
+      ],
+      "weapons": [
+        "Simple Weapons, Hand Crossbows, Longswords, Rapiers, Shortswords"
+      ],
+      "tools": [
+        "Cook's Utensils, Lyre, Drums, Fiddle."
+      ],
+      "other": []
+    }
+  }
+}

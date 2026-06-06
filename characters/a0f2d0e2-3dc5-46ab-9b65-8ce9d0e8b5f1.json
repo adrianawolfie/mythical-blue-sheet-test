@@ -1,20 +1,21 @@
 {
+  "schemaVersion": 2,
   "id": "a0f2d0e2-3dc5-46ab-9b65-8ce9d0e8b5f1",
-  "updatedAt": "2026-06-01T17:08:10.694Z",
+  "updatedAt": "2026-06-04T15:12:51.779Z",
   "summary": {
     "name": "Nimue",
     "armorClass": "13",
     "hpCurrent": "8",
-    "hpMax": "8",
+    "hpMax": "14",
     "tempHp": "",
-    "hitDice": "1d6",
+    "hitDice": "2d6",
     "passivePerception": "11",
     "currentConditions": ""
   },
   "fields": {
     "characterName": "Nimue",
     "background": "Golden Goose",
-    "classLevel": "Sorcerer 1",
+    "classLevel": "Sorcerer 2",
     "experience": "",
     "speciesRace": "Aeternian",
     "subclass": "Thalassic",
@@ -23,7 +24,7 @@
     "speed": "30",
     "armorClass": "13",
     "hpCurrent": "8",
-    "hpMax": "8",
+    "hpMax": "14",
     "tempHp": "",
     "currentConditions": "",
     "proficiencyBonus": "2",
@@ -64,7 +65,7 @@
     "intimidation": "+4",
     "performance": "+6",
     "persuasion": "+6",
-    "hitDice": "1d6",
+    "hitDice": "2d6",
     "hitDiceSpent": "",
     "copperPieces": "",
     "silverPieces": "",
@@ -75,7 +76,7 @@
     "spellcastingAbility": "cha",
     "spellSaveDc": "14",
     "spellAttackBonus": "+6",
-    "spellSlotsLevel1": "2/2",
+    "spellSlotsLevel1": "2/3",
     "spellSlotsLevel2": "",
     "spellSlotsLevel3": "",
     "spellSlotsLevel4": "",
@@ -86,7 +87,7 @@
     "spellSlotsLevel9": "",
     "backstory": "",
     "personalityIdealsBonds": "Zodiac: Sahet - the Twin Koi",
-    "appearance": "Average Height, Violet Eyes, Blue Hair",
+    "appearance": "Violet Eyes, Blue Hair",
     "languages": "Common\nAequor\n",
     "attunement": "",
     "equipmentInventory": "Spear, 2 Daggers, Backpack, Caltrops, Crowbar, 2 flasks of Oil, 10 days of Rations, Rope, Tinderbox, 10 Torches, and Waterskin.",
@@ -218,6 +219,22 @@
         "resource": "2/2 Long Rest",
         "details": "An event in your past left an indelible mark on you, infusing you with simmering magic. As a Bonus Action, you can unleash that magic for 1 minute, during which you gain the following benefits:\n\nThe spell save DC of your Sorcerer spells increases by 1.\nYou have Advantage on the attack rolls of Sorcerer spells you cast.\nYou can use this feature twice, and you regain all expended uses of it when you finish a Long Rest.",
         "open": false
+      },
+      {
+        "name": "Font of Magic",
+        "short": "Sorcery Points",
+        "hasResource": true,
+        "resource": "2/2 Long Rest",
+        "details": "You can tap into the wellspring of magic within yourself. This wellspring is represented by Sorcery Points, which allow you to create a variety of magical effects.\n\nYou have 2 Sorcery Points, and you gain more as you reach higher levels, as shown in the Sorcery Points column of the Sorcerer Features table. You can’t have more Sorcery Points than the number shown in the table for your level. You regain all expended Sorcery Points when you finish a Long Rest.\n\nYou can use your Sorcery Points to fuel the options below, along with other features, such as Metamagic, that use those points.\n\nConverting Spell Slots to Sorcery Points. You can expend a spell slot to gain a number of Sorcery Points equal to the slot’s level (no action required).\n\nCreating Spell Slots. As a Bonus Action, you can transform unexpended Sorcery Points into one spell slot. The Creating Spell Slots table shows the cost of creating a spell slot of a given level, and it lists the minimum Sorcerer level you must be to create a slot. You can create a spell slot no higher than level 5.\n\nAny spell slot you create with this feature vanishes when you finish a Long Rest.\n\nCreating Spell Slots\nSpell Slot Level\tSorcery Point Cost\tMin. Sorcerer Level\n1\t2\t2\n2\t3\t3\n3\t5\t5\n4\t6\t7\n5\t7\t9",
+        "open": false
+      },
+      {
+        "name": "Metamagic",
+        "short": "Heightened & Twinned",
+        "hasResource": false,
+        "resource": "",
+        "details": "Heightened: Cost: 2 Sorcery Points\nWhen you cast a spell that forces a creature to make a saving throw, you can spend 2 Sorcery Points to give one target of the spell Disadvantage on saves against the spell.\n\nTwinned: Source: Cost: 1 Sorcery Point\nWhen you cast a spell, such as Charm Person, that can be cast with a higher-level spell slot to target an additional creature, you can spend 1 Sorcery Point to increase the spell’s effective level by 1.\n\nBecause your magic flows from within, you can alter your spells to suit your needs; you gain two Metamagic options of your choice from “Metamagic Options” later in this class’s description. You use the chosen options to temporarily modify spells you cast. To use an option, you must spend the number of Sorcery Points that it costs.\n\nYou can use only one Metamagic option on a spell when you cast it unless otherwise noted in one of those options.\n\nWhenever you gain a Sorcerer level, you can replace one of your Metamagic options with one you don’t know. You gain two more options at Sorcerer level 10 and two more at Sorcerer level 17.",
+        "open": true
       }
     ],
     "weapons": [
@@ -378,6 +395,30 @@
         "effect": "Dex save; 3d8/3d10 cold damage and target falls prone/is pushed downward",
         "details": "Spell Level: 1st\nCasting Time: 1 Action\nRange/Area: 90 ft. — 5 ft. square\nComponents: S, M*\n*A small vial of water\n\nDuration: Instantaneous\nSchool: Conjuration\nAttack/Save: Dexterity Save\nDamage/Effect: Cold & Control\n\nDescription\nAs you spin around your vial of water, a whirlpool comes to be. Uncorking the vial will release said whirlpool upon a target within range (90 ft.). The target must make a Dexterity saving throw or experience the full effect of the spell. The effect of the spell differs depending on whether the target is on the surface or below it:\n\nOn Land\nThe target takes 3d8 cold damage and falls prone. On a successful save, the target takes half the damage and does not fall prone.\n\nUnder Water\nThe target takes 3d10 cold damage and is pushed downward by 30 ft. On a successful save, the target takes half the damage and is not pushed downward.\n\nHigher-Level Spell Slot\nFor each spell slot above level 1, an extra whirlpool is created. ",
         "open": false
+      },
+      {
+        "level": "1",
+        "name": "Fog Cloud",
+        "castTime": "Action",
+        "range": "120 ft",
+        "concentration": true,
+        "ritual": false,
+        "material": false,
+        "effect": "20 ft radius sphere of heavily obscured fog for 1hr.",
+        "details": "Level 1 Conjuration (Druid, Ranger, Sorcerer, Wizard)\n\nCasting Time: Action\nRange: 120 feet\nComponents: V, S\nDuration: Concentration, up to 1 hour\n\nYou create a 20-foot-radius Sphere of fog centered on a point within range. The Sphere is Heavily Obscured. It lasts for the duration or until a strong wind (such as one created by Gust of Wind) disperses it.\n\nUsing a Higher-Level Spell Slot. The fog’s radius increases by 20 feet for each spell slot level above 1.",
+        "open": false
+      },
+      {
+        "level": "1",
+        "name": "Mage Armor",
+        "castTime": "Action",
+        "range": "Touch",
+        "concentration": false,
+        "ritual": false,
+        "material": true,
+        "effect": "AC13+Dex 8hrs. ",
+        "details": "Level 1 Abjuration (Sorcerer, Wizard)\n\nCasting Time: Action\nRange: Touch\nComponents: V, S, M (a piece of cured leather)\nDuration: 8 hours\n\nYou touch a willing creature who isn’t wearing armor. Until the spell ends, the target’s base AC becomes 13 plus its Dexterity modifier. The spell ends early if the target dons armor.",
+        "open": false
       }
     ],
     "proficiencies": {
@@ -389,9 +430,9 @@
         "Calligrapher's Supplies"
       ],
       "other": [
-        "Darkvision: 60ft · Speed: 30ft Swimming"
+        "Darkvision: 60ft",
+        "Swim Speed: 30ft"
       ]
     }
-  },
-  "schemaVersion": 2
+  }
 }
