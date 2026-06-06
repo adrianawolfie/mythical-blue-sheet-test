@@ -1,0 +1,233 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   MATERRA CALENDAR — append to the bottom of css/styles.css
+═══════════════════════════════════════════════════════════════════════ */
+
+
+/* ── INDEX PAGE WIDGET ─────────────────────────────────────────────────── */
+
+.calendar-widget {
+  border: 1.5px solid var(--gold);
+  background: rgba(255, 255, 255, 0.18);
+  margin: 0 0 18px 0;
+  overflow: hidden;
+}
+
+/* Navy header bar */
+.cal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 14px;
+  background: var(--navy-deep);
+  color: #fff;
+}
+
+.cal-era {
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.cal-year {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 14px;
+  color: var(--gold-light);
+  letter-spacing: 1px;
+}
+
+/* Zodiac sign strip */
+.cal-sign {
+  text-align: center;
+  padding: 5px 14px;
+  font-family: 'IM Fell English', Georgia, serif;
+  font-style: italic;
+  font-size: 12.5px;
+  color: var(--navy);
+  background: rgba(184, 144, 44, 0.1);
+  border-bottom: 1px solid rgba(184, 144, 44, 0.35);
+  letter-spacing: 0.3px;
+}
+
+/* Date block */
+.cal-date-block {
+  padding: 14px 14px 10px;
+  text-align: center;
+}
+
+.cal-weekday {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--navy-deep);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.cal-wd-desc {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+
+/* The "❖ the 28th of Trelus ❖" line */
+.cal-day-row {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.cal-ornament {
+  color: var(--gold);
+  font-size: 13px;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+.cal-day-num {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 22px;
+  color: var(--gold-deep);
+  line-height: 1;
+}
+
+.cal-month-of {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.cal-meaning {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 2px;
+}
+
+.cal-season {
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  opacity: 0.85;
+}
+
+.cal-week {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--navy);
+  opacity: 0.45;
+  margin-top: 4px;
+}
+
+/* Prev / Reset / Next controls */
+.cal-controls {
+  display: flex;
+  border-top: 1px solid rgba(184, 144, 44, 0.4);
+}
+
+.cal-btn {
+  flex: 1;
+  padding: 9px 10px;
+  border: none;
+  border-right: 1px solid rgba(184, 144, 44, 0.3);
+  background: transparent;
+  color: var(--navy);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 9.5px;
+  letter-spacing: 1px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cal-btn:last-child { border-right: none; }
+
+.cal-btn:hover {
+  background: rgba(184, 144, 44, 0.14);
+  color: var(--navy-deep);
+}
+
+.cal-btn:active { background: rgba(184, 144, 44, 0.28); }
+
+/* Reset button — smaller, centred icon */
+.cal-btn-reset {
+  flex: 0 0 42px;
+  font-size: 14px;
+  color: var(--gold-deep);
+  letter-spacing: 0;
+  opacity: 0.7;
+}
+
+.cal-btn-reset:hover { opacity: 1; }
+
+
+/* ── CHARACTER SHEET BAR ───────────────────────────────────────────────── */
+
+.calendar-sheet-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 7px 30px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(184, 144, 44, 0.4);
+  background: rgba(184, 144, 44, 0.06);
+  font-family: 'IM Fell English', Georgia, serif;
+  font-style: italic;
+  font-size: 12.5px;
+  color: var(--navy);
+  line-height: 1.4;
+}
+
+.cal-sheet-lbl {
+  font-family: 'Cinzel', serif;
+  font-style: normal;
+  font-size: 8.5px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cal-sheet-sep {
+  color: var(--gold);
+  font-style: normal;
+  flex-shrink: 0;
+}
+
+.cal-sheet-date {
+  color: var(--ink);
+  flex: 1;
+  min-width: 0;
+}
+
+
+/* ── MOBILE ADJUSTMENTS ────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .cal-day-num  { font-size: 18px; }
+  .cal-month-of { font-size: 15px; }
+  .cal-weekday  { font-size: 13px; }
+  .cal-btn      { font-size: 9px; padding: 8px 6px; }
+
+  .calendar-sheet-bar {
+    padding: 6px 10px;
+    font-size: 11.5px;
+  }
+
+  .cal-sheet-lbl { display: none; }  /* hide label on very small screens */
+  .cal-sheet-sep { display: none; }
+}
