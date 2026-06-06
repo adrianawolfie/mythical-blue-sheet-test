@@ -2026,3 +2026,63 @@ background-position: top center;
 .card-hp-bar { height: 100%; background: #1D9E75; border-radius: 2px; transition: width .3s, background .3s; }
 .card-hp-bar.danger { background: #c0392b; }
 .card-hp-text { font-family: 'Cinzel', serif; font-size: 9px; color: var(--navy-deep); opacity: .7; letter-spacing: 1px; }
+
+/* ─── CHARACTER INDEX CARD — HP EDIT CONTROLS ──────────────── */
+.card-hp-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.card-hp-adj {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-deep);
+  background: var(--navy);
+  color: white;
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background .15s;
+}
+.card-hp-adj:hover { background: var(--navy-soft, #2b3866); }
+
+.card-hp-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.card-hp-cur,
+.card-hp-max {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(43,56,102,.3);
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  color: var(--navy-deep);
+  text-align: center;
+  outline: none;
+  -moz-appearance: textfield;
+}
+.card-hp-cur::-webkit-outer-spin-button,
+.card-hp-cur::-webkit-inner-spin-button,
+.card-hp-max::-webkit-outer-spin-button,
+.card-hp-max::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.card-hp-cur   { width: 36px; font-size: 16px; }
+.card-hp-slash { font-family: 'Cinzel', serif; font-size: 11px; color: var(--gold); font-weight: 700; padding: 0 2px; }
+.card-hp-max   { width: 30px; font-size: 11px; opacity: .7; }
+
+.character-card:has(.card-hp-cur:focus),
+.character-card:has(.card-hp-max:focus) {
+  cursor: default;
+}
