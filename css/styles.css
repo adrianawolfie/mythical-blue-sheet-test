@@ -2155,3 +2155,97 @@ background-position: top center;
     min-width: 30px !important;
   }
 }
+
+
+/* ─── SAVED CHARACTERS — LIVE CONDITIONS EDITOR ───────────── */
+.card-condition-editor {
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px dotted rgba(184,144,44,.55);
+}
+
+.card-condition-label {
+  margin-bottom: 4px;
+  color: var(--navy-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.card-condition-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 5px;
+}
+
+.card-condition-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 5px;
+  border: 1px solid rgba(184,144,44,.62);
+  border-radius: 999px;
+  background: rgba(255,253,245,.26);
+  color: var(--navy-deep);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+}
+
+.card-condition-remove {
+  width: 15px;
+  height: 15px;
+  min-width: 15px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(138,105,24,.82);
+  cursor: pointer;
+  font-family: Georgia, serif;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.card-condition-remove:hover {
+  background: rgba(214,168,56,.16);
+}
+
+.card-condition-empty {
+  color: rgba(28,39,80,.58);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  font-style: italic;
+}
+
+.card-condition-picker {
+  width: auto;
+  max-width: 210px;
+  border: 1px solid rgba(184,144,44,.58);
+  background: rgba(255,253,245,.3);
+  color: var(--navy-deep);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  padding: 3px 5px;
+}
+
+@media (max-width: 768px) {
+  .start-page .character-card .card-condition-picker {
+    width: auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .start-page .character-card button.card-condition-remove {
+    flex: 0 0 15px !important;
+    width: 15px !important;
+    min-width: 15px !important;
+    max-width: 15px !important;
+    height: 15px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 50% !important;
+  }
+}

@@ -72,14 +72,28 @@
         return parseJsonResponse(response, "Failed to save character.");
       },
 
-      async saveHPOnly({ id, hpCurrent, hpMax, tempHp }) {
+      async saveHPOnly({
+        id,
+        hpCurrent,
+        hpMax,
+        tempHp,
+        armorClass,
+        currentConditions
+      }) {
         const response = await fetch("/.netlify/functions/save-hp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id, hpCurrent, hpMax, tempHp })
+          body: JSON.stringify({
+            id,
+            hpCurrent,
+            hpMax,
+            tempHp,
+            armorClass,
+            currentConditions
+          })
         });
 
-        return parseJsonResponse(response, "Failed to save HP.");
+        return parseJsonResponse(response, "Failed to save live character summary.");
       },
 
       async deleteCharacterData(payload) {
@@ -207,7 +221,14 @@
         };
       },
 
-      async saveHPOnly({ id, hpCurrent, hpMax, tempHp }) {
+      async saveHPOnly({
+        id,
+        hpCurrent,
+        hpMax,
+        tempHp,
+        armorClass,
+        currentConditions
+      }) {
         const characters = readCharacters();
         const character = characters[id];
 
@@ -221,12 +242,16 @@
         character.fields  = character.fields  || {};
 
         character.summary.hpCurrent = hpCurrent;
-        character.summary.hpMax     = hpMax;
-        character.summary.tempHp    = tempHp;
+        character.summary.hpMax = hpMax;
+        character.summary.tempHp = tempHp;
+        character.summary.armorClass = armorClass;
+        character.summary.currentConditions = currentConditions;
 
-        character.fields.hpCurrent  = hpCurrent;
-        character.fields.hpMax      = hpMax;
-        character.fields.tempHp     = tempHp;
+        character.fields.hpCurrent = hpCurrent;
+        character.fields.hpMax = hpMax;
+        character.fields.tempHp = tempHp;
+        character.fields.armorClass = armorClass;
+        character.fields.currentConditions = currentConditions;
 
         character.updatedAt = savedAt;
 

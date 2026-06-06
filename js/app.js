@@ -346,13 +346,23 @@ const hpSyncChannel =
     ? new BroadcastChannel(HP_SYNC_CHANNEL_NAME)
     : null;
 
-function createHPUpdatePayload({ id, hpCurrent, hpMax, tempHp, updatedAt }) {
+function createLiveUpdatePayload({
+  id,
+  hpCurrent,
+  hpMax,
+  tempHp,
+  armorClass,
+  currentConditions,
+  updatedAt
+}) {
   return {
-    type: "hp-updated",
+    type: "live-summary-updated",
     id: String(id || ""),
     hpCurrent: hpCurrent ?? "",
     hpMax: hpMax ?? "",
     tempHp: tempHp ?? "",
+    armorClass: armorClass ?? "",
+    currentConditions: currentConditions ?? "",
     updatedAt: updatedAt || new Date().toISOString(),
     nonce:
       typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
@@ -361,13 +371,13 @@ function createHPUpdatePayload({ id, hpCurrent, hpMax, tempHp, updatedAt }) {
   };
 }
 
-function publishHPUpdate(update) {
-  const payload = createHPUpdatePayload(update);
+function publishLiveUpdate(update) {
+  const payload = createLiveUpdatePayload(update);
 
   try {
     hpSyncChannel?.postMessage(payload);
   } catch (error) {
-    console.warn("Could not broadcast HP update:", error);
+    console.warn("Could not broadcast live summary update:", error);
   }
 
   // Fallback for browsers that do not support BroadcastChannel.
@@ -375,38 +385,40 @@ function publishHPUpdate(update) {
   try {
     localStorage.setItem(HP_SYNC_STORAGE_KEY, JSON.stringify(payload));
   } catch (error) {
-    console.warn("Could not publish HP update through localStorage:", error);
+    console.warn("Could not publish live summary update through localStorage:", error);
   }
 }
 
-function receiveHPUpdate(payload) {
-  if (!payload || payload.type !== "hp-updated" || !payload.id) return;
+function receiveLiveUpdate(payload) {
+  if (!payload || payload.type !== "live-summary-updated" || !payload.id) return;
 
-  applyIndexHPUpdates([payload]);
+  applyIndexLiveUpdates([payload]);
 
   if (currentCharacterId === payload.id) {
-    applySheetHPUpdates({
+    applySheetLiveUpdates({
       updatedAt: payload.updatedAt,
       summary: {
         hpCurrent: payload.hpCurrent,
         hpMax: payload.hpMax,
-        tempHp: payload.tempHp
+        tempHp: payload.tempHp,
+        armorClass: payload.armorClass,
+        currentConditions: payload.currentConditions
       }
     });
   }
 }
 
 hpSyncChannel?.addEventListener("message", event => {
-  receiveHPUpdate(event.data);
+  receiveLiveUpdate(event.data);
 });
 
 window.addEventListener("storage", event => {
   if (event.key !== HP_SYNC_STORAGE_KEY || !event.newValue) return;
 
   try {
-    receiveHPUpdate(JSON.parse(event.newValue));
+    receiveLiveUpdate(JSON.parse(event.newValue));
   } catch (error) {
-    console.warn("Could not parse HP sync event:", error);
+    console.warn("Could not parse live summary sync event:", error);
   }
 });
 
@@ -558,6 +570,7 @@ function addSelectedCondition(condition) {
 
   focusedCondition = condition;
   renderSelectedConditions();
+  scheduleHPAutoSave();
 }
 
 function removeSelectedCondition(condition, event) {
@@ -574,6 +587,7 @@ function removeSelectedCondition(condition, event) {
   }
 
   renderSelectedConditions();
+  scheduleHPAutoSave();
 }
 
 function showConditionExplanation(condition) {
@@ -1255,6 +1269,76 @@ async function deleteCurrentCharacter() {
   }
 }
 
+function normalizeConditionNames(value) {
+  const knownConditions = Object.keys(CONDITION_DETAILS);
+
+  return String(value || "")
+    .split(",")
+    .map(item => item.trim())
+    .filter(Boolean)
+    .map(item =>
+      knownConditions.find(condition =>
+        condition.toLowerCase() === item.toLowerCase()
+      ) || item
+    )
+    .filter((item, index, array) =>
+      array.findIndex(other => other.toLowerCase() === item.toLowerCase()) === index
+    );
+}
+
+function serializeConditionNames(conditions) {
+  return normalizeConditionNames(conditions.join(", ")).join(", ");
+}
+
+function getCardLiveState(card) {
+  const cardHp = card.querySelector(".card-hp");
+  const curIn = card.querySelector(".card-hp-cur");
+  const maxIn = card.querySelector(".card-hp-max");
+  const conditions = Array.from(
+    card.querySelectorAll(".card-condition-chip")
+  ).map(chip => chip.dataset.condition);
+
+  return {
+    id: card.dataset.id,
+    hpCurrent: curIn?.value ?? "",
+    hpMax: maxIn?.value ?? "",
+    tempHp: cardHp?.dataset.temphp ?? "",
+    armorClass: card.querySelector(".card-ac-value")?.textContent?.trim() ?? "",
+    currentConditions: serializeConditionNames(conditions)
+  };
+}
+
+function renderCardConditions(card, currentConditions) {
+  const chipContainer = card.querySelector(".card-condition-chips");
+  if (!chipContainer) return;
+
+  const conditions = normalizeConditionNames(currentConditions);
+
+  chipContainer.innerHTML = conditions.length
+    ? conditions.map(condition => `
+        <span class="card-condition-chip" data-condition="${escapeHtml(condition)}">
+          ${escapeHtml(condition)}
+          <button
+            type="button"
+            class="card-condition-remove"
+            data-condition="${escapeHtml(condition)}"
+            title="Remove ${escapeHtml(condition)}"
+            aria-label="Remove ${escapeHtml(condition)}"
+          >×</button>
+        </span>
+      `).join("")
+    : `<span class="card-condition-empty">No conditions</span>`;
+}
+
+function buildConditionOptions() {
+  return `
+    <option value="">Add condition…</option>
+    ${Object.keys(CONDITION_DETAILS)
+      .map(condition => `<option value="${escapeHtml(condition)}">${escapeHtml(condition)}</option>`)
+      .join("")}
+  `;
+}
+
 async function renderCharacterList() {
   const list = document.getElementById("characterList");
 
@@ -1282,9 +1366,19 @@ async function renderCharacterList() {
     return `
     <div class="character-card" data-id="${character.id}">
       <strong>${character.name}</strong><br>
-      Armor Class: ${character.armorClass || "—"}<br>
-      Passive Perception: ${character.passivePerception || "—"}<br>
-      Current Conditions: ${character.currentConditions || "—"}
+      Armor Class: <span class="card-ac-value">${escapeHtml(character.armorClass || "—")}</span><br>
+      Passive Perception: ${escapeHtml(character.passivePerception || "—")}
+      <div class="card-condition-editor" data-id="${character.id}">
+        <div class="card-condition-label">Current Conditions</div>
+        <div class="card-condition-chips"></div>
+        <select
+          class="card-condition-picker"
+          data-id="${character.id}"
+          aria-label="Add condition for ${escapeHtml(character.name)}"
+        >
+          ${buildConditionOptions()}
+        </select>
+      </div>
       <div class="card-hp" data-id="${character.id}" data-temphp="${tempHp}">
         <div class="card-hp-bwrap">
           <div class="card-hp-bar${danger}" style="width:${hpPct}%"></div>
@@ -1308,10 +1402,45 @@ async function renderCharacterList() {
     </div>`;
   }).join("");
 
+  characters.forEach(character => {
+    const card = list.querySelector(`.character-card[data-id="${character.id}"]`);
+    if (card) renderCardConditions(card, character.currentConditions);
+  });
+
   if (list.dataset.hpHandlersBound === "true") return;
   list.dataset.hpHandlersBound = "true";
 
   list.addEventListener("click", async (event) => {
+    const removeConditionButton = event.target.closest(".card-condition-remove");
+
+    if (removeConditionButton) {
+      event.stopPropagation();
+
+      const card = removeConditionButton.closest(".character-card");
+      if (!card) return;
+
+      const conditionToRemove = removeConditionButton.dataset.condition || "";
+      const conditions = normalizeConditionNames(
+        getCardLiveState(card).currentConditions
+      ).filter(condition =>
+        condition.toLowerCase() !== conditionToRemove.toLowerCase()
+      );
+
+      renderCardConditions(card, conditions.join(", "));
+
+      const liveState = getCardLiveState(card);
+      scheduleCardHPAutoSave(
+        liveState.id,
+        liveState.hpCurrent,
+        liveState.hpMax,
+        liveState.tempHp,
+        liveState.armorClass,
+        liveState.currentConditions
+      );
+
+      return;
+    }
+
     const btn = event.target.closest(".card-hp-adj");
     if (btn) {
       event.stopPropagation();
@@ -1326,12 +1455,24 @@ async function renderCharacterList() {
       c = Math.max(0, Math.min(m || 9999, c + delta));
       curIn.value = c;
       updateCardHPBar(cardHp, c, m);
-      scheduleCardHPAutoSave(id, String(c), maxIn.value, cardHp.dataset.temphp);
+      const liveState = getCardLiveState(cardHp.closest(".character-card"));
+      scheduleCardHPAutoSave(
+        id,
+        String(c),
+        maxIn.value,
+        cardHp.dataset.temphp,
+        liveState.armorClass,
+        liveState.currentConditions
+      );
       return;
     }
 
     const card = event.target.closest(".character-card");
-    if (card && !event.target.closest(".card-hp-controls")) {
+    if (
+      card &&
+      !event.target.closest(".card-hp-controls") &&
+      !event.target.closest(".card-condition-editor")
+    ) {
       try {
         const result = await characterStorage.loadCharacterData(card.dataset.id);
         loadCharacter(result);
@@ -1340,6 +1481,36 @@ async function renderCharacterList() {
         alert(error.message || "Could not load character.");
       }
     }
+  });
+
+  list.addEventListener("change", (event) => {
+    const picker = event.target.closest(".card-condition-picker");
+    if (!picker || !picker.value) return;
+
+    const card = picker.closest(".character-card");
+    if (!card) return;
+
+    const liveState = getCardLiveState(card);
+    const conditions = normalizeConditionNames(liveState.currentConditions);
+
+    if (!conditions.some(condition =>
+      condition.toLowerCase() === picker.value.toLowerCase()
+    )) {
+      conditions.push(picker.value);
+    }
+
+    renderCardConditions(card, conditions.join(", "));
+    picker.value = "";
+
+    const updatedState = getCardLiveState(card);
+    scheduleCardHPAutoSave(
+      updatedState.id,
+      updatedState.hpCurrent,
+      updatedState.hpMax,
+      updatedState.tempHp,
+      updatedState.armorClass,
+      updatedState.currentConditions
+    );
   });
 
   list.addEventListener("input", (event) => {
@@ -1353,7 +1524,15 @@ async function renderCharacterList() {
     const c = parseInt(curIn.value) || 0;
     const m = parseInt(maxIn.value) || 0;
     updateCardHPBar(cardHp, c, m);
-    scheduleCardHPAutoSave(id, curIn.value, maxIn.value, cardHp.dataset.temphp);
+    const liveState = getCardLiveState(cardHp.closest(".character-card"));
+    scheduleCardHPAutoSave(
+      id,
+      curIn.value,
+      maxIn.value,
+      cardHp.dataset.temphp,
+      liveState.armorClass,
+      liveState.currentConditions
+    );
   });
 }
 
@@ -1365,26 +1544,43 @@ function updateCardHPBar(cardHpEl, c, m) {
   bar.classList.toggle("danger", pct > 0 && pct <= 50);
 }
 
-function scheduleCardHPAutoSave(id, hpCurrent, hpMax, tempHp) {
+function scheduleCardHPAutoSave(
+  id,
+  hpCurrent,
+  hpMax,
+  tempHp,
+  armorClass = "",
+  currentConditions = ""
+) {
   clearTimeout(cardHPAutoSaveTimers.get(id));
   cardHPAutoSaveTimers.set(id, setTimeout(async () => {
     cardHPAutoSaveTimers.delete(id);
+
     try {
-      const result = await characterStorage.saveHPOnly({ id, hpCurrent, hpMax, tempHp });
+      const result = await characterStorage.saveHPOnly({
+        id,
+        hpCurrent,
+        hpMax,
+        tempHp,
+        armorClass,
+        currentConditions
+      });
 
       if (result?.updatedAt && currentCharacterId === id) {
         loadedCharacterUpdatedAt = result.updatedAt;
       }
 
-      publishHPUpdate({
+      publishLiveUpdate({
         id,
         hpCurrent,
         hpMax,
         tempHp,
+        armorClass,
+        currentConditions,
         updatedAt: result?.updatedAt
       });
     } catch (err) {
-      console.warn("Card HP auto-save failed:", err.message);
+      console.warn("Card live-summary auto-save failed:", err.message);
     }
   }, 800));
 }
@@ -1415,6 +1611,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("newCharacterBtn").addEventListener("click", newCharacter);
   document.getElementById("saveCharacterBtn").addEventListener("click", saveCurrentCharacter);
   document.getElementById("deleteCharacterBtn").addEventListener("click", deleteCurrentCharacter);
+
+  document
+    .querySelector('[data-field="armorClass"]')
+    ?.addEventListener("input", scheduleHPAutoSave);
 
   document.getElementById("backToStartBtn").addEventListener("click", async () => {
     currentCharacterId = null;
@@ -1485,19 +1685,23 @@ function scheduleHPAutoSave() {
     hpAutoSaveTimer = null;
     if (!currentCharacterId) return;
     try {
-      const result = await characterStorage.saveHPOnly({
-        id:        currentCharacterId,
-        hpCurrent: document.getElementById("hpCurrentInput")?.value ?? "",
-        hpMax:     document.getElementById("hpMaxInput")?.value ?? "",
-        tempHp:    document.getElementById("tempHpInput")?.value ?? ""
-      });
-      if (result?.updatedAt) loadedCharacterUpdatedAt = result.updatedAt;
-
-      publishHPUpdate({
+      const liveState = {
         id: currentCharacterId,
         hpCurrent: document.getElementById("hpCurrentInput")?.value ?? "",
         hpMax: document.getElementById("hpMaxInput")?.value ?? "",
         tempHp: document.getElementById("tempHpInput")?.value ?? "",
+        armorClass:
+          document.querySelector('[data-field="armorClass"]')?.value ?? "",
+        currentConditions:
+          document.getElementById("currentConditionsInput")?.value ?? ""
+      };
+
+      const result = await characterStorage.saveHPOnly(liveState);
+
+      if (result?.updatedAt) loadedCharacterUpdatedAt = result.updatedAt;
+
+      publishLiveUpdate({
+        ...liveState,
         updatedAt: result?.updatedAt
       });
     } catch (err) {
@@ -1529,13 +1733,13 @@ function scheduleIndexPoll() {
 async function pollIndexHP() {
   try {
     const characters = await characterStorage.listCharacterData();
-    applyIndexHPUpdates(characters);
+    applyIndexLiveUpdates(characters);
   } catch {
     // silent — wait for next poll
   }
 }
 
-function applyIndexHPUpdates(characters) {
+function applyIndexLiveUpdates(characters) {
   const list = document.getElementById("characterList");
   if (!list) return;
 
@@ -1566,6 +1770,20 @@ function applyIndexHPUpdates(characters) {
     if (ch.tempHp !== undefined) {
       cardHp.dataset.temphp = ch.tempHp;
     }
+
+    const card = cardHp.closest(".character-card");
+    if (!card) continue;
+
+    const armorClass = String(ch.armorClass || "—");
+    const acValue = card.querySelector(".card-ac-value");
+
+    if (acValue && acValue.textContent !== armorClass) {
+      acValue.textContent = armorClass;
+    }
+
+    if (!card.querySelector(".card-condition-picker:focus")) {
+      renderCardConditions(card, ch.currentConditions || "");
+    }
   }
 }
 
@@ -1593,13 +1811,13 @@ async function pollSheetHP() {
   if (!currentCharacterId) return;
   try {
     const character = await characterStorage.loadCharacterData(currentCharacterId);
-    applySheetHPUpdates(character);
+    applySheetLiveUpdates(character);
   } catch {
     // silent — wait for next poll
   }
 }
 
-function applySheetHPUpdates(character) {
+function applySheetLiveUpdates(character) {
   // Don't overwrite while a local auto-save is pending
   if (hpAutoSaveTimer !== null) return;
 
@@ -1622,10 +1840,24 @@ function applySheetHPUpdates(character) {
     tmpIn.value = character.summary?.tempHp ?? "";
   }
 
-  // Only advance our timestamp if none of the HP fields are focused
+  const armorClassInput = document.querySelector('[data-field="armorClass"]');
+  const conditionsInput = document.getElementById("currentConditionsInput");
+
+  if (armorClassInput && document.activeElement !== armorClassInput) {
+    armorClassInput.value = character.summary?.armorClass ?? "";
+  }
+
+  if (conditionsInput) {
+    conditionsInput.value = character.summary?.currentConditions ?? "";
+    focusedCondition = "";
+    renderSelectedConditions();
+  }
+
+  // Only advance our timestamp if none of the directly editable fields are focused
   if (document.activeElement !== curIn &&
       document.activeElement !== maxIn &&
-      document.activeElement !== tmpIn) {
+      document.activeElement !== tmpIn &&
+      document.activeElement !== armorClassInput) {
     loadedCharacterUpdatedAt = remoteUpdatedAt;
   }
 

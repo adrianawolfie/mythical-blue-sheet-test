@@ -96,19 +96,25 @@ exports.handler = async (event) => {
     );
 
     const hpCurrent = body.hpCurrent ?? "";
-    const hpMax     = body.hpMax     ?? "";
-    const tempHp    = body.tempHp    ?? "";
+    const hpMax = body.hpMax ?? "";
+    const tempHp = body.tempHp ?? "";
+    const armorClass = body.armorClass ?? "";
+    const currentConditions = body.currentConditions ?? "";
 
     character.summary = character.summary || {};
-    character.fields  = character.fields  || {};
+    character.fields = character.fields || {};
 
     character.summary.hpCurrent = hpCurrent;
-    character.summary.hpMax     = hpMax;
-    character.summary.tempHp    = tempHp;
+    character.summary.hpMax = hpMax;
+    character.summary.tempHp = tempHp;
+    character.summary.armorClass = armorClass;
+    character.summary.currentConditions = currentConditions;
 
-    character.fields.hpCurrent  = hpCurrent;
-    character.fields.hpMax      = hpMax;
-    character.fields.tempHp     = tempHp;
+    character.fields.hpCurrent = hpCurrent;
+    character.fields.hpMax = hpMax;
+    character.fields.tempHp = tempHp;
+    character.fields.armorClass = armorClass;
+    character.fields.currentConditions = currentConditions;
 
     const savedAt = new Date().toISOString();
     character.updatedAt = savedAt;
@@ -116,7 +122,7 @@ exports.handler = async (event) => {
     const result = await saveFile(
       characterPath,
       character,
-      `[skip netlify] Update HP for ${character.summary?.name || characterId}`,
+      `[skip netlify] Update live summary for ${character.summary?.name || characterId}`,
       existingFile.sha
     );
 
@@ -124,7 +130,7 @@ exports.handler = async (event) => {
       return {
         statusCode: 409,
         body: JSON.stringify({
-          error: "HP save had a race condition; the latest value will arrive via polling."
+          error: "Live-summary save had a race condition; the latest value will arrive via polling."
         })
       };
     }
