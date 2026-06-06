@@ -2086,3 +2086,28 @@ background-position: top center;
 .character-card:has(.card-hp-max:focus) {
   cursor: default;
 }
+
+
+/* ─── MOBILE SAVED-CHARACTER HP CONTROLS ─────────────────────
+   Override the generic .start-page button mobile rule so the HP + / −
+   controls remain compact circles instead of stretching across the card. */
+@media (max-width: 768px) {
+  .start-page .character-card .card-hp-controls {
+    justify-content: flex-start;
+    gap: 7px;
+  }
+
+  .start-page .character-card .card-hp-adj {
+    flex: 0 0 28px;
+    min-width: 28px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 16px;
+  }
+
+  .start-page .character-card .card-hp-readout {
+    flex: 0 0 auto;
+  }
+}
