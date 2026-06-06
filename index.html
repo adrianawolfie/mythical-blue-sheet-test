@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/accessibility.css" />
 <link rel="stylesheet" href="css/styles.css" />
+<link rel="stylesheet" href="css/calendar.css" />
 </head>
 <body>
 
@@ -31,6 +32,40 @@
     </div>
     </div>
   </div>
+
+  <!-- ═══════════════════ MATERRA CALENDAR WIDGET ═══════════════════ -->
+  <div class="calendar-widget" id="calendarWidget">
+    <div class="cal-header">
+      <span class="cal-era">Era of Materra</span>
+      <span class="cal-year" id="calWidgetYear">4520 EM</span>
+    </div>
+
+    <div class="cal-sign" id="calWidgetSign">Year of the Void Wyrm · Abzutarus</div>
+
+    <div class="cal-date-block">
+      <div class="cal-weekday" id="calWidgetWeekday">Solaris · Solis</div>
+      <div class="cal-wd-desc" id="calWidgetWdDesc">The Sun Sets</div>
+
+      <div class="cal-day-row">
+        <span class="cal-ornament">❖</span>
+        <span class="cal-day-num" id="calWidgetDay">the 28th</span>
+        <span class="cal-month-of" id="calWidgetMonth">of Trelus</span>
+        <span class="cal-ornament">❖</span>
+      </div>
+
+      <div class="cal-meaning" id="calWidgetMeaning">Hope &amp; Nautic Origin</div>
+      <div class="cal-season"  id="calWidgetSeason">Winter (Hiver)</div>
+      <div class="cal-week"    id="calWidgetWeek">Week 4 of 4</div>
+    </div>
+
+    <div class="cal-controls">
+      <button type="button" class="cal-btn" id="calPrevDay">← Prev Day</button>
+      <button type="button" class="cal-btn cal-btn-reset" id="calResetDay" title="Reset to story start">↺</button>
+      <button type="button" class="cal-btn" id="calNextDay">Next Day →</button>
+    </div>
+  </div>
+  <!-- ════════════════════════════════════════════════════════════════ -->
+
   <div id="characterList"></div>
   <button id="newCharacterBtn">+ New Character</button>
   <button id="resetTestDataBtn" type="button" style="display:none;">Reset Test Data</button>
@@ -133,6 +168,14 @@
 </div>
 </div>
 <div id="conditionExplanation" class="condition-explanation"></div>
+
+    <!-- ═══════════════════ MATERRA CALENDAR BAR ═══════════════════ -->
+    <div class="calendar-sheet-bar">
+      <span class="cal-sheet-lbl">✦ Era of Materra</span>
+      <span class="cal-sheet-sep">·</span>
+      <span class="cal-sheet-date" id="calSheetDisplay">Loading…</span>
+    </div>
+    <!-- ═════════════════════════════════════════════════════════════ -->
 
     <div class="tabs">
       <button class="tab on" onclick="sw('main',this)">⚓ Main</button>
@@ -381,6 +424,18 @@
 <script src="js/storage-config.js"></script>
 <script src="js/storage-adapter.js"></script>
 <script src="js/app.js"></script>
+<script src="js/calendar.js"></script>
+<script>
+  // Hook the calendar bar into showSheet() without touching app.js.
+  // app.js is already loaded above, so showSheet is available to patch here.
+  (function () {
+    var _orig = showSheet;
+    showSheet = function () {
+      _orig();
+      if (typeof renderCalendarOnSheet === 'function') renderCalendarOnSheet();
+    };
+  }());
+</script>
 <script src="js/accessibility.js"></script>
 </body>
 </html>
