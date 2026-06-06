@@ -1,20 +1,17 @@
 /* ─── ACCESSIBILITY: FONT SIZE CONTROLS ─────────────────────────
-   The controls change text size only. The parchment, decorative assets,
-   boxes and overall layout are not scaled. */
+   Increase or decrease text size without scaling the parchment layout,
+   decorative images, boxes or spacing. */
+:root {
+  --app-font-scale: 1;
+}
 
 .accessibility-controls {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 9999;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 5px 6px;
-  border: 1px solid rgba(184,144,44,.8);
-  border-radius: 3px;
-  background: rgba(237,225,192,.92);
-  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+  margin-left: auto;
+  padding: 4px 5px;
+  border-left: 1px solid rgba(184,144,44,.65);
   color: var(--navy-deep, #1c2750);
 }
 
@@ -49,15 +46,45 @@
   outline: none;
 }
 
+/* Scale text only. Decorative layout dimensions stay unchanged. */
+.sheet input,
+.sheet textarea,
+.sheet select,
+.sheet button,
+.sheet label,
+.sheet th,
+.sheet td,
+.sheet span,
+.sheet div,
+.sheet summary,
+.sheet strong,
+.sheet li,
+.start-page,
+.start-page button,
+.sheet-toolbar button,
+.accessibility-controls,
+.accessibility-controls button {
+  font-size: calc(1em * var(--app-font-scale));
+}
+
+/* Keep the accessibility control itself stable instead of compounding scale. */
+.accessibility-controls,
+.accessibility-controls * {
+  font-size: revert;
+}
+
 @media (max-width: 768px) {
   .accessibility-controls {
-    top: 5px;
-    right: 5px;
-    padding: 4px;
+    width: 100%;
+    margin-left: 0;
+    padding: 5px 0 0;
+    border-left: none;
+    border-top: 1px solid rgba(184,144,44,.45);
+    justify-content: center;
   }
 
   .accessibility-label {
-    display: none;
+    display: inline-block;
   }
 
   .accessibility-size-btn {
