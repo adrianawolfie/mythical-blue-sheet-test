@@ -1,13 +1,6 @@
-/* ─── ACCESSIBILITY: PAGE SIZE CONTROLS ─────────────────────────
-   The app uses many fixed pixel dimensions for its decorative layout.
-   Scaling the whole interface keeps text, controls and spacing consistent. */
-:root {
-  --app-page-scale: 1;
-}
-
-body {
-  zoom: var(--app-page-scale);
-}
+/* ─── ACCESSIBILITY: FONT SIZE CONTROLS ─────────────────────────
+   The controls change text size only. The parchment, decorative assets,
+   boxes and overall layout are not scaled. */
 
 .accessibility-controls {
   position: fixed;
