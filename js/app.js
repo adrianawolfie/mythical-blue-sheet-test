@@ -333,7 +333,11 @@ resetWeaponRows();
 resetSpellRows();
 
 let currentCharacterId = null;
- let loadedCharacterUpdatedAt = null;
+let loadedCharacterUpdatedAt = null;
+let hpAutoSaveTimer = null;
+let indexPollTimer = null;
+let sheetHPPollTimer = null;
+const cardHPAutoSaveTimers = new Map();
 
 const STORAGE_KEY = "mythicalBlueCharacters";
 const CURRENT_SCHEMA_VERSION = 2;
@@ -1181,6 +1185,7 @@ async function deleteCurrentCharacter() {
 }
 
 async function renderCharacterList() {
+  cardHPAutoSaveTimers.clear();
   const list = document.getElementById("characterList");
 
   let characters = [];
@@ -1203,23 +1208,57 @@ async function renderCharacterList() {
     const hpMax  = parseInt(character.hpMax)     || 0;
     const hpPct  = hpMax > 0 ? Math.round((hpCur / hpMax) * 100) : 0;
     const danger = hpPct > 0 && hpPct <= 50 ? " danger" : "";
+    const tempHp = character.tempHp || "";
     return `
     <div class="character-card" data-id="${character.id}">
       <strong>${character.name}</strong><br>
       Armor Class: ${character.armorClass || "—"}<br>
       Passive Perception: ${character.passivePerception || "—"}<br>
       Current Conditions: ${character.currentConditions || "—"}
-      <div class="card-hp">
+      <div class="card-hp" data-id="${character.id}" data-temphp="${tempHp}">
         <div class="card-hp-bwrap">
           <div class="card-hp-bar${danger}" style="width:${hpPct}%"></div>
         </div>
-        <span class="card-hp-text">${hpCur} / ${hpMax} HP</span>
+        <div class="card-hp-controls">
+          <button class="card-hp-adj" data-id="${character.id}" data-delta="-1" title="Lose 1 HP" aria-label="Lose 1 HP for ${character.name}">−</button>
+          <span class="card-hp-readout">
+            <input class="card-hp-cur" type="number" min="0"
+              value="${hpCur}"
+              data-id="${character.id}"
+              aria-label="Current HP for ${character.name}">
+            <span class="card-hp-slash">/</span>
+            <input class="card-hp-max" type="number" min="0"
+              value="${hpMax}"
+              data-id="${character.id}"
+              aria-label="Max HP for ${character.name}">
+          </span>
+          <button class="card-hp-adj" data-id="${character.id}" data-delta="1" title="Gain 1 HP" aria-label="Gain 1 HP for ${character.name}">+</button>
+        </div>
       </div>
     </div>`;
   }).join("");
 
-  document.querySelectorAll(".character-card").forEach(card => {
-    card.addEventListener("click", async () => {
+  list.addEventListener("click", async (event) => {
+    const btn = event.target.closest(".card-hp-adj");
+    if (btn) {
+      event.stopPropagation();
+      const id    = btn.dataset.id;
+      const delta = parseInt(btn.dataset.delta, 10);
+      const cardHp = list.querySelector(`.card-hp[data-id="${id}"]`);
+      if (!cardHp) return;
+      const curIn = cardHp.querySelector(".card-hp-cur");
+      const maxIn = cardHp.querySelector(".card-hp-max");
+      let c = parseInt(curIn.value) || 0;
+      const m = parseInt(maxIn.value) || 0;
+      c = Math.max(0, Math.min(m || 9999, c + delta));
+      curIn.value = c;
+      updateCardHPBar(cardHp, c, m);
+      scheduleCardHPAutoSave(id, String(c), maxIn.value, cardHp.dataset.temphp);
+      return;
+    }
+
+    const card = event.target.closest(".character-card");
+    if (card && !event.target.closest(".card-hp-controls")) {
       try {
         const result = await characterStorage.loadCharacterData(card.dataset.id);
         loadCharacter(result);
@@ -1227,20 +1266,61 @@ async function renderCharacterList() {
         console.error(error);
         alert(error.message || "Could not load character.");
       }
-    });
+    }
   });
+
+  list.addEventListener("input", (event) => {
+    const input = event.target;
+    if (!input.classList.contains("card-hp-cur") && !input.classList.contains("card-hp-max")) return;
+    const id     = input.dataset.id;
+    const cardHp = list.querySelector(`.card-hp[data-id="${id}"]`);
+    if (!cardHp) return;
+    const curIn = cardHp.querySelector(".card-hp-cur");
+    const maxIn = cardHp.querySelector(".card-hp-max");
+    const c = parseInt(curIn.value) || 0;
+    const m = parseInt(maxIn.value) || 0;
+    updateCardHPBar(cardHp, c, m);
+    scheduleCardHPAutoSave(id, curIn.value, maxIn.value, cardHp.dataset.temphp);
+  });
+}
+
+function updateCardHPBar(cardHpEl, c, m) {
+  const bar  = cardHpEl.querySelector(".card-hp-bar");
+  if (!bar) return;
+  const pct  = m > 0 ? Math.round((c / m) * 100) : 0;
+  bar.style.width = pct + "%";
+  bar.classList.toggle("danger", pct > 0 && pct <= 50);
+}
+
+function scheduleCardHPAutoSave(id, hpCurrent, hpMax, tempHp) {
+  clearTimeout(cardHPAutoSaveTimers.get(id));
+  cardHPAutoSaveTimers.set(id, setTimeout(async () => {
+    cardHPAutoSaveTimers.delete(id);
+    try {
+      const result = await characterStorage.saveHPOnly({ id, hpCurrent, hpMax, tempHp });
+      if (result?.updatedAt && currentCharacterId === id) {
+        loadedCharacterUpdatedAt = result.updatedAt;
+      }
+    } catch (err) {
+      console.warn("Card HP auto-save failed:", err.message);
+    }
+  }, 800));
 }
 
 function showStartPage() {
   document.getElementById("startPage").style.display = "block";
   document.querySelector(".sheet").style.display = "none";
   document.querySelector(".sheet-toolbar").style.display = "none";
+  stopSheetHPPolling();
+  startIndexPolling();
 }
 
 function showSheet() {
   document.getElementById("startPage").style.display = "none";
   document.querySelector(".sheet").style.display = "block";
   document.querySelector(".sheet-toolbar").style.display = "flex";
+  stopIndexPolling();
+  startSheetHPPolling();
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -1296,6 +1376,7 @@ function adjustHP(delta) {
   c = Math.max(0, Math.min(m || 9999, c + delta));
   cur.value = c;
   updateHPBar();
+  scheduleHPAutoSave();
 }
 
 function updateHPBar() {
@@ -1310,3 +1391,166 @@ function updateHPBar() {
   // green above 50 %, red at 50 % and below
   bar.classList.toggle("danger", pct > 0 && pct <= 50);
 }
+
+function onHPInput() {
+  updateHPBar();
+  scheduleHPAutoSave();
+}
+
+function scheduleHPAutoSave() {
+  clearTimeout(hpAutoSaveTimer);
+  hpAutoSaveTimer = setTimeout(async () => {
+    hpAutoSaveTimer = null;
+    if (!currentCharacterId) return;
+    try {
+      const result = await characterStorage.saveHPOnly({
+        id:        currentCharacterId,
+        hpCurrent: document.getElementById("hpCurrentInput")?.value ?? "",
+        hpMax:     document.getElementById("hpMaxInput")?.value ?? "",
+        tempHp:    document.getElementById("tempHpInput")?.value ?? ""
+      });
+      if (result?.updatedAt) loadedCharacterUpdatedAt = result.updatedAt;
+    } catch (err) {
+      console.warn("HP auto-save failed:", err.message);
+    }
+  }, 800);
+}
+
+// ─── INDEX PAGE POLLING ───────────────────────────────────────────────────────
+
+function startIndexPolling() {
+  stopIndexPolling();
+  scheduleIndexPoll();
+}
+
+function stopIndexPolling() {
+  clearTimeout(indexPollTimer);
+  indexPollTimer = null;
+}
+
+function scheduleIndexPoll() {
+  const ms = document.hidden ? 30000 : 10000;
+  indexPollTimer = setTimeout(async () => {
+    await pollIndexHP();
+    if (indexPollTimer !== null) scheduleIndexPoll();
+  }, ms);
+}
+
+async function pollIndexHP() {
+  try {
+    const characters = await characterStorage.listCharacterData();
+    applyIndexHPUpdates(characters);
+  } catch {
+    // silent — wait for next poll
+  }
+}
+
+function applyIndexHPUpdates(characters) {
+  const list = document.getElementById("characterList");
+  if (!list) return;
+
+  for (const ch of characters) {
+    const cardHp = list.querySelector(`.card-hp[data-id="${ch.id}"]`);
+    if (!cardHp) continue;
+
+    const curIn = cardHp.querySelector(".card-hp-cur");
+    const maxIn = cardHp.querySelector(".card-hp-max");
+    if (!curIn || !maxIn) continue;
+
+    // Skip if user is actively editing this card's HP
+    if (document.activeElement === curIn || document.activeElement === maxIn) continue;
+
+    // Skip if a pending auto-save timer exists (user just made a change)
+    if (cardHPAutoSaveTimers.has(ch.id)) continue;
+
+    const newCur = String(ch.hpCurrent || "0");
+    const newMax = String(ch.hpMax     || "0");
+
+    if (curIn.value !== newCur || maxIn.value !== newMax) {
+      curIn.value = newCur;
+      maxIn.value = newMax;
+      updateCardHPBar(cardHp, parseInt(newCur) || 0, parseInt(newMax) || 0);
+    }
+
+    // Keep tempHp data attribute in sync for future auto-saves
+    if (ch.tempHp !== undefined) {
+      cardHp.dataset.temphp = ch.tempHp;
+    }
+  }
+}
+
+// ─── CHARACTER SHEET HP POLLING ───────────────────────────────────────────────
+
+function startSheetHPPolling() {
+  stopSheetHPPolling();
+  scheduleSheetHPPoll();
+}
+
+function stopSheetHPPolling() {
+  clearTimeout(sheetHPPollTimer);
+  sheetHPPollTimer = null;
+}
+
+function scheduleSheetHPPoll() {
+  const ms = document.hidden ? 30000 : 10000;
+  sheetHPPollTimer = setTimeout(async () => {
+    await pollSheetHP();
+    if (sheetHPPollTimer !== null) scheduleSheetHPPoll();
+  }, ms);
+}
+
+async function pollSheetHP() {
+  if (!currentCharacterId) return;
+  try {
+    const character = await characterStorage.loadCharacterData(currentCharacterId);
+    applySheetHPUpdates(character);
+  } catch {
+    // silent — wait for next poll
+  }
+}
+
+function applySheetHPUpdates(character) {
+  // Don't overwrite while a local auto-save is pending
+  if (hpAutoSaveTimer !== null) return;
+
+  const remoteUpdatedAt = character.updatedAt;
+  // Skip if we already have this version or newer
+  if (remoteUpdatedAt && loadedCharacterUpdatedAt &&
+      remoteUpdatedAt <= loadedCharacterUpdatedAt) return;
+
+  const curIn = document.getElementById("hpCurrentInput");
+  const maxIn = document.getElementById("hpMaxInput");
+  const tmpIn = document.getElementById("tempHpInput");
+
+  if (curIn && document.activeElement !== curIn) {
+    curIn.value = character.summary?.hpCurrent ?? "";
+  }
+  if (maxIn && document.activeElement !== maxIn) {
+    maxIn.value = character.summary?.hpMax ?? "";
+  }
+  if (tmpIn && document.activeElement !== tmpIn) {
+    tmpIn.value = character.summary?.tempHp ?? "";
+  }
+
+  // Only advance our timestamp if none of the HP fields are focused
+  if (document.activeElement !== curIn &&
+      document.activeElement !== maxIn &&
+      document.activeElement !== tmpIn) {
+    loadedCharacterUpdatedAt = remoteUpdatedAt;
+  }
+
+  updateHPBar();
+}
+
+// ─── PAGE VISIBILITY ──────────────────────────────────────────────────────────
+
+document.addEventListener("visibilitychange", () => {
+  if (indexPollTimer !== null) {
+    stopIndexPolling();
+    startIndexPolling();
+  }
+  if (sheetHPPollTimer !== null) {
+    stopSheetHPPolling();
+    startSheetHPPolling();
+  }
+});

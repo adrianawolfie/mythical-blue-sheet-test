@@ -31,6 +31,7 @@
       armorClass: summary.armorClass || "",
       hpCurrent: summary.hpCurrent || "",
       hpMax: summary.hpMax || "",
+      tempHp: summary.tempHp || "",
       passivePerception: summary.passivePerception || "",
       currentConditions: summary.currentConditions || "",
       updatedAt: character.updatedAt || ""
@@ -69,6 +70,16 @@
         });
 
         return parseJsonResponse(response, "Failed to save character.");
+      },
+
+      async saveHPOnly({ id, hpCurrent, hpMax, tempHp }) {
+        const response = await fetch("/.netlify/functions/save-hp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, hpCurrent, hpMax, tempHp })
+        });
+
+        return parseJsonResponse(response, "Failed to save HP.");
       },
 
       async deleteCharacterData(payload) {
@@ -194,6 +205,33 @@
           success: true,
           updatedAt: savedAt
         };
+      },
+
+      async saveHPOnly({ id, hpCurrent, hpMax, tempHp }) {
+        const characters = readCharacters();
+        const character = characters[id];
+
+        if (!character) {
+          throw new Error("Could not find this local test character.");
+        }
+
+        const savedAt = new Date().toISOString();
+
+        character.summary = character.summary || {};
+        character.fields  = character.fields  || {};
+
+        character.summary.hpCurrent = hpCurrent;
+        character.summary.hpMax     = hpMax;
+        character.summary.tempHp    = tempHp;
+
+        character.fields.hpCurrent  = hpCurrent;
+        character.fields.hpMax      = hpMax;
+        character.fields.tempHp     = tempHp;
+
+        character.updatedAt = savedAt;
+
+        writeCharacters(characters);
+        return { success: true, updatedAt: savedAt };
       },
 
       async deleteCharacterData({ id, expectedUpdatedAt }) {
