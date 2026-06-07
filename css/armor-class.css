@@ -306,3 +306,70 @@
     width: min(220px, calc(100vw - 34px));
   }
 }
+
+
+/* ─── ARMOR CLASS PANEL ALIGNMENT REFINEMENT ─────────────────
+   Wider text field, aligned values, and left-aligned Base AC label. */
+.armor-class-panel {
+  width: 246px;
+  padding: 7px 8px;
+}
+
+.armor-class-base-row,
+.armor-class-modifier-row {
+  column-gap: 7px;
+}
+
+.armor-class-base-row {
+  grid-template-columns: minmax(0, 1fr) 38px;
+}
+
+.armor-class-base-row span {
+  text-align: left;
+}
+
+.armor-class-base-row input,
+.armor-class-modifier-value {
+  width: 38px;
+  min-width: 38px;
+  text-align: right;
+  padding-right: 2px;
+}
+
+.armor-class-modifier-row {
+  grid-template-columns: 18px minmax(132px, 1fr) 38px 13px;
+}
+
+.armor-class-modifier-name {
+  width: 100%;
+  min-width: 0;
+  padding-right: 3px;
+}
+
+.armor-class-modifier-remove {
+  width: 13px;
+  height: 13px;
+  min-width: 13px;
+  justify-self: end;
+}
+
+@media (max-width: 768px) {
+  .armor-class-panel {
+    width: min(246px, calc(100vw - 26px));
+    padding: 7px 8px;
+  }
+
+  .armor-class-base-row {
+    grid-template-columns: minmax(0, 1fr) 38px;
+  }
+
+  .armor-class-modifier-row {
+    grid-template-columns: 18px minmax(132px, 1fr) 38px 13px;
+  }
+
+  .armor-class-base-row input,
+  .armor-class-modifier-value {
+    width: 38px;
+    min-width: 38px;
+  }
+}
