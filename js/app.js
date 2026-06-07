@@ -675,7 +675,10 @@ function collectNamedFields() {
     "armorProficiencies",
     "weaponProficiencies",
     "toolProficiencies",
-    "otherProficiencies"
+    "otherProficiencies",
+    "classLevel",
+    "subclass",
+    "experience"
   ].forEach(key => delete namedFields[key]);
 
   return namedFields;
@@ -751,6 +754,49 @@ function migrateLegacyEquipmentAndProficiencies(namedFields = {}) {
   }
 
   delete migrated.equipmentProficiencies;
+  return migrated;
+}
+
+function migrateLegacyClassFields(namedFields = {}) {
+  const migrated = { ...namedFields };
+
+  const existingClassSubclass = String(migrated.classSubclass || "").trim();
+  const existingLevel = String(migrated.level || "").trim();
+
+  if (!existingClassSubclass) {
+    const legacyClassLevel = String(migrated.classLevel || "").trim();
+    const legacySubclass = String(migrated.subclass || "").trim();
+
+    let className = legacyClassLevel;
+    let parsedLevel = "";
+
+    const levelMatch = legacyClassLevel.match(/^(.*?)(?:\s+|\s*[-–—|·]\s*)(\d{1,2})$/);
+
+    if (levelMatch) {
+      className = levelMatch[1].trim();
+      parsedLevel = levelMatch[2];
+    }
+
+    const parts = [className, legacySubclass]
+      .map(value => String(value || "").trim())
+      .filter(Boolean)
+      .filter((value, index, array) =>
+        array.findIndex(other =>
+          other.toLowerCase() === value.toLowerCase()
+        ) === index
+      );
+
+    migrated.classSubclass = parts.join(" · ");
+
+    if (!existingLevel && parsedLevel) {
+      migrated.level = parsedLevel;
+    }
+  }
+
+  delete migrated.classLevel;
+  delete migrated.subclass;
+  delete migrated.experience;
+
   return migrated;
 }
 
@@ -1160,8 +1206,10 @@ function loadCharacter(character) {
   currentCharacterId = character.id;
   loadedCharacterUpdatedAt = character.updatedAt || null;
 
-  const normalizedFields = migrateLegacyEquipmentAndProficiencies(
-    normalizeSavedFields(character)
+  const normalizedFields = migrateLegacyClassFields(
+    migrateLegacyEquipmentAndProficiencies(
+      normalizeSavedFields(character)
+    )
   );
 
   applyNamedFields(normalizedFields);
