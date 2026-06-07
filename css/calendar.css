@@ -231,3 +231,90 @@
   .calendar-sheet-bar { padding: 6px 10px; font-size: 11.5px; }
   .cal-sheet-lbl, .cal-sheet-sep { display: none; }
 }
+
+
+/* ── SHARED CAMPAIGN TRAVEL ─────────────────────────────────────────────── */
+
+.cal-travel {
+  border-top: 1px solid rgba(184, 144, 44, 0.38);
+  background: rgba(184, 144, 44, 0.055);
+  padding: 8px 10px 9px;
+}
+
+.cal-travel-heading {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.cal-travel-label {
+  color: var(--navy);
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.7px;
+  opacity: .78;
+  text-transform: uppercase;
+}
+
+.cal-travel-count {
+  color: var(--gold-deep);
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.cal-travel-controls {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.cal-travel-btn {
+  padding: 5px 7px;
+  border: 1px solid rgba(184, 144, 44, 0.54);
+  border-radius: 2px;
+  background: rgba(255, 253, 245, 0.16);
+  color: var(--navy);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .45px;
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    color .15s ease;
+}
+
+.cal-travel-btn:hover,
+.cal-travel-btn:focus-visible {
+  background: rgba(184, 144, 44, 0.16);
+  border-color: var(--gold-deep);
+  color: var(--navy-deep);
+  outline: none;
+}
+
+.cal-travel-btn:disabled {
+  cursor: default;
+  opacity: .72;
+}
+
+@media (max-width: 768px) {
+  .cal-travel {
+    padding: 7px 7px 8px;
+  }
+
+  .cal-travel-controls {
+    gap: 4px;
+  }
+
+  .cal-travel-btn {
+    flex: 1 1 calc(50% - 4px);
+    padding: 6px 5px;
+    font-size: 7.5px;
+  }
+}

@@ -59,7 +59,8 @@ js/
   live-sync.js               HP / AC / conditions autosave and polling
   app.js                     startup and event binding
 
-  calendar.js                Materra calendar behavior
+  campaign-state.js          shared campaign-state storage adapter
+  calendar.js                Materra calendar and travel controls
   accessibility.js           font-size controls
 
 netlify/
@@ -68,6 +69,8 @@ netlify/
     get-character.js
     save-character.js
     save-character-status.js
+    get-campaign-state.js
+    save-campaign-state.js
     delete-character.js
 ```
 
@@ -90,3 +93,29 @@ Temp HP
 Armor Class
 Conditions
 ```
+
+
+## Shared campaign calendar
+
+The calendar and travel counter are campaign-wide rather than character-specific.
+
+```text
+GitHub Pages test site
+→ local campaign-state test data
+
+Netlify production
+→ campaign/campaign-state.json
+→ shared between users and devices
+```
+
+The Saved Characters overview allows the DM to:
+
+```text
+set the campaign date manually
+add 1 traveled day
+remove 1 traveled day
+add 1 traveled week
+add 1 Materra month (28 days)
+```
+
+Character sheets show the saved campaign date as a read-only bar.
