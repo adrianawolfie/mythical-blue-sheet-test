@@ -170,7 +170,13 @@
       async listCharacterData() {
         return Object.values(readCharacters())
           .map(summarize)
-          .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+          .sort((a, b) =>
+            String(a.name || "").localeCompare(
+              String(b.name || ""),
+              undefined,
+              { sensitivity: "base" }
+            )
+          );
       },
 
       async loadCharacterData(id) {
