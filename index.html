@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="css/accessibility.css" />
 <link rel="stylesheet" href="css/styles.css" />
 <link rel="stylesheet" href="css/calendar.css" />
+<link rel="stylesheet" href="css/inventory.css" />
+<link rel="stylesheet" href="css/spells.css" />
 </head>
 <body>
 
@@ -515,33 +517,47 @@
           </div>
         </div>
       </div>
-<div class="sb-card" style="margin-top:12px;">
-  <div class="sb-hdr">Cantrips & Prepared Spells</div>
-
-  <div class="spell-table-wrap">
-  <table class="stbl dynamic-table" id="spellTable">
-    <thead>
-<tr>
-  <th style="width:5%">Lvl</th>
-  <th style="width:18%">Spell Name</th>
-  <th style="width:10%">Cast Time</th>
-  <th style="width:9%">Range</th>
-  <th style="width:4%">C</th>
-  <th style="width:4%">R</th>
-  <th style="width:4%">M</th>
-  <th>Effect</th>
-  <th class="spell-details-heading" style="width:8%"></th>
-  <th class="edit-col" style="width:10%"></th>
-</tr>
-    </thead>
-    <tbody id="sbody"></tbody>
-  </table>
+<div class="sb-card spellbook-card" style="margin-top:12px;">
+  <div class="spellbook-heading-row">
+    <div>
+      <div class="sb-hdr">Cantrips & Prepared Spells</div>
+      <div class="spellbook-subtitle">Build a spellbook from the SRD library or add your own homebrew magic.</div>
+    </div>
+    <div class="spell-view-toggle" role="tablist" aria-label="Spell display mode">
+      <button type="button" class="spell-view-btn active" data-spell-view="cards" aria-selected="true">Cards</button>
+      <button type="button" class="spell-view-btn" data-spell-view="list" aria-selected="false">List</button>
+    </div>
   </div>
 
-  <div class="table-actions">
-    <button type="button" class="add-btn" onclick="addSR()">+ Add Spell</button>
-    <button type="button" class="add-btn" onclick="toggleTableEditMode('spellTable', this)">Edit Spells</button>
+  <div class="spell-toolbar">
+    <label><span>Level</span><select id="spellLevelFilter"><option value="all">All Levels</option><option value="C">Cantrips</option><option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option><option value="4">Level 4</option><option value="5">Level 5</option><option value="6">Level 6</option><option value="7">Level 7</option><option value="8">Level 8</option><option value="9">Level 9</option></select></label>
+    <label><span>School</span><select id="spellSchoolFilter"><option value="all">All Schools</option><option>Abjuration</option><option>Conjuration</option><option>Divination</option><option>Enchantment</option><option>Evocation</option><option>Illusion</option><option>Necromancy</option><option>Transmutation</option><option value="Homebrew">Homebrew / Unassigned</option></select></label>
+    <label class="spell-search-label"><span>Search</span><input id="spellSearchInput" placeholder="Search your spellbook…"></label>
   </div>
+
+  <div id="spellCardView" class="spell-card-grid"></div>
+
+  <div id="spellListView" class="spell-list-view" hidden>
+    <div class="spell-table-wrap">
+      <table class="stbl dynamic-table" id="spellTable">
+        <thead><tr>
+          <th style="width:5%">Lvl</th><th style="width:18%">Spell Name</th><th style="width:10%">Cast Time</th><th style="width:9%">Range</th><th style="width:4%">C</th><th style="width:4%">R</th><th style="width:4%">M</th><th>Effect</th><th class="spell-details-heading" style="width:8%"></th><th class="edit-col" style="width:10%"></th>
+        </tr></thead>
+        <tbody id="sbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="table-actions spellbook-actions">
+    <button type="button" class="add-btn" onclick="openSpellPicker()">+ Add from SRD</button>
+    <button type="button" class="add-btn" onclick="addCustomSpell()">+ Create Homebrew Spell</button>
+    <button type="button" class="add-btn spell-list-only-action" onclick="toggleTableEditMode('spellTable', this)">Edit Spell Order</button>
+  </div>
+
+  <details class="srd-license-note">
+    <summary>SRD attribution</summary>
+    <p>This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.</p>
+  </details>
 </div>
     </div>
 
@@ -765,12 +781,30 @@
   </div>
 </div>
 
+<div id="spellPickerModal" class="spell-picker-backdrop" hidden>
+  <section class="spell-picker-modal" role="dialog" aria-modal="true" aria-labelledby="spellPickerTitle">
+    <div class="spell-picker-header">
+      <div><div class="sb-hdr" id="spellPickerTitle">Add Spell from SRD</div><p>Choose a spell to autofill its structured fields. You can edit the imported snapshot afterward.</p></div>
+      <button type="button" class="spell-picker-close" onclick="closeSpellPicker()" aria-label="Close spell picker">×</button>
+    </div>
+    <div class="spell-picker-toolbar">
+      <label><span>Search</span><input id="spellPickerSearch" placeholder="Mage Armor, Fog Cloud, Healing Word…"></label>
+      <label><span>Level</span><select id="spellPickerLevel"><option value="all">All Levels</option><option value="C">Cantrips</option><option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option><option value="4">Level 4</option><option value="5">Level 5</option><option value="6">Level 6</option><option value="7">Level 7</option><option value="8">Level 8</option><option value="9">Level 9</option></select></label>
+      <label><span>School</span><select id="spellPickerSchool"><option value="all">All Schools</option><option>Abjuration</option><option>Conjuration</option><option>Divination</option><option>Enchantment</option><option>Evocation</option><option>Illusion</option><option>Necromancy</option><option>Transmutation</option></select></label>
+      <label><span>Class</span><select id="spellPickerClass"><option value="all">All Classes</option><option>Bard</option><option>Cleric</option><option>Druid</option><option>Paladin</option><option>Ranger</option><option>Sorcerer</option><option>Warlock</option><option>Wizard</option></select></label>
+    </div>
+    <div id="spellPickerResults" class="spell-picker-results"></div>
+    <div class="spell-picker-footer"><span id="spellPickerCount"></span><button type="button" class="add-btn" onclick="addCustomSpell(); closeSpellPicker();">+ Create Homebrew Spell</button></div>
+  </section>
+</div>
+
 <script src="js/conditions.js"></script>
 <script src="js/storage-config.js"></script>
 <script src="js/storage-adapter.js"></script>
 
 <script src="js/core.js"></script>
 <script src="js/tables.js"></script>
+<script src="js/spells-ui.js"></script>
 <script src="js/conditions-ui.js"></script>
 <script src="js/features.js"></script>
 <script src="js/proficiencies.js"></script>

@@ -1995,3 +1995,110 @@
 .inventory-item-details {
   display: block;
 }
+
+
+/* ─── EQUIPMENT · DESKTOP RESPONSIVE GRID ROWS ──────────────────────────
+   Desktop no longer relies on rigid table sizing. Rows remain visually
+   table-like but use a responsive grid, so horizontal scrolling is removed. */
+@media (min-width: 769px) {
+  .inventory-unified-card .inventory-table-wrap {
+    overflow-x: visible !important;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .inventory-unified-table {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    table-layout: auto !important;
+  }
+
+  .inventory-unified-table thead,
+  .inventory-unified-table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .inventory-unified-table thead tr,
+  .inventory-unified-table .inventory-unified-row {
+    display: grid !important;
+    grid-template-columns:
+      minmax(150px, 1.35fr)
+      minmax(150px, .82fr)
+      48px
+      72px
+      minmax(160px, .95fr)
+      72px
+      18px;
+    gap: 0;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .inventory-unified-table th,
+  .inventory-unified-table .inventory-unified-row td {
+    box-sizing: border-box;
+    display: block;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .inventory-unified-table .inventory-mobile-summary {
+    display: none !important;
+  }
+
+  .inventory-unified-table input,
+  .inventory-unified-table select {
+    box-sizing: border-box;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .inventory-unified-table select {
+    text-overflow: ellipsis;
+  }
+
+  .inventory-unified-table .inventory-item-details-row {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .inventory-unified-table .inventory-item-details-row[style*="display: none"] {
+    display: none !important;
+  }
+
+  .inventory-unified-table .inventory-item-details-row td {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .inventory-unified-table .inventory-item-details-panel {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1050px) {
+  .inventory-unified-table thead tr,
+  .inventory-unified-table .inventory-unified-row {
+    grid-template-columns:
+      minmax(125px, 1.18fr)
+      minmax(132px, .8fr)
+      42px
+      58px
+      minmax(132px, .9fr)
+      62px
+      16px;
+  }
+}
