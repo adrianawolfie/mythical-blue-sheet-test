@@ -65,7 +65,7 @@ function createArmorClassModifierRow(data = {}) {
 
     <input
       class="armor-class-modifier-value"
-      type="number"
+      type="text"
       inputmode="numeric"
       value="${escapeHtml(modifierValue)}"
       aria-label="${escapeHtml(modifierName)} Armor Class modifier"
@@ -196,10 +196,30 @@ function renderArmorClassState(
 
 function bindArmorClassControls() {
   const toggle = document.getElementById("toggleArmorClassPanelBtn");
+  const closeButton = document.getElementById("closeArmorClassPanelBtn");
+  const panel = document.getElementById("armorClassPanel");
+  const tracker = document.querySelector(".armor-class-tracker");
   const baseInput = document.getElementById("armorClassBaseInput");
   const addSelect = document.getElementById("addArmorClassModifierSelect");
 
   toggle?.addEventListener("click", toggleArmorClassPanel);
+  closeButton?.addEventListener("click", () => {
+    setArmorClassPanelOpen(false);
+  });
+
+  document.addEventListener("click", event => {
+    if (!panel || panel.hidden || !tracker) return;
+    if (!tracker.contains(event.target)) {
+      setArmorClassPanelOpen(false);
+    }
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && panel && !panel.hidden) {
+      setArmorClassPanelOpen(false);
+      toggle?.focus();
+    }
+  });
 
   baseInput?.addEventListener("input", () => {
     updateArmorClassTotal({ scheduleSave: true });

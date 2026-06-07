@@ -214,3 +214,95 @@
     padding: 3px 5px;
   }
 }
+
+
+/* ─── ARMOR CLASS PANEL REFINEMENT ────────────────────────────
+   Compact popup, clear close control, wider modifier label,
+   and no browser number-spinner arrows beside the remove ×. */
+.armor-class-panel {
+  width: 220px;
+  padding: 7px;
+}
+
+.armor-class-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.armor-class-panel-title {
+  margin-bottom: 0;
+}
+
+.armor-class-panel-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--gold-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: .52;
+}
+
+.armor-class-panel-close:hover,
+.armor-class-panel-close:focus-visible {
+  color: var(--navy-deep);
+  opacity: 1;
+  outline: none;
+}
+
+.armor-class-base-row {
+  grid-template-columns: minmax(0, 1fr) 34px;
+  gap: 7px;
+}
+
+.armor-class-modifier-row {
+  grid-template-columns: 17px minmax(0, 1fr) 29px 15px;
+  gap: 7px;
+}
+
+.armor-class-modifier-name {
+  width: 100%;
+}
+
+.armor-class-modifier-value {
+  width: 29px;
+  padding: 0 1px;
+}
+
+.armor-class-panel input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.armor-class-panel input[type="number"]::-webkit-inner-spin-button,
+.armor-class-panel input[type="number"]::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.armor-class-modifier-remove {
+  border-radius: 0;
+  background: transparent;
+}
+
+.armor-class-modifier-row:hover .armor-class-modifier-remove,
+.armor-class-modifier-remove:focus-visible {
+  background: transparent;
+}
+
+@media (max-width: 768px) {
+  .armor-class-panel {
+    width: min(220px, calc(100vw - 34px));
+  }
+}
