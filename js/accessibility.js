@@ -33,9 +33,14 @@
     Array.from(document.styleSheets).forEach(styleSheet => {
       const href = styleSheet.href || "";
 
-      // Scale only the main app stylesheet.
-      // Accessibility controls stay a stable size.
-      if (!href.includes("/css/styles.css")) return;
+      // Scale the main character-sheet stylesheet and the calendar stylesheet.
+      // Accessibility controls themselves stay a stable size because their
+      // styles live in css/accessibility.css.
+      const isScalableStylesheet =
+        href.includes("/css/styles.css") ||
+        href.includes("/css/calendar.css");
+
+      if (!isScalableStylesheet) return;
 
       let rules;
 
