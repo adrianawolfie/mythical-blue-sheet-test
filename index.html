@@ -9,8 +9,6 @@
 <link rel="stylesheet" href="css/accessibility.css" />
 <link rel="stylesheet" href="css/styles.css" />
 <link rel="stylesheet" href="css/calendar.css" />
-<link rel="stylesheet" href="css/inventory.css" />
-<link rel="stylesheet" href="css/spells.css" />
 </head>
 <body>
 
@@ -523,10 +521,6 @@
       <div class="sb-hdr">Cantrips & Prepared Spells</div>
       <div class="spellbook-subtitle">Build a spellbook from the SRD library or add your own homebrew magic.</div>
     </div>
-    <div class="spell-view-toggle" role="tablist" aria-label="Spell display mode">
-      <button type="button" class="spell-view-btn active" data-spell-view="cards" aria-selected="true">Cards</button>
-      <button type="button" class="spell-view-btn" data-spell-view="list" aria-selected="false">List</button>
-    </div>
   </div>
 
   <div class="spell-toolbar">
@@ -537,7 +531,7 @@
 
   <div id="spellCardView" class="spell-card-grid"></div>
 
-  <div id="spellListView" class="spell-list-view" hidden>
+  <div id="spellListView" class="spell-list-view spell-data-store" hidden aria-hidden="true">
     <div class="spell-table-wrap">
       <table class="stbl dynamic-table" id="spellTable">
         <thead><tr>
@@ -549,9 +543,8 @@
   </div>
 
   <div class="table-actions spellbook-actions">
-    <button type="button" class="add-btn" onclick="openSpellPicker()">+ Add from SRD</button>
+    <button type="button" class="add-btn" onclick="openSpellPicker()">+ Add Spell</button>
     <button type="button" class="add-btn" onclick="addCustomSpell()">+ Create Homebrew Spell</button>
-    <button type="button" class="add-btn spell-list-only-action" onclick="toggleTableEditMode('spellTable', this)">Edit Spell Order</button>
   </div>
 
   <details class="srd-license-note">
@@ -784,7 +777,7 @@
 <div id="spellPickerModal" class="spell-picker-backdrop" hidden>
   <section class="spell-picker-modal" role="dialog" aria-modal="true" aria-labelledby="spellPickerTitle">
     <div class="spell-picker-header">
-      <div><div class="sb-hdr" id="spellPickerTitle">Add Spell from SRD</div><p>Choose a spell to autofill its structured fields. You can edit the imported snapshot afterward.</p></div>
+      <div><div class="sb-hdr" id="spellPickerTitle">Add Spell</div><p>Choose an SRD or Mythical Blue spell to autofill its structured fields. You can edit the imported snapshot afterward.</p></div>
       <button type="button" class="spell-picker-close" onclick="closeSpellPicker()" aria-label="Close spell picker">×</button>
     </div>
     <div class="spell-picker-toolbar">

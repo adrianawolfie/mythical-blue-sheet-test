@@ -1,527 +1,79 @@
-// Mythical Blue · SRD spell picker and card/list spellbook views.
+// Mythical Blue · Card-only spellbook with SRD and Mythical Blue library picker.
 (function () {
   const SCHOOL_ICONS = {
-    Abjuration: 'abjuration',
-    Conjuration: 'conjuration',
-    Divination: 'divination',
-    Enchantment: 'enchantment',
-    Evocation: 'evocation',
-    Illusion: 'illusion',
-    Necromancy: 'necromancy',
-    Transmutation: 'transmutation',
-    Homebrew: 'homebrew'
+    Abjuration: 'abjuration', Conjuration: 'conjuration', Divination: 'divination',
+    Enchantment: 'enchantment', Evocation: 'evocation', Illusion: 'illusion',
+    Necromancy: 'necromancy', Transmutation: 'transmutation', Homebrew: 'homebrew'
   };
-
-  let srdLibrary = [];
-  let srdLoaded = false;
-
+  const AREA_ICONS = {
+    sphere: 'sphere', cone: 'cone', cube: 'square', square: 'square',
+    cylinder: 'cylinder', line: 'line', emanation: 'emanation', generic: 'generic'
+  };
+  let spellLibrary = [];
+  let libraryLoaded = false;
+  let editingSpellIndex = null;
   const originalAddSR = window.addSR;
   const originalResetSpellRows = window.resetSpellRows;
 
-  function esc(value = '') {
-    return String(value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  function text(value = '') {
-    return String(value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-  }
-
-  function icon(school = 'Homebrew') {
-    const key = SCHOOL_ICONS[school] || 'homebrew';
-    return `assets/spell-icons/${key}.svg`;
-  }
-
-  function cleanText(value = '') {
-    return String(value).replace(/\s+/g, ' ').trim();
-  }
-
-  function firstSentence(value = '') {
-    const cleaned = cleanText(value);
-    if (!cleaned) return '';
-
-    const match = cleaned.match(/^(.{1,220}?[.!?])(?:\s|$)/);
-    const first = match ? match[1] : cleaned;
-    return first.length > 190 ? `${first.slice(0, 187).trim()}…` : first;
-  }
-
-  function deriveBoolean(explicitValue, fallbackText = '', pattern) {
-    return explicitValue === true || pattern.test(String(fallbackText || ''));
-  }
-
-  function levelRank(level = '') {
-    if (level === 'C') return 0;
-    const parsed = Number.parseInt(level, 10);
-    return Number.isFinite(parsed) ? parsed : 99;
-  }
-
-  function compareSpells(a, b) {
-    const levelDifference = levelRank(a.level) - levelRank(b.level);
-    if (levelDifference) return levelDifference;
-    return String(a.name || '').localeCompare(String(b.name || ''), undefined, {
-      sensitivity: 'base'
-    });
-  }
-
-  function levelLabel(level = '') {
-    return level === 'C' ? 'Cantrip' : level ? `Level ${level}` : 'Unassigned';
-  }
-
-  function rowMetadata(row) {
-    return {
-      sourceId: row.dataset.sourceId || '',
-      source: row.dataset.source || '',
-      school: row.dataset.school || 'Homebrew',
-      duration: row.dataset.duration || '',
-      componentsText: row.dataset.componentsText || '',
-      classes: row.dataset.classes || ''
-    };
-  }
-
-  function findRow(index) {
-    return document.querySelectorAll('#sbody .spell-main-row')[index];
-  }
-
-  function getDetailsRow(row) {
-    return row?.nextElementSibling?.classList.contains('spell-details-row')
-      ? row.nextElementSibling
-      : null;
-  }
-
-  function syncSRDCheckboxes(row, data = {}, match = null) {
-    if (!row) return;
-
-    const sourceLinked = Boolean(
-      data.sourceId ||
-      row.dataset.sourceId ||
-      data.source === 'SRD 5.2.1' ||
-      row.dataset.source === 'SRD 5.2.1'
-    );
-
-    if (!sourceLinked) return;
-
-    const resolved = match || data;
-    const duration = data.duration || row.dataset.duration || resolved?.duration || '';
-    const castTime = data.castTime || resolved?.castTime || '';
-    const components = data.componentsText || row.dataset.componentsText || resolved?.componentsText || '';
-
-    const concentration = deriveBoolean(resolved?.concentration, duration, /concentration/i);
-    const ritual = deriveBoolean(resolved?.ritual, castTime, /ritual/i);
-    const material = deriveBoolean(resolved?.material, components, /(^|,\s*)M(?:\s|,|\(|$)/i);
-
-    const concentrationInput = row.querySelector('.spell-concentration');
-    const ritualInput = row.querySelector('.spell-ritual');
-    const materialInput = row.querySelector('.spell-material');
-
-    if (concentrationInput) concentrationInput.checked = concentration;
-    if (ritualInput) ritualInput.checked = ritual;
-    if (materialInput) materialInput.checked = material;
-  }
-
-  function enhanceRow(row, data = {}) {
-    if (!row) return;
-
-    const detailsRow = getDetailsRow(row);
-    const panel = detailsRow?.querySelector('.spell-details-panel');
-    const nameCell = row.querySelector('.spell-name')?.closest('td');
-    const name = row.querySelector('.spell-name')?.value || data.name || '';
-    const match = srdLibrary.find(spell => spell.name.toLowerCase() === name.toLowerCase());
-
-    const meta = {
-      sourceId: data.sourceId || row.dataset.sourceId || match?.id || '',
-      source: data.source || row.dataset.source || match?.source || '',
-      school: data.school || row.dataset.school || match?.school || 'Homebrew',
-      duration: data.duration || row.dataset.duration || match?.duration || '',
-      componentsText: data.componentsText || row.dataset.componentsText || match?.componentsText || '',
-      classes: Array.isArray(data.classes)
-        ? data.classes.join(', ')
-        : data.classes || row.dataset.classes || (match?.classes || []).join(', ')
-    };
-
-    Object.entries(meta).forEach(([key, value]) => {
-      row.dataset[key] = value || '';
-    });
-
-    if (nameCell && !nameCell.querySelector('.spell-list-school-icon')) {
-      nameCell.insertAdjacentHTML(
-        'afterbegin',
-        `<img class="spell-list-school-icon" src="${icon(meta.school)}" alt="" aria-hidden="true">`
-      );
-    } else {
-      const image = nameCell?.querySelector('.spell-list-school-icon');
-      if (image) image.src = icon(meta.school);
-    }
-
-    syncSRDCheckboxes(row, data, match);
-
-    if (panel && !panel.querySelector('.spell-structured-grid')) {
-      panel.insertAdjacentHTML(
-        'afterbegin',
-        `<span class="spell-source-badge">${esc(meta.source || 'Homebrew / Custom')}</span>
-         <div class="spell-structured-grid">
-           <label><span>School</span><input class="spell-school" value="${esc(meta.school === 'Homebrew' ? '' : meta.school)}" placeholder="Evocation, Abjuration…"></label>
-           <label><span>Duration</span><input class="spell-duration" value="${esc(meta.duration)}" placeholder="Instantaneous, 1 minute…"></label>
-           <label><span>Components</span><input class="spell-components-text" value="${esc(meta.componentsText)}" placeholder="V, S, M…"></label>
-           <label><span>Classes</span><input class="spell-classes" value="${esc(meta.classes)}" placeholder="Wizard, Cleric…"></label>
-         </div>`
-      );
-
-      panel.querySelectorAll('.spell-structured-grid input').forEach(input => {
-        input.addEventListener('input', () => {
-          row.dataset.school = panel.querySelector('.spell-school')?.value || 'Homebrew';
-          row.dataset.duration = panel.querySelector('.spell-duration')?.value || '';
-          row.dataset.componentsText = panel.querySelector('.spell-components-text')?.value || '';
-          row.dataset.classes = panel.querySelector('.spell-classes')?.value || '';
-
-          const image = nameCell?.querySelector('.spell-list-school-icon');
-          if (image) image.src = icon(row.dataset.school);
-
-          refreshSpellCards();
-        });
-      });
-    }
-  }
-
-  function enhanceAll() {
-    document
-      .querySelectorAll('#sbody .spell-main-row')
-      .forEach(row => enhanceRow(row));
-  }
-
-  window.addSR = function addEnhancedSpellRow(data = {}) {
-    const duration = data.duration || '';
-    const castTime = data.castTime || '';
-    const componentsText = data.componentsText || '';
-    const enriched = {
-      ...data,
-      concentration: deriveBoolean(data.concentration, duration, /concentration/i),
-      ritual: deriveBoolean(data.ritual, castTime, /ritual/i),
-      material: deriveBoolean(data.material, componentsText, /(^|,\s*)M(?:\s|,|\(|$)/i),
-      effect: data.effect || data.effectSummary || firstSentence(data.details || '')
-    };
-
-    originalAddSR(enriched);
-
-    const rows = document.querySelectorAll('#sbody .spell-main-row');
-    enhanceRow(rows[rows.length - 1], enriched);
-    refreshSpellCards();
-    applySpellFilters();
-  };
-
-  window.resetSpellRows = function resetEnhancedSpellRows(rows) {
-    if (rows === undefined) {
-      originalResetSpellRows();
-      enhanceAll();
-      refreshSpellCards();
-      return;
-    }
-
-    const body = document.getElementById('sbody');
-    if (!body) return;
-
-    body.innerHTML = '';
-    (rows || []).forEach(row => window.addSR(row));
-    refreshSpellCards();
-  };
-
-  window.collectSpellRows = function collectEnhancedSpellRows() {
-    return Array.from(document.querySelectorAll('#sbody .spell-main-row')).map(row => {
-      const detailsRow = getDetailsRow(row);
-      const meta = rowMetadata(row);
-
-      return {
-        level: row.querySelector('.spell-level')?.value || '',
-        name: row.querySelector('.spell-name')?.value || '',
-        castTime: row.querySelector('.spell-cast-time')?.value || '',
-        range: row.querySelector('.spell-range')?.value || '',
-        concentration: row.querySelector('.spell-concentration')?.checked || false,
-        ritual: row.querySelector('.spell-ritual')?.checked || false,
-        material: row.querySelector('.spell-material')?.checked || false,
-        effect: row.querySelector('.spell-effect')?.value || '',
-        details: detailsRow?.querySelector('.spell-details')?.value || '',
-        open: detailsRow?.style.display !== 'none',
-        ...meta
-      };
-    });
-  };
-
-  async function loadLibrary() {
-    if (srdLoaded) return;
-
-    try {
-      const response = await fetch('data/srd-spells.json', { cache: 'no-store' });
-      const library = await response.json();
-      srdLibrary = (library.spells || []).sort(compareSpells);
-      srdLoaded = true;
-      enhanceAll();
-      refreshSpellCards();
-    } catch (error) {
-      console.warn('SRD spell library unavailable', error);
-    }
-  }
-
-  window.openSpellPicker = async function openSpellPicker() {
-    await loadLibrary();
-    const modal = document.getElementById('spellPickerModal');
-    if (!modal) return;
-
-    modal.hidden = false;
-    document.getElementById('spellPickerSearch')?.focus();
-    renderPicker();
-  };
-
-  window.closeSpellPicker = function closeSpellPicker() {
-    const modal = document.getElementById('spellPickerModal');
-    if (modal) modal.hidden = true;
-  };
-
-  window.addCustomSpell = function addCustomSpell() {
-    window.addSR({ source: 'Homebrew / Custom', school: 'Homebrew' });
-    setSpellView('list');
-    const rows = document.querySelectorAll('#sbody .spell-main-row');
-    rows[rows.length - 1]?.querySelector('.spell-name')?.focus();
-  };
-
-  window.addSpellFromLibrary = function addSpellFromLibrary(id) {
-    const spell = srdLibrary.find(candidate => candidate.id === id);
-    if (!spell) return;
-
-    window.addSR({
-      sourceId: spell.id,
-      source: spell.source,
-      name: spell.name,
-      level: spell.level,
-      school: spell.school,
-      classes: spell.classes,
-      castTime: spell.castTime,
-      range: spell.range,
-      duration: spell.duration,
-      componentsText: spell.componentsText,
-      concentration: deriveBoolean(spell.concentration, spell.duration, /concentration/i),
-      ritual: deriveBoolean(spell.ritual, spell.castTime, /ritual/i),
-      material: deriveBoolean(spell.material, spell.componentsText, /(^|,\s*)M(?:\s|,|\(|$)/i),
-      effect: spell.effectSummary || firstSentence(spell.details),
-      details: spell.details
-    });
-
-    closeSpellPicker();
-  };
-
-  function renderPicker() {
-    const query = (document.getElementById('spellPickerSearch')?.value || '').toLowerCase();
-    const level = document.getElementById('spellPickerLevel')?.value || 'all';
-    const school = document.getElementById('spellPickerSchool')?.value || 'all';
-    const spellClass = document.getElementById('spellPickerClass')?.value || 'all';
-
-    const results = srdLibrary
-      .filter(spell =>
-        (!query || [spell.name, spell.school, (spell.classes || []).join(' ')].join(' ').toLowerCase().includes(query)) &&
-        (level === 'all' || spell.level === level) &&
-        (school === 'all' || spell.school === school) &&
-        (spellClass === 'all' || (spell.classes || []).includes(spellClass))
-      )
-      .slice(0, 180);
-
-    const box = document.getElementById('spellPickerResults');
-    if (box) {
-      box.innerHTML = results.map(spell => `
-        <button type="button" class="spell-picker-result" onclick="addSpellFromLibrary('${esc(spell.id)}')">
-          <img src="${icon(spell.school)}" alt="" aria-hidden="true">
-          <span>
-            <strong>${esc(spell.name)}</strong>
-            <em>${esc(levelLabel(spell.level))} · ${esc(spell.school)} · ${esc((spell.classes || []).join(', '))}</em>
-          </span>
-          <span class="spell-picker-add">Add</span>
-        </button>
-      `).join('') || '<p class="spell-picker-empty">No matching SRD spells found.</p>';
-    }
-
-    const count = document.getElementById('spellPickerCount');
-    if (count) count.textContent = `Showing ${results.length} of ${srdLibrary.length} SRD spells`;
-  }
-
-  function currentFilters() {
-    return {
-      query: (document.getElementById('spellSearchInput')?.value || '').toLowerCase(),
-      level: document.getElementById('spellLevelFilter')?.value || 'all',
-      school: document.getElementById('spellSchoolFilter')?.value || 'all'
-    };
-  }
-
-  function matches(spell, filters) {
-    const school = spell.school || 'Homebrew';
-    return (
-      (!filters.query || [spell.name, spell.effect, spell.details, school].join(' ').toLowerCase().includes(filters.query)) &&
-      (filters.level === 'all' || spell.level === filters.level) &&
-      (filters.school === 'all' || school === filters.school)
-    );
-  }
-
-  window.applySpellFilters = function applySpellFilters() {
-    const filters = currentFilters();
-    const spells = window.collectSpellRows();
-
-    document.querySelectorAll('#sbody .spell-main-row').forEach((row, index) => {
-      const show = matches(spells[index] || {}, filters);
-      row.hidden = !show;
-      const detailsRow = getDetailsRow(row);
-      if (detailsRow) detailsRow.hidden = !show;
-    });
-
-    refreshSpellCards();
-  };
-
-  function properties(spell) {
-    const components = spell.componentsText || '';
-    const flags = [
-      ['V', /(^|,\s*)V(?:,|\s|$)/i.test(components)],
-      ['S', /(^|,\s*)S(?:,|\s|$)/i.test(components)],
-      ['M', spell.material],
-      ['C', spell.concentration],
-      ['R', spell.ritual]
-    ];
-
-    return flags.map(([label, active]) => `
-      <span class="spell-property-chip ${active ? 'active' : ''}" title="${label}">${label}</span>
-    `).join('');
-  }
-
-  function cardTeaser(spell) {
-    const customEffect = cleanText(spell.effect || '');
-    const autoSummary = firstSentence(spell.details || '');
-
-    if (customEffect && customEffect !== autoSummary) return customEffect;
-    return autoSummary || 'No short effect entered yet.';
-  }
-
-  function cardDetails(spell) {
-    return `
-      <div class="spell-card-detail-grid">
-        <div><strong>Level</strong><span>${esc(levelLabel(spell.level))}</span></div>
-        <div><strong>Casting Time</strong><span>${esc(spell.castTime || '—')}</span></div>
-        <div><strong>Range</strong><span>${esc(spell.range || '—')}</span></div>
-        <div><strong>Components</strong><span>${esc(spell.componentsText || '—')}</span></div>
-        <div><strong>Duration</strong><span>${esc(spell.duration || '—')}</span></div>
-        <div><strong>School</strong><span>${esc(spell.school || 'Homebrew')}</span></div>
-        <div><strong>Classes</strong><span>${esc(spell.classes || '—')}</span></div>
-        <div><strong>Source</strong><span>${esc(spell.source || 'Custom')}</span></div>
-      </div>
-      <div class="spell-card-rule-text">${text(spell.details || 'No full description entered yet.')}</div>
-    `;
-  }
-
-  window.refreshSpellCards = function refreshSpellCards() {
-    const box = document.getElementById('spellCardView');
-    if (!box) return;
-
-    const filters = currentFilters();
-    const spells = window.collectSpellRows()
-      .map((spell, index) => ({ ...spell, index }))
-      .filter(spell => spell.name && matches(spell, filters))
-      .sort(compareSpells);
-
-    box.innerHTML = spells.map(spell => `
-      <article class="spell-card">
-        <div class="spell-card-summary-row">
-          <img class="spell-school-icon" src="${icon(spell.school || 'Homebrew')}" alt="" aria-hidden="true">
-          <span class="spell-level-badge"><span>${esc(spell.level || '—')}</span></span>
-          <div class="spell-card-title-wrap">
-            <div class="spell-card-title">${esc(spell.name)}</div>
-            <div class="spell-card-school">${esc(spell.school || 'Homebrew')} · ${esc(levelLabel(spell.level))}</div>
-          </div>
-          <div class="spell-card-quick"><strong>Cast</strong><span>${esc(spell.castTime || '—')}</span></div>
-          <div class="spell-card-quick"><strong>Duration</strong><span>${esc(spell.duration || '—')}</span></div>
-          <div class="spell-card-quick"><strong>Range</strong><span>${esc(spell.range || '—')}</span></div>
-          <div class="spell-card-properties">${properties(spell)}</div>
-          <button class="spell-card-expand" type="button" onclick="toggleSpellCardDetails(this)" aria-expanded="false">Details ▾</button>
-        </div>
-        <div class="spell-card-teaser">${text(cardTeaser(spell))}</div>
-        <div class="spell-card-details" hidden>
-          ${cardDetails(spell)}
-          <div class="spell-card-actions">
-            <button class="spell-card-btn" type="button" onclick="editSpellFromCard(${spell.index})">Edit Spell</button>
-          </div>
-        </div>
-      </article>
-    `).join('') || '<p class="spell-picker-empty">No spells match the current filters.</p>';
-  };
-
-  window.toggleSpellCardDetails = function toggleSpellCardDetails(button) {
-    const details = button.closest('.spell-card')?.querySelector('.spell-card-details');
-    if (!details) return;
-
-    details.hidden = !details.hidden;
-    button.textContent = details.hidden ? 'Details ▾' : 'Details ▴';
-    button.setAttribute('aria-expanded', details.hidden ? 'false' : 'true');
-  };
-
-  window.editSpellFromCard = function editSpellFromCard(index) {
-    setSpellView('list');
-    const row = findRow(index);
-    row?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    row?.querySelector('.spell-name')?.focus();
-  };
-
-  window.setSpellView = function setSpellView(view = 'cards') {
-    const cards = document.getElementById('spellCardView');
-    const list = document.getElementById('spellListView');
-    const selected = view === 'list' ? 'list' : 'cards';
-
-    if (cards) cards.hidden = selected !== 'cards';
-    if (list) list.hidden = selected !== 'list';
-
-    document.querySelectorAll('.spell-view-btn').forEach(button => {
-      const active = button.dataset.spellView === selected;
-      button.classList.toggle('active', active);
-      button.setAttribute('aria-selected', active ? 'true' : 'false');
-    });
-
-    document.querySelectorAll('.spell-list-only-action').forEach(button => {
-      button.hidden = selected !== 'list';
-    });
-
-    localStorage.setItem('mythical-blue-spell-view', selected);
-    refreshSpellCards();
-  };
-
-  function bind() {
-    document.querySelectorAll('.spell-view-btn').forEach(button => {
-      button.addEventListener('click', () => setSpellView(button.dataset.spellView));
-    });
-
-    ['spellLevelFilter', 'spellSchoolFilter', 'spellSearchInput'].forEach(id => {
-      document.getElementById(id)?.addEventListener('input', applySpellFilters);
-    });
-
-    ['spellPickerSearch', 'spellPickerLevel', 'spellPickerSchool', 'spellPickerClass'].forEach(id => {
-      document.getElementById(id)?.addEventListener('input', renderPicker);
-    });
-
-    document.getElementById('spellPickerModal')?.addEventListener('click', event => {
-      if (event.target.id === 'spellPickerModal') closeSpellPicker();
-    });
-
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape') closeSpellPicker();
-    });
-
-    document.getElementById('sbody')?.addEventListener('input', refreshSpellCards);
-    document.getElementById('sbody')?.addEventListener('change', refreshSpellCards);
-
-    enhanceAll();
-    setSpellView(localStorage.getItem('mythical-blue-spell-view') || 'cards');
-    loadLibrary();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bind);
-  } else {
-    bind();
-  }
+  function esc(value = '') { return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function text(value = '') { return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function cleanText(value = '') { return String(value).replace(/\s+/g,' ').trim(); }
+  function firstSentence(value = '') { const c=cleanText(value); if(!c) return ''; const m=c.match(/^(.{1,240}?[.!?])(?:\s|$)/); const f=m?m[1]:c; return f.length>210?`${f.slice(0,207).trim()}…`:f; }
+  function icon(school='Homebrew') { return `assets/spell-icons/${SCHOOL_ICONS[school]||'homebrew'}.svg`; }
+  function areaIcon(shape='') { return `assets/spell-icons/areas/${AREA_ICONS[String(shape).toLowerCase()]||'generic'}.svg`; }
+  function deriveBoolean(explicitValue, fallbackText='', pattern) { return explicitValue===true || pattern.test(String(fallbackText||'')); }
+  function levelRank(level='') { if(level==='C') return 0; const n=Number.parseInt(level,10); return Number.isFinite(n)?n:99; }
+  function compareSpells(a,b) { const d=levelRank(a.level)-levelRank(b.level); return d || String(a.name||'').localeCompare(String(b.name||''),undefined,{sensitivity:'base'}); }
+  function levelLabel(level='') { return level==='C'?'Cantrip':level?`Level ${level}`:'Unassigned'; }
+  function findRow(index) { return document.querySelectorAll('#sbody .spell-main-row')[index]; }
+  function getDetailsRow(row) { return row?.nextElementSibling?.classList.contains('spell-details-row')?row.nextElementSibling:null; }
+  function libraryMatch(name='') { const n=String(name).toLowerCase(); return spellLibrary.find(s=>String(s.name).toLowerCase()===n); }
+  function rowMetadata(row) { return {
+    sourceId:row.dataset.sourceId||'', source:row.dataset.source||'', school:row.dataset.school||'Homebrew',
+    duration:row.dataset.duration||'', componentsText:row.dataset.componentsText||'', classes:row.dataset.classes||'',
+    attackSave:row.dataset.attackSave||'', damageHealing:row.dataset.damageHealing||'', damageType:row.dataset.damageType||'',
+    areaShape:row.dataset.areaShape||'', areaSize:row.dataset.areaSize||''
+  }; }
+  function syncCheckboxes(row,data={},match=null) { if(!row)return; const r=match||data; const duration=data.duration||row.dataset.duration||r?.duration||''; const cast=data.castTime||r?.castTime||''; const comp=data.componentsText||row.dataset.componentsText||r?.componentsText||''; const c=deriveBoolean(r?.concentration,duration,/concentration/i); const ritual=deriveBoolean(r?.ritual,cast,/ritual/i); const mat=deriveBoolean(r?.material,comp,/(^|,\s*)M(?:\s|,|\(|$)/i); const ci=row.querySelector('.spell-concentration'), ri=row.querySelector('.spell-ritual'), mi=row.querySelector('.spell-material'); if(ci)ci.checked=c;if(ri)ri.checked=ritual;if(mi)mi.checked=mat; }
+  function enhanceRow(row,data={}) { if(!row)return; const name=row.querySelector('.spell-name')?.value||data.name||''; const match=libraryMatch(name); const meta={
+    sourceId:data.sourceId||row.dataset.sourceId||match?.id||'', source:data.source||row.dataset.source||match?.source||'',
+    school:data.school||row.dataset.school||match?.school||'Homebrew', duration:data.duration||row.dataset.duration||match?.duration||'',
+    componentsText:data.componentsText||row.dataset.componentsText||match?.componentsText||'', classes:Array.isArray(data.classes)?data.classes.join(', '):data.classes||row.dataset.classes||(match?.classes||[]).join(', '),
+    attackSave:data.attackSave||row.dataset.attackSave||match?.attackSave||'', damageHealing:data.damageHealing||row.dataset.damageHealing||match?.damageHealing||'',
+    damageType:data.damageType||row.dataset.damageType||match?.damageType||'', areaShape:data.areaShape||row.dataset.areaShape||match?.areaShape||'', areaSize:data.areaSize||row.dataset.areaSize||match?.areaSize||''
+  }; Object.entries(meta).forEach(([k,v])=>row.dataset[k]=v||''); syncCheckboxes(row,data,match); }
+  function enhanceAll(){document.querySelectorAll('#sbody .spell-main-row').forEach(r=>enhanceRow(r));}
+
+  window.addSR=function(data={}){const duration=data.duration||'', cast=data.castTime||'', comp=data.componentsText||''; const enriched={...data, concentration:deriveBoolean(data.concentration,duration,/concentration/i), ritual:deriveBoolean(data.ritual,cast,/ritual/i), material:deriveBoolean(data.material,comp,/(^|,\s*)M(?:\s|,|\(|$)/i), effect:data.effect||data.effectSummary||firstSentence(data.details||'')}; originalAddSR(enriched); const rows=document.querySelectorAll('#sbody .spell-main-row'); enhanceRow(rows[rows.length-1],enriched); refreshSpellCards(); };
+  window.resetSpellRows=function(rows){ if(rows===undefined){originalResetSpellRows();enhanceAll();refreshSpellCards();return;} const b=document.getElementById('sbody'); if(!b)return; b.innerHTML=''; (rows||[]).forEach(r=>window.addSR(r)); refreshSpellCards(); };
+  window.collectSpellRows=function(){return Array.from(document.querySelectorAll('#sbody .spell-main-row')).map(row=>{const d=getDetailsRow(row);return {level:row.querySelector('.spell-level')?.value||'',name:row.querySelector('.spell-name')?.value||'',castTime:row.querySelector('.spell-cast-time')?.value||'',range:row.querySelector('.spell-range')?.value||'',concentration:row.querySelector('.spell-concentration')?.checked||false,ritual:row.querySelector('.spell-ritual')?.checked||false,material:row.querySelector('.spell-material')?.checked||false,effect:row.querySelector('.spell-effect')?.value||'',details:d?.querySelector('.spell-details')?.value||'',open:false,...rowMetadata(row)};});};
+
+  async function loadLibrary(){if(libraryLoaded)return;try{const r=await fetch('data/srd-spells.json',{cache:'no-store'});const j=await r.json();spellLibrary=(j.spells||[]).sort(compareSpells);libraryLoaded=true;enhanceAll();refreshSpellCards();}catch(e){console.warn('Spell library unavailable',e);}}
+  window.openSpellPicker=async function(){await loadLibrary();const m=document.getElementById('spellPickerModal');if(!m)return;m.hidden=false;document.getElementById('spellPickerSearch')?.focus();renderPicker();};
+  window.closeSpellPicker=function(){const m=document.getElementById('spellPickerModal');if(m)m.hidden=true;};
+  window.addSpellFromLibrary=function(id){const s=spellLibrary.find(x=>x.id===id);if(!s)return;window.addSR({...s,effect:s.effectSummary||firstSentence(s.details)});closeSpellPicker();};
+  function renderPicker(){const q=(document.getElementById('spellPickerSearch')?.value||'').toLowerCase(), level=document.getElementById('spellPickerLevel')?.value||'all', school=document.getElementById('spellPickerSchool')?.value||'all', cls=document.getElementById('spellPickerClass')?.value||'all'; const results=spellLibrary.filter(s=>(!q||[s.name,s.school,s.source,(s.classes||[]).join(' ')].join(' ').toLowerCase().includes(q))&&(level==='all'||s.level===level)&&(school==='all'||s.school===school)&&(cls==='all'||(s.classes||[]).includes(cls))).slice(0,220); const box=document.getElementById('spellPickerResults');if(box)box.innerHTML=results.map(s=>`<button type="button" class="spell-picker-result" onclick="addSpellFromLibrary('${esc(s.id)}')"><img src="${icon(s.school)}" alt="" aria-hidden="true"><span><strong>${esc(s.name)}</strong><em>${esc(levelLabel(s.level))} · ${esc(s.school)} · ${esc((s.classes||[]).join(', ')||'Homebrew')}</em><small>${esc(s.source||'Custom')}</small></span><span class="spell-picker-add">Add</span></button>`).join('')||'<p class="spell-picker-empty">No matching spells found.</p>';const c=document.getElementById('spellPickerCount');if(c)c.textContent=`Showing ${results.length} of ${spellLibrary.length} spells`;}
+
+  function filters(){return {query:(document.getElementById('spellSearchInput')?.value||'').toLowerCase(),level:document.getElementById('spellLevelFilter')?.value||'all',school:document.getElementById('spellSchoolFilter')?.value||'all'};}
+  function matches(s,f){const school=s.school||'Homebrew';return(!f.query||[s.name,s.effect,s.details,s.school,s.source,s.damageType,s.damageHealing].join(' ').toLowerCase().includes(f.query))&&(f.level==='all'||s.level===f.level)&&(f.school==='all'||school===f.school);}
+  window.applySpellFilters=function(){refreshSpellCards();};
+  function properties(s){const c=s.componentsText||'';const flags=[['V',/(^|,\s*)V(?:,|\s|$)/i.test(c)],['S',/(^|,\s*)S(?:,|\s|$)/i.test(c)],['M',s.material],['C',s.concentration],['R',s.ritual]];return flags.map(([l,a])=>`<span class="spell-property-chip ${a?'active':''}" title="${l}">${l}</span>`).join('');}
+  function cardTeaser(s){return cleanText(s.effect||'')||firstSentence(s.details||'')||'No short effect entered yet.';}
+  function rangeArea(s){const area=s.areaShape||s.areaSize;if(!area)return `<span>${esc(s.range||'—')}</span>`;return `<span>${esc(s.range||'—')}</span><span class="spell-area-inline"><img src="${areaIcon(s.areaShape)}" alt="" aria-hidden="true">${esc([s.areaSize,s.areaShape].filter(Boolean).join(' '))}</span>`;}
+  function effectBlock(s){const main=[s.damageHealing,s.damageType].filter(Boolean).join(' · ');if(!main)return '<span>—</span>';return `<span>${esc(main)}</span>`;}
+  function cardDetails(s){return `<div class="spell-card-detail-grid"><div><strong>Level</strong><span>${esc(levelLabel(s.level))}</span></div><div><strong>Casting Time</strong><span>${esc(s.castTime||'—')}</span></div><div><strong>Range / Area</strong><span>${esc(s.range||'—')}</span>${s.areaShape||s.areaSize?`<span class="spell-area-inline"><img src="${areaIcon(s.areaShape)}" alt="" aria-hidden="true">${esc([s.areaSize,s.areaShape].filter(Boolean).join(' '))}</span>`:''}</div><div><strong>Components</strong><span>${esc(s.componentsText||'—')}</span></div><div><strong>Duration</strong><span>${esc(s.duration||'—')}</span></div><div><strong>School</strong><span>${esc(s.school||'Homebrew')}</span></div><div><strong>Attack / Save</strong><span>${esc(s.attackSave||'—')}</span></div><div><strong>Damage / Healing</strong><span>${esc([s.damageHealing,s.damageType].filter(Boolean).join(' · ')||'—')}</span></div><div><strong>Classes</strong><span>${esc(s.classes||'—')}</span></div><div><strong>Source</strong><span>${esc(s.source||'Custom')}</span></div></div><div class="spell-card-rule-text">${text(s.details||'No full description entered yet.')}</div>`;}
+  window.refreshSpellCards=function(){const box=document.getElementById('spellCardView');if(!box)return;const f=filters();const spells=window.collectSpellRows().map((s,index)=>({...s,index})).filter(s=>s.name&&matches(s,f)).sort(compareSpells);box.innerHTML=spells.map(s=>`<article class="spell-card"><div class="spell-card-summary-row"><img class="spell-school-icon" src="${icon(s.school||'Homebrew')}" alt="" aria-hidden="true"><span class="spell-level-badge"><span>${esc(s.level||'—')}</span></span><div class="spell-card-title-wrap"><div class="spell-card-title">${esc(s.name)}</div><div class="spell-card-school">${esc(s.school||'Homebrew')} · ${esc((s.componentsText||'').replace(/\s*\(.*/,'' )||'No components')}</div></div><div class="spell-card-quick"><strong>Cast</strong><span>${esc(s.castTime||'—')}</span></div><div class="spell-card-quick"><strong>Duration</strong><span>${esc(s.duration||'—')}</span></div><div class="spell-card-quick spell-card-range"><strong>Range / Area</strong>${rangeArea(s)}</div><div class="spell-card-quick"><strong>Attack / Save</strong><span>${esc(s.attackSave||'—')}</span></div><div class="spell-card-quick spell-card-damage"><strong>Damage / Healing</strong>${effectBlock(s)}</div><button class="spell-card-expand" type="button" onclick="toggleSpellCardDetails(this)" aria-expanded="false">Details ▾</button></div><div class="spell-card-subrow"><div class="spell-card-properties">${properties(s)}</div><div class="spell-card-teaser">${text(cardTeaser(s))}</div></div><div class="spell-card-details" hidden>${cardDetails(s)}<div class="spell-card-actions"><button class="spell-card-btn" type="button" onclick="editSpellFromCard(${s.index})">Edit Spell</button></div></div></article>`).join('')||'<p class="spell-picker-empty">No spells match the current filters.</p>';};
+  window.toggleSpellCardDetails=function(btn){const d=btn.closest('.spell-card')?.querySelector('.spell-card-details');if(!d)return;d.hidden=!d.hidden;btn.textContent=d.hidden?'Details ▾':'Details ▴';btn.setAttribute('aria-expanded',d.hidden?'false':'true');};
+
+  function ensureEditor(){if(document.getElementById('spellEditorModal'))return;document.body.insertAdjacentHTML('beforeend',`<div id="spellEditorModal" class="spell-editor-backdrop" hidden><section class="spell-editor-modal" role="dialog" aria-modal="true" aria-labelledby="spellEditorTitle"><div class="spell-editor-header"><div><div class="sb-hdr" id="spellEditorTitle">Edit Spell</div><p>Adjust the structured card fields or write your own homebrew spell.</p></div><button type="button" class="spell-picker-close" onclick="closeSpellEditor()" aria-label="Close spell editor">×</button></div><div class="spell-editor-grid"><label><span>Name</span><input id="spellEditName"></label><label><span>Level</span><input id="spellEditLevel" placeholder="C, 1, 2…"></label><label><span>School</span><input id="spellEditSchool"></label><label><span>Source</span><input id="spellEditSource"></label><label><span>Casting Time</span><input id="spellEditCast"></label><label><span>Range</span><input id="spellEditRange"></label><label><span>Duration</span><input id="spellEditDuration"></label><label><span>Components</span><input id="spellEditComponents"></label><label><span>Classes</span><input id="spellEditClasses"></label><label><span>Attack / Save</span><input id="spellEditAttackSave"></label><label><span>Damage / Healing</span><input id="spellEditDamageHealing"></label><label><span>Damage Type / Effect</span><input id="spellEditDamageType"></label><label><span>Area Shape</span><select id="spellEditAreaShape"><option value="">None</option><option>Sphere</option><option>Cone</option><option>Square</option><option>Cube</option><option>Cylinder</option><option>Line</option><option>Emanation</option></select></label><label><span>Area Size</span><input id="spellEditAreaSize" placeholder="20 ft radius"></label></div><div class="spell-editor-checks"><label><input id="spellEditConcentration" type="checkbox"> Concentration</label><label><input id="spellEditRitual" type="checkbox"> Ritual</label><label><input id="spellEditMaterial" type="checkbox"> Material</label></div><label class="spell-editor-wide"><span>Short Card Effect</span><textarea id="spellEditEffect" rows="3"></textarea></label><label class="spell-editor-wide"><span>Full Rules Text</span><textarea id="spellEditDetails" rows="12"></textarea></label><div class="spell-editor-actions"><button type="button" class="add-btn spell-editor-delete" onclick="deleteEditedSpell()">Delete Spell</button><span></span><button type="button" class="add-btn" onclick="closeSpellEditor()">Cancel</button><button type="button" class="add-btn" onclick="saveSpellEditor()">Save Spell</button></div></section></div>`);document.getElementById('spellEditorModal')?.addEventListener('click',e=>{if(e.target.id==='spellEditorModal')closeSpellEditor();});}
+  function setVal(id,v=''){const el=document.getElementById(id);if(el)el.value=v||'';} function setCheck(id,v){const el=document.getElementById(id);if(el)el.checked=!!v;}
+  window.editSpellFromCard=function(index){ensureEditor();editingSpellIndex=index;const s=window.collectSpellRows()[index]||{};setVal('spellEditName',s.name);setVal('spellEditLevel',s.level);setVal('spellEditSchool',s.school==='Homebrew'?'':s.school);setVal('spellEditSource',s.source);setVal('spellEditCast',s.castTime);setVal('spellEditRange',s.range);setVal('spellEditDuration',s.duration);setVal('spellEditComponents',s.componentsText);setVal('spellEditClasses',s.classes);setVal('spellEditAttackSave',s.attackSave);setVal('spellEditDamageHealing',s.damageHealing);setVal('spellEditDamageType',s.damageType);setVal('spellEditAreaShape',s.areaShape);setVal('spellEditAreaSize',s.areaSize);setVal('spellEditEffect',s.effect);setVal('spellEditDetails',s.details);setCheck('spellEditConcentration',s.concentration);setCheck('spellEditRitual',s.ritual);setCheck('spellEditMaterial',s.material);document.getElementById('spellEditorModal').hidden=false;document.getElementById('spellEditName')?.focus();};
+  window.closeSpellEditor=function(){const m=document.getElementById('spellEditorModal');if(m)m.hidden=true;editingSpellIndex=null;};
+  window.saveSpellEditor=function(){if(editingSpellIndex===null)return;const row=findRow(editingSpellIndex),details=getDetailsRow(row);if(!row)return;const get=id=>document.getElementById(id)?.value||'';row.querySelector('.spell-name').value=get('spellEditName');row.querySelector('.spell-level').value=get('spellEditLevel');row.querySelector('.spell-cast-time').value=get('spellEditCast');row.querySelector('.spell-range').value=get('spellEditRange');row.querySelector('.spell-effect').value=get('spellEditEffect');row.querySelector('.spell-concentration').checked=document.getElementById('spellEditConcentration')?.checked||false;row.querySelector('.spell-ritual').checked=document.getElementById('spellEditRitual')?.checked||false;row.querySelector('.spell-material').checked=document.getElementById('spellEditMaterial')?.checked||false;if(details?.querySelector('.spell-details'))details.querySelector('.spell-details').value=get('spellEditDetails');Object.entries({school:get('spellEditSchool')||'Homebrew',source:get('spellEditSource')||'Homebrew / Custom',duration:get('spellEditDuration'),componentsText:get('spellEditComponents'),classes:get('spellEditClasses'),attackSave:get('spellEditAttackSave'),damageHealing:get('spellEditDamageHealing'),damageType:get('spellEditDamageType'),areaShape:get('spellEditAreaShape'),areaSize:get('spellEditAreaSize')}).forEach(([k,v])=>row.dataset[k]=v||'');closeSpellEditor();refreshSpellCards();};
+  window.deleteEditedSpell=function(){if(editingSpellIndex===null)return;if(!confirm('Remove this spell?'))return;const row=findRow(editingSpellIndex),details=getDetailsRow(row);details?.remove();row?.remove();closeSpellEditor();refreshSpellCards();};
+  window.addCustomSpell=function(){window.addSR({source:'Homebrew / Custom',school:'Homebrew'});const rows=document.querySelectorAll('#sbody .spell-main-row');editSpellFromCard(rows.length-1);};
+  window.setSpellView=function(){const cards=document.getElementById('spellCardView'),list=document.getElementById('spellListView');if(cards)cards.hidden=false;if(list)list.hidden=true;localStorage.setItem('mythical-blue-spell-view','cards');refreshSpellCards();};
+
+  function bind(){['spellLevelFilter','spellSchoolFilter','spellSearchInput'].forEach(id=>document.getElementById(id)?.addEventListener('input',applySpellFilters));['spellPickerSearch','spellPickerLevel','spellPickerSchool','spellPickerClass'].forEach(id=>document.getElementById(id)?.addEventListener('input',renderPicker));document.getElementById('spellPickerModal')?.addEventListener('click',e=>{if(e.target.id==='spellPickerModal')closeSpellPicker();});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSpellPicker();closeSpellEditor();}});document.getElementById('sbody')?.addEventListener('input',refreshSpellCards);document.getElementById('sbody')?.addEventListener('change',refreshSpellCards);enhanceAll();setSpellView();loadLibrary();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
 })();
