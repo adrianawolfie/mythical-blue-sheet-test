@@ -1341,3 +1341,126 @@
     justify-self: end;
   }
 }
+
+
+/* ─── EQUIPMENT TABLE · MOBILE CARD LAYOUT ───────────────────────────────
+   The desktop table remains unchanged. On smaller screens each equipment
+   item becomes a compact card, so users never need to horizontally scroll. */
+
+@media (max-width: 768px) {
+  .inventory-table-wrap {
+    overflow-x: visible;
+  }
+
+  .inventory-unified-table {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .inventory-unified-table thead {
+    display: none;
+  }
+
+  .inventory-unified-table tbody {
+    display: block;
+    padding: 6px;
+  }
+
+  .inventory-unified-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(86px, .55fr);
+    gap: 7px 9px;
+    margin-bottom: 7px;
+    padding: 7px;
+    border: 1px solid rgba(184,144,44,.4);
+    background: rgba(255,253,245,.16);
+  }
+
+  .inventory-unified-row td {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: auto !important;
+    min-width: 0;
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .inventory-unified-row td::before {
+    color: var(--navy);
+    font-family: 'Cinzel', serif;
+    font-size: 6.5px;
+    font-weight: 700;
+    letter-spacing: .75px;
+    text-transform: uppercase;
+  }
+
+  .inventory-unified-row td:nth-child(1) {
+    grid-column: 1 / -1;
+  }
+
+  .inventory-unified-row td:nth-child(1)::before {
+    content: "Item";
+  }
+
+  .inventory-unified-row td:nth-child(2)::before {
+    content: "Type";
+  }
+
+  .inventory-unified-row td:nth-child(3)::before {
+    content: "Qty";
+  }
+
+  .inventory-unified-row td:nth-child(4)::before {
+    content: "Value";
+  }
+
+  .inventory-unified-row td:nth-child(5)::before {
+    content: "Location";
+  }
+
+  .inventory-unified-row td:nth-child(6),
+  .inventory-unified-row td:nth-child(7) {
+    align-self: end;
+    justify-content: flex-end;
+  }
+
+  .inventory-unified-row td:nth-child(6)::before,
+  .inventory-unified-row td:nth-child(7)::before {
+    content: "";
+  }
+
+  .inventory-unified-row input,
+  .inventory-unified-row select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .inventory-unified-row .inventory-details-toggle {
+    align-self: flex-start;
+  }
+
+  .inventory-unified-row .inventory-remove {
+    align-self: flex-end;
+  }
+
+  .inventory-unified-row + .inventory-item-details-row {
+    display: block;
+    margin: -7px 6px 8px;
+  }
+
+  .inventory-unified-row + .inventory-item-details-row[style*="display: none"] {
+    display: none !important;
+  }
+
+  .inventory-unified-row + .inventory-item-details-row td {
+    display: block;
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .inventory-unified-row + .inventory-item-details-row .inventory-item-details-panel {
+    padding-top: 0;
+  }
+}

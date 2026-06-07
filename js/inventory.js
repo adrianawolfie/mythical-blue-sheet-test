@@ -32,7 +32,8 @@ const EQUIPPED_SLOT_DEFINITIONS = [
 
 
 const INVENTORY_ITEM_TYPE_OPTIONS = [
-  { value: "equipment", label: "Equipment" },
+  { value: "gear", label: "Gear" },
+  { value: "tool", label: "Tool" },
   { value: "magic", label: "Magic Item" },
   { value: "consumable", label: "Potion / Consumable" },
   { value: "other", label: "Other" }
@@ -41,7 +42,7 @@ const INVENTORY_ITEM_TYPE_OPTIONS = [
 const STANDARD_ITEM_LOCATIONS = [
   { value: "", label: "Unassigned" },
   { value: "carried", label: "Carried" },
-  { value: "worn", label: "Worn / Equipped" }
+  { value: "worn", label: "Equipped & Carried" }
 ];
 
 
@@ -320,11 +321,15 @@ function inventorySafeText(value = "") {
     .replace(/>/g, "&gt;");
 }
 
-function normalizeInventoryItem(data = {}, prefix = "item") {
+function normalizeInventoryType(type = "gear") {
+  return type === "equipment" ? "gear" : String(type || "gear");
+}
+
+function normalizeInventoryItem(data = {}, prefix = "gear") {
   return {
     id: String(data.id || inventoryId(prefix)),
     name: String(data.name || ""),
-    type: String(data.type || prefix || "equipment"),
+    type: normalizeInventoryType(data.type || prefix || "gear"),
     qty: String(data.qty || ""),
     value: String(data.value || ""),
     location: String(data.location || ""),
@@ -377,7 +382,9 @@ function inventoryLocationCell(value = "") {
   `;
 }
 
-function inventoryTypeCell(value = "equipment") {
+function inventoryTypeCell(value = "gear") {
+  const normalizedValue = normalizeInventoryType(value);
+
   return `
     <td>
       <select class="inventory-item-type">
@@ -393,7 +400,7 @@ function inventoryTypeCell(value = "equipment") {
   `;
 }
 
-function inventoryTypeLabel(type = "equipment") {
+function inventoryTypeLabel(type = "gear") {
   return INVENTORY_ITEM_TYPE_OPTIONS.find(option => option.value === type)?.label || "Other";
 }
 
@@ -486,7 +493,7 @@ function getEquippableItems() {
     .querySelectorAll("#inventoryItemsBody .inventory-unified-row")
     .forEach(row => {
       const name = row.querySelector(".inventory-item-name")?.value.trim() || "";
-      const type = row.querySelector(".inventory-item-type")?.value || "equipment";
+      const type = row.querySelector(".inventory-item-type")?.value || "gear";
       if (!name) return;
 
       const item = { id: row.dataset.itemId, label: name };
@@ -602,7 +609,7 @@ function applyInventoryFilters() {
     .querySelectorAll("#inventoryItemsBody .inventory-unified-row")
     .forEach(row => {
       const location = row.querySelector(".inventory-location")?.value || "";
-      const type = row.querySelector(".inventory-item-type")?.value || "equipment";
+      const type = row.querySelector(".inventory-item-type")?.value || "gear";
       const searchable = [
         row.querySelector(".inventory-item-name")?.value || "",
         inventoryTypeLabel(type),
@@ -700,7 +707,7 @@ function addUnifiedInventoryRow(data = {}) {
   const body = document.getElementById("inventoryItemsBody");
   if (!body) return;
 
-  const item = normalizeInventoryItem(data, data.type || "equipment");
+  const item = normalizeInventoryItem(data, data.type || "gear");
 
   const row = document.createElement("tr");
   row.className = "inventory-unified-row inventory-item-row";
@@ -725,7 +732,7 @@ function addUnifiedInventoryRow(data = {}) {
 }
 
 function addInventoryEquipmentRow(data = {}) {
-  addUnifiedInventoryRow({ ...data, type: data.type || "equipment" });
+  addUnifiedInventoryRow({ ...data, type: normalizeInventoryType(data.type || "gear") });
 }
 
 function addInventoryMagicItemRow(data = {}) {
@@ -939,7 +946,7 @@ function collectUnifiedInventoryRows() {
       return {
         id: row.dataset.itemId,
         name: row.querySelector(".inventory-item-name")?.value.trim() || "",
-        type: row.querySelector(".inventory-item-type")?.value || "equipment",
+        type: normalizeInventoryType(row.querySelector(".inventory-item-type")?.value || "gear"),
         qty: row.querySelector(".inventory-item-qty")?.value.trim() || "",
         value: row.querySelector(".inventory-item-value")?.value.trim() || "",
         location: row.querySelector(".inventory-location")?.value.trim() || "",
@@ -951,7 +958,9 @@ function collectUnifiedInventoryRows() {
 }
 
 function collectInventoryEquipmentRows() {
-  return collectUnifiedInventoryRows().filter(row => row.type === "equipment");
+  return collectUnifiedInventoryRows().filter(
+    row => !["magic", "consumable"].includes(row.type)
+  );
 }
 
 function collectInventoryMagicItemRows() {
@@ -969,11 +978,17 @@ function mergeLegacyInventoryRows({
   consumables = []
 } = {}) {
   if (Array.isArray(inventoryItems) && inventoryItems.length) {
-    return inventoryItems.map(item => ({ ...item, type: item.type || "equipment" }));
+    return inventoryItems.map(item => ({
+      ...item,
+      type: normalizeInventoryType(item.type || "gear")
+    }));
   }
 
   return [
-    ...(equipment || []).map(item => ({ ...item, type: item.type || "equipment" })),
+    ...(equipment || []).map(item => ({
+      ...item,
+      type: normalizeInventoryType(item.type || "gear")
+    })),
     ...(magicItems || []).map(item => ({ ...item, type: item.type || "magic" })),
     ...(consumables || []).map(item => ({ ...item, type: item.type || "consumable" }))
   ];
