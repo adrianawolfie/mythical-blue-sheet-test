@@ -275,7 +275,14 @@
   }
 
   function renderDaysTraveled(daysTraveled) {
-    setText("calDaysTraveled", String(daysTraveled || 0));
+    var normalizedDays = Math.max(0, Number(daysTraveled) || 0);
+    var input = document.getElementById("calDaysTraveledInput");
+
+    if (input && document.activeElement !== input) {
+      input.value = String(normalizedDays);
+    }
+
+    setText("calSheetDaysTraveled", String(normalizedDays));
   }
 
   function renderSheetBar(date) {
@@ -387,6 +394,27 @@
     );
   }
 
+  async function setTraveledDaysTotal(rawValue, input) {
+    var currentDays = Number(savedState.daysTraveled) || 0;
+    var requestedDays = Math.max(0, Math.floor(Number(rawValue) || 0));
+    var delta = requestedDays - currentDays;
+
+    if (!delta) {
+      if (input) input.value = String(currentDays);
+      return;
+    }
+
+    await saveState(
+      {
+        ...savedState,
+        calendarDate: advance(savedState.calendarDate, delta),
+        daysTraveled: requestedDays
+      },
+      input,
+      "Updated ✓"
+    );
+  }
+
   function schedulePoll() {
     clearTimeout(pollTimer);
 
@@ -433,6 +461,19 @@
     });
 
     document
+      .getElementById("calTravelMinusMonth")
+      ?.addEventListener("click", function (event) {
+        // Materra months contain 28 standard days.
+        changeTraveledDays(-28, event.currentTarget);
+      });
+
+    document
+      .getElementById("calTravelMinusWeek")
+      ?.addEventListener("click", function (event) {
+        changeTraveledDays(-7, event.currentTarget);
+      });
+
+    document
       .getElementById("calTravelMinusDay")
       ?.addEventListener("click", function (event) {
         changeTraveledDays(-1, event.currentTarget);
@@ -456,6 +497,18 @@
         // Materra months contain 28 standard days.
         changeTraveledDays(28, event.currentTarget);
       });
+
+    var daysTraveledInput = document.getElementById("calDaysTraveledInput");
+
+    daysTraveledInput?.addEventListener("change", function () {
+      setTraveledDaysTotal(daysTraveledInput.value, daysTraveledInput);
+    });
+
+    daysTraveledInput?.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        daysTraveledInput.blur();
+      }
+    });
 
     schedulePoll();
   }

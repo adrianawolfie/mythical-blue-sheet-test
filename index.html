@@ -69,11 +69,23 @@
 
     <div class="cal-travel">
       <div class="cal-travel-heading">
-        <span class="cal-travel-label">Days Traveled</span>
-        <span class="cal-travel-count" id="calDaysTraveled">0</span>
+        <label class="cal-travel-label" for="calDaysTraveledInput">Days Traveled</label>
+        <input
+          id="calDaysTraveledInput"
+          class="cal-travel-count-input"
+          type="number"
+          min="0"
+          step="1"
+          inputmode="numeric"
+          value="0"
+          aria-label="Total days traveled"
+          title="Enter the total days traveled"
+        >
       </div>
 
       <div class="cal-travel-controls">
+        <button type="button" class="cal-travel-btn" id="calTravelMinusMonth">−1 Month</button>
+        <button type="button" class="cal-travel-btn" id="calTravelMinusWeek">−1 Week</button>
         <button type="button" class="cal-travel-btn" id="calTravelMinusDay">−1 Day</button>
         <button type="button" class="cal-travel-btn" id="calTravelAddDay">+1 Day</button>
         <button type="button" class="cal-travel-btn" id="calTravelAddWeek">+1 Week</button>
@@ -272,6 +284,8 @@
       <span class="cal-sheet-lbl">✦ Era of Materra</span>
       <span class="cal-sheet-sep">·</span>
       <span class="cal-sheet-date" id="calSheetDisplay">Loading…</span>
+      <span class="cal-sheet-sep">·</span>
+      <span class="cal-sheet-travel">Days Traveled: <strong id="calSheetDaysTraveled">0</strong></span>
     </div>
     <!-- ═════════════════════════════════════════════════════════════ -->
 

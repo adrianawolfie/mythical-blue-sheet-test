@@ -318,3 +318,70 @@
     font-size: 7.5px;
   }
 }
+
+
+/* ── ADJUSTABLE DAYS TRAVELED ───────────────────────────────────────────── */
+
+.cal-travel-count-input {
+  width: 58px;
+  height: 26px;
+  padding: 0 4px;
+  border: none;
+  border-bottom: 1px dotted rgba(184, 144, 44, 0.66);
+  border-radius: 0;
+  background: transparent;
+  color: var(--gold-deep);
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.cal-travel-count-input:focus {
+  border-bottom-color: var(--gold-deep);
+  background: rgba(255, 253, 245, 0.22);
+}
+
+.cal-travel-count-input::-webkit-inner-spin-button,
+.cal-travel-count-input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.cal-sheet-travel {
+  color: var(--gold-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cal-sheet-travel strong {
+  color: var(--navy-deep);
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 11px;
+}
+
+@media (max-width: 768px) {
+  .cal-travel-count-input {
+    width: 52px;
+    height: 24px;
+    font-size: 14px;
+  }
+
+  .cal-sheet-travel {
+    width: 100%;
+    font-size: 8px;
+    text-align: right;
+  }
+
+  .cal-sheet-travel strong {
+    font-size: 10px;
+  }
+}
