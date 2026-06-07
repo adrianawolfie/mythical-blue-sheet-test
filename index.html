@@ -461,12 +461,12 @@
 
 <div class="sb-card compact-main-coinage-card">
   <div class="sb-hdr">Coinage</div>
-  <div class="compact-coinsrow">
-    <label><span>CP</span><input type="text" placeholder="0" data-coinage-key="copperPieces"></label>
-    <label><span>SP</span><input type="text" placeholder="0" data-coinage-key="silverPieces"></label>
-    <label><span>EP</span><input type="text" placeholder="0" data-coinage-key="electrumPieces"></label>
-    <label class="compact-gold-coin"><span>GP</span><input type="text" placeholder="0" data-coinage-key="goldPieces"></label>
-    <label><span>PP</span><input type="text" placeholder="0" data-coinage-key="platinumPieces"></label>
+  <div class="coinsrow compact-old-coinsrow">
+    <div class="cbox2"><label>CP</label><input type="text" placeholder="0" data-coinage-key="copperPieces"></div>
+    <div class="cbox2"><label>SP</label><input type="text" placeholder="0" data-coinage-key="silverPieces"></div>
+    <div class="cbox2"><label>EP</label><input type="text" placeholder="0" data-coinage-key="electrumPieces"></div>
+    <div class="cbox2 gold-coin"><label>GP</label><input type="text" placeholder="0" data-coinage-key="goldPieces"></div>
+    <div class="cbox2"><label>PP</label><input type="text" placeholder="0" data-coinage-key="platinumPieces"></div>
   </div>
 </div>
 
@@ -568,13 +568,32 @@
       <div class="inventory-page-grid">
 
         <div class="sb-card inventory-coinage-card">
-          <div class="sb-hdr">Coinage</div>
-          <div class="inventory-coinsrow">
-            <label><span>CP</span><input type="text" placeholder="0" data-field="copperPieces" data-coinage-key="copperPieces"></label>
-            <label><span>SP</span><input type="text" placeholder="0" data-field="silverPieces" data-coinage-key="silverPieces"></label>
-            <label><span>EP</span><input type="text" placeholder="0" data-field="electrumPieces" data-coinage-key="electrumPieces"></label>
-            <label class="inventory-gold-coin"><span>GP</span><input type="text" placeholder="0" data-field="goldPieces" data-coinage-key="goldPieces"></label>
-            <label><span>PP</span><input type="text" placeholder="0" data-field="platinumPieces" data-coinage-key="platinumPieces"></label>
+          <div class="sb-hdr">Coinage & Gems</div>
+
+          <div class="coinsrow inventory-old-coinsrow">
+            <div class="cbox2"><label>CP</label><input type="text" placeholder="0" data-field="copperPieces" data-coinage-key="copperPieces"></div>
+            <div class="cbox2"><label>SP</label><input type="text" placeholder="0" data-field="silverPieces" data-coinage-key="silverPieces"></div>
+            <div class="cbox2"><label>EP</label><input type="text" placeholder="0" data-field="electrumPieces" data-coinage-key="electrumPieces"></div>
+            <div class="cbox2 gold-coin"><label>GP</label><input type="text" placeholder="0" data-field="goldPieces" data-coinage-key="goldPieces"></div>
+            <div class="cbox2"><label>PP</label><input type="text" placeholder="0" data-field="platinumPieces" data-coinage-key="platinumPieces"></div>
+          </div>
+
+          <div class="inventory-gems-section">
+            <div class="inventory-subheading">Gems & Valuables</div>
+            <table class="inventory-table inventory-gems-table">
+              <thead>
+                <tr>
+                  <th>Gem / Valuable</th>
+                  <th class="inventory-qty-col">Qty</th>
+                  <th class="inventory-value-col">Value</th>
+                  <th class="inventory-location-col">Location</th>
+                  <th>Notes</th>
+                  <th class="inventory-remove-col"></th>
+                </tr>
+              </thead>
+              <tbody id="inventoryGemsBody"></tbody>
+            </table>
+            <button type="button" class="inventory-add" onclick="addInventoryGemRow()">+ Add Gem / Valuable</button>
           </div>
         </div>
 

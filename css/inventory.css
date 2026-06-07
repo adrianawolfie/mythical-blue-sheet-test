@@ -407,3 +407,81 @@
     width: 16px;
   }
 }
+
+
+/* ─── COINAGE & GEMS REFINEMENT ──────────────────────────────
+   Restore the original coin-circle layout while keeping the Main copy compact. */
+
+.compact-main-coinage-card .coinsrow,
+.inventory-coinage-card .coinsrow {
+  display: flex;
+  justify-content: space-around;
+  gap: 7px;
+  padding: 8px 8px 9px;
+}
+
+.compact-main-coinage-card .cbox2,
+.inventory-coinage-card .cbox2 {
+  flex: 0 1 62px;
+}
+
+.compact-main-coinage-card .cbox2 label,
+.inventory-coinage-card .cbox2 label {
+  display: block;
+}
+
+.compact-main-coinage-card .cbox2 input,
+.inventory-coinage-card .cbox2 input {
+  width: 100%;
+}
+
+.compact-main-coinage-card .coinsrow {
+  gap: 5px;
+  padding: 6px 8px 7px;
+}
+
+.compact-main-coinage-card .cbox2 {
+  flex-basis: 54px;
+}
+
+.inventory-gems-section {
+  padding: 0 7px 7px;
+}
+
+.inventory-subheading {
+  padding: 7px 0 5px;
+  border-top: 1px dotted rgba(184,144,44,.5);
+  color: var(--navy);
+  font-family: 'Cinzel', serif;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.inventory-gems-table th:nth-child(1) {
+  width: 25%;
+}
+
+.inventory-gems-table th:nth-child(5) {
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .compact-main-coinage-card .coinsrow,
+  .inventory-coinage-card .coinsrow {
+    gap: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .compact-main-coinage-card .cbox2,
+  .inventory-coinage-card .cbox2 {
+    min-width: 0;
+    flex-basis: 48px;
+  }
+
+  .inventory-gems-table {
+    table-layout: auto;
+  }
+}

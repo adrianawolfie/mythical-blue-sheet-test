@@ -4,6 +4,7 @@
 const DEFAULT_INVENTORY_EQUIPMENT_ROWS = [];
 const DEFAULT_INVENTORY_MAGIC_ITEM_ROWS = [];
 const DEFAULT_INVENTORY_CONSUMABLE_ROWS = [];
+const DEFAULT_INVENTORY_GEM_ROWS = [];
 const DEFAULT_STORAGE_LOCATION_ROWS = [];
 const DEFAULT_INVENTORY_ATTUNEMENT_ROWS = [
   { item: "", notes: "" },
@@ -15,7 +16,8 @@ const EQUIPPED_SLOT_DEFINITIONS = [
   { key: "head", label: "Head" },
   { key: "neck", label: "Neck" },
   { key: "cape", label: "Cape" },
-  { key: "armor", label: "Armor / Clothing" },
+  { key: "armor", label: "Armor" },
+  { key: "clothing", label: "Clothing" },
   { key: "mainHand", label: "Main Hand" },
   { key: "offHand", label: "Off Hand" },
   { key: "ring1", label: "Ring 1" },
@@ -190,14 +192,17 @@ function refreshAllLocationSelects() {
 }
 
 function getEquippableItems() {
-  const items = [];
+  const equipment = [];
+  const magicItems = [];
+  const storageItems = [];
 
   document
     .querySelectorAll("#inventoryEquipmentBody .inventory-equipment-row")
     .forEach(row => {
       const name = row.querySelector(".inventory-equipment-name")?.value.trim() || "";
+
       if (name) {
-        items.push({
+        equipment.push({
           id: row.dataset.itemId,
           label: name
         });
@@ -208,31 +213,58 @@ function getEquippableItems() {
     .querySelectorAll("#inventoryMagicItemsBody .inventory-magic-row")
     .forEach(row => {
       const name = row.querySelector(".inventory-magic-name")?.value.trim() || "";
+
       if (name) {
-        items.push({
+        magicItems.push({
           id: row.dataset.itemId,
           label: name
         });
       }
     });
 
-  return items;
+  getStorageLocations()
+    .filter(location => location.name)
+    .forEach(location => {
+      storageItems.push({
+        id: `storage:${location.id}`,
+        label: location.name
+      });
+    });
+
+  return {
+    equipment,
+    magicItems,
+    storageItems
+  };
+}
+
+function equippedOptionGroup(label, items) {
+  if (!items.length) return "";
+
+  return `
+    <optgroup label="${inventorySafeValue(label)}">
+      ${items
+        .map(item => `
+          <option value="${inventorySafeValue(item.id)}">
+            ${inventorySafeValue(item.label)}
+          </option>
+        `)
+        .join("")}
+    </optgroup>
+  `;
 }
 
 function refreshEquippedSelect(select) {
   if (!select) return;
 
   const previous = select.value || select.dataset.selectedItemId || "";
+  const groups = getEquippableItems();
 
   select.innerHTML = `
     <option value="">— None —</option>
-    ${getEquippableItems()
-      .map(item => `
-        <option value="${inventorySafeValue(item.id)}">
-          ${inventorySafeValue(item.label)}
-        </option>
-      `)
-      .join("")}
+    ${equippedOptionGroup("Equipment", groups.equipment)}
+    ${equippedOptionGroup("Magic Items", groups.magicItems)}
+    ${equippedOptionGroup("Storage / Bags", groups.storageItems)}
   `;
 
   select.value = Array.from(select.options).some(option => option.value === previous)
@@ -369,6 +401,46 @@ function addInventoryConsumableRow(data = {}) {
   refreshInventoryDependentOptions();
 }
 
+function addInventoryGemRow(data = {}) {
+  const body = document.getElementById("inventoryGemsBody");
+  if (!body) return;
+
+  const gem = {
+    id: String(data.id || inventoryId("gem")),
+    name: String(data.name || ""),
+    qty: String(data.qty || ""),
+    value: String(data.value || ""),
+    location: String(data.location || ""),
+    notes: String(data.notes || "")
+  };
+
+  const row = document.createElement("tr");
+  row.className = "inventory-gem-row";
+  row.dataset.itemId = gem.id;
+
+  row.innerHTML =
+    inventoryInputCell("inventory-gem-name", gem.name, "Diamond, ruby, diamond dust…") +
+    inventoryInputCell("inventory-gem-qty", gem.qty, "1") +
+    inventoryInputCell("inventory-gem-value", gem.value, "—") +
+    inventoryLocationCell(gem.location) +
+    inventoryInputCell("inventory-gem-notes", gem.notes, "Notes…") +
+    inventoryRemoveButton("gem or valuable");
+
+  body.appendChild(row);
+
+  const locationSelect = row.querySelector(".inventory-location");
+
+  locationSelect?.addEventListener("change", () => {
+    locationSelect.dataset.selectedLocation = locationSelect.value;
+  });
+
+  row.querySelector(".inventory-remove")?.addEventListener("click", () => {
+    row.remove();
+  });
+
+  refreshAllLocationSelects();
+}
+
 function addInventoryAttunementRow(data = {}) {
   const body = document.getElementById("inventoryAttunementBody");
   if (!body) return;
@@ -413,15 +485,15 @@ function addStorageLocationRow(data = {}) {
 
   row.querySelector(".storage-location-name")?.addEventListener(
     "input",
-    refreshAllLocationSelects
+    refreshInventoryDependentOptions
   );
 
   row.querySelector(".inventory-remove")?.addEventListener("click", () => {
     row.remove();
-    refreshAllLocationSelects();
+    refreshInventoryDependentOptions();
   });
 
-  refreshAllLocationSelects();
+  refreshInventoryDependentOptions();
 }
 
 function renumberInventoryAttunementRows() {
@@ -531,6 +603,27 @@ function collectInventoryConsumableRows() {
   );
 }
 
+function collectInventoryGemRows() {
+  return Array.from(
+    document.querySelectorAll("#inventoryGemsBody .inventory-gem-row")
+  )
+    .map(row => ({
+      id: row.dataset.itemId,
+      name: row.querySelector(".inventory-gem-name")?.value.trim() || "",
+      qty: row.querySelector(".inventory-gem-qty")?.value.trim() || "",
+      value: row.querySelector(".inventory-gem-value")?.value.trim() || "",
+      location: row.querySelector(".inventory-location")?.value.trim() || "",
+      notes: row.querySelector(".inventory-gem-notes")?.value.trim() || ""
+    }))
+    .filter(row =>
+      row.name ||
+      row.qty ||
+      row.value ||
+      row.location ||
+      row.notes
+    );
+}
+
 function collectInventoryAttunementRows() {
   return Array.from(
     document.querySelectorAll("#inventoryAttunementBody .inventory-attunement-row")
@@ -544,6 +637,7 @@ function resetInventoryRows({
   equipment = DEFAULT_INVENTORY_EQUIPMENT_ROWS,
   magicItems = DEFAULT_INVENTORY_MAGIC_ITEM_ROWS,
   consumables = DEFAULT_INVENTORY_CONSUMABLE_ROWS,
+  gems = DEFAULT_INVENTORY_GEM_ROWS,
   attunement = DEFAULT_INVENTORY_ATTUNEMENT_ROWS,
   storageLocations = DEFAULT_STORAGE_LOCATION_ROWS,
   equippedSlots = {}
@@ -551,12 +645,14 @@ function resetInventoryRows({
   const equipmentBody = document.getElementById("inventoryEquipmentBody");
   const magicBody = document.getElementById("inventoryMagicItemsBody");
   const consumablesBody = document.getElementById("inventoryConsumablesBody");
+  const gemsBody = document.getElementById("inventoryGemsBody");
   const attunementBody = document.getElementById("inventoryAttunementBody");
   const storageBody = document.getElementById("storageLocationsBody");
 
   if (equipmentBody) equipmentBody.innerHTML = "";
   if (magicBody) magicBody.innerHTML = "";
   if (consumablesBody) consumablesBody.innerHTML = "";
+  if (gemsBody) gemsBody.innerHTML = "";
   if (attunementBody) attunementBody.innerHTML = "";
   if (storageBody) storageBody.innerHTML = "";
 
@@ -564,6 +660,7 @@ function resetInventoryRows({
   (equipment || []).forEach(addInventoryEquipmentRow);
   (magicItems || []).forEach(addInventoryMagicItemRow);
   (consumables || []).forEach(addInventoryConsumableRow);
+  (gems || []).forEach(addInventoryGemRow);
   (attunement || []).forEach(addInventoryAttunementRow);
 
   renumberInventoryAttunementRows();

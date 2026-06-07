@@ -135,3 +135,23 @@ customLists.equippedSlots
 
 Coinage is mirrored between Main and Inventory, while only one canonical copy is
 stored in the character fields.
+
+
+## Inventory phase 3
+
+Equipped & Carried now supports:
+
+```text
+Equipment items
+Magic items
+Storage / bags
+```
+
+Armor and Clothing are separate equipped slots.
+
+Coinage uses the original coin-box layout again. The Inventory page also has a
+structured Gems & Valuables table stored under:
+
+```text
+customLists.gems
+```

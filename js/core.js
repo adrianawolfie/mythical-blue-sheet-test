@@ -388,6 +388,7 @@ customLists: {
   inventoryEquipment: collectInventoryEquipmentRows(),
   magicItems: collectInventoryMagicItemRows(),
   consumables: collectInventoryConsumableRows(),
+  gems: collectInventoryGemRows(),
   attunementSlots: collectInventoryAttunementRows(),
   storageLocations: collectStorageLocations(),
   equippedSlots: collectEquippedSlots(),
@@ -417,6 +418,7 @@ resetInventoryRows({
   equipment: character.customLists?.inventoryEquipment || [],
   magicItems: character.customLists?.magicItems || [],
   consumables: character.customLists?.consumables || [],
+  gems: character.customLists?.gems || [],
   attunement:
     character.customLists?.attunementSlots ||
     DEFAULT_INVENTORY_ATTUNEMENT_ROWS,
