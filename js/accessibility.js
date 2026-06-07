@@ -34,28 +34,38 @@
       const href = styleSheet.href || "";
 
       // Scale the main character-sheet stylesheet and the calendar stylesheet.
-      // Accessibility controls themselves stay a stable size because their
-      // styles live in css/accessibility.css.
+      // styles.css is now an import-only entry point, so imported CSS files
+      // must also be traversed recursively.
       const isScalableStylesheet =
         href.includes("/css/styles.css") ||
         href.includes("/css/calendar.css");
 
       if (!isScalableStylesheet) return;
 
-      let rules;
-
-      try {
-        rules = styleSheet.cssRules;
-      } catch {
-        return;
-      }
-
-      collectFromRuleList(rules);
+      collectFromStyleSheet(styleSheet);
     });
+  }
+
+  function collectFromStyleSheet(styleSheet) {
+    let rules;
+
+    try {
+      rules = styleSheet.cssRules;
+    } catch {
+      return;
+    }
+
+    collectFromRuleList(rules);
   }
 
   function collectFromRuleList(rules) {
     Array.from(rules || []).forEach(rule => {
+      // CSS @import rules expose their imported stylesheet through
+      // rule.styleSheet rather than rule.cssRules.
+      if (rule.styleSheet) {
+        collectFromStyleSheet(rule.styleSheet);
+      }
+
       if (rule.cssRules) {
         collectFromRuleList(rule.cssRules);
       }
