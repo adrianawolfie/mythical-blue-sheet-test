@@ -186,8 +186,8 @@ background-position: top center;
     padding: 0 30px;
   }
   .hdr-row { display: grid; gap: 18px; margin-bottom: 12px; }
-  .hdr-row.r1 { grid-template-columns: 2fr 1.5fr 1.5fr .55fr; }
-.hdr-row.r2 { grid-template-columns: 1.5fr 1fr 2fr; }
+  .hdr-row.r1 { grid-template-columns: 2fr 1.25fr 1.45fr .85fr; }
+.hdr-row.r2 { grid-template-columns: .55fr 1.15fr 1.5fr 2fr; }
 .hdr-row.r3 {
   grid-template-columns: 78px auto 78px 1fr 95px;
   gap: 10px;

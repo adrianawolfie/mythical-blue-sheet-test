@@ -677,7 +677,7 @@ function collectNamedFields() {
     "toolProficiencies",
     "otherProficiencies",
     "classLevel",
-    "subclass",
+    "classSubclass",
     "experience"
   ].forEach(key => delete namedFields[key]);
 
@@ -760,41 +760,61 @@ function migrateLegacyEquipmentAndProficiencies(namedFields = {}) {
 function migrateLegacyClassFields(namedFields = {}) {
   const migrated = { ...namedFields };
 
-  const existingClassSubclass = String(migrated.classSubclass || "").trim();
-  const existingLevel = String(migrated.level || "").trim();
+  const finalClass = String(migrated.class || "").trim();
+  const finalSubclass = String(migrated.subclass || "").trim();
+  const finalLevel = String(migrated.level || "").trim();
 
-  if (!existingClassSubclass) {
-    const legacyClassLevel = String(migrated.classLevel || "").trim();
-    const legacySubclass = String(migrated.subclass || "").trim();
+  let className = finalClass;
+  let subclassName = finalSubclass;
+  let parsedLevel = finalLevel;
 
-    let className = legacyClassLevel;
-    let parsedLevel = "";
+  // Read the intermediate test format: "Class · Subclass".
+  const combinedClassSubclass = String(migrated.classSubclass || "").trim();
 
-    const levelMatch = legacyClassLevel.match(/^(.*?)(?:\s+|\s*[-–—|·]\s*)(\d{1,2})$/);
+  if (combinedClassSubclass && (!className || !subclassName)) {
+    const combinedParts = combinedClassSubclass
+      .split(/\s*[·|]\s*/)
+      .map(value => value.trim())
+      .filter(Boolean);
 
-    if (levelMatch) {
-      className = levelMatch[1].trim();
-      parsedLevel = levelMatch[2];
+    if (!className && combinedParts.length) {
+      className = combinedParts.shift();
     }
 
-    const parts = [className, legacySubclass]
-      .map(value => String(value || "").trim())
-      .filter(Boolean)
-      .filter((value, index, array) =>
-        array.findIndex(other =>
-          other.toLowerCase() === value.toLowerCase()
-        ) === index
-      );
-
-    migrated.classSubclass = parts.join(" · ");
-
-    if (!existingLevel && parsedLevel) {
-      migrated.level = parsedLevel;
+    if (!subclassName && combinedParts.length) {
+      subclassName = combinedParts.join(" · ");
     }
   }
 
+  // Read the original format: e.g. "Fighter 5" plus a separate subclass.
+  const legacyClassLevel = String(migrated.classLevel || "").trim();
+
+  if (legacyClassLevel) {
+    let parsedClass = legacyClassLevel;
+
+    const levelMatch = legacyClassLevel.match(
+      /^(.*?)(?:\s+|\s*[-–—|·]\s*)(\d{1,2})$/
+    );
+
+    if (levelMatch) {
+      parsedClass = levelMatch[1].trim();
+
+      if (!parsedLevel) {
+        parsedLevel = levelMatch[2];
+      }
+    }
+
+    if (!className && parsedClass) {
+      className = parsedClass;
+    }
+  }
+
+  migrated.class = className;
+  migrated.subclass = subclassName;
+  migrated.level = parsedLevel;
+
   delete migrated.classLevel;
-  delete migrated.subclass;
+  delete migrated.classSubclass;
   delete migrated.experience;
 
   return migrated;
