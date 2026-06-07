@@ -1125,7 +1125,7 @@ function addExtraSpeedRow(data = {}) {
     <input
       class="extra-speed-custom-type"
       type="text"
-      placeholder="speed type…"
+      placeholder="Other speed…"
       value="${escapeHtml(data.customType || "")}"
       aria-label="Custom movement speed type"
       ${speedType === "Other" ? "" : "hidden"}
@@ -1153,16 +1153,34 @@ function addExtraSpeedRow(data = {}) {
   const typeSelect = row.querySelector(".extra-speed-type");
   const customTypeInput = row.querySelector(".extra-speed-custom-type");
 
-  typeSelect.addEventListener("change", () => {
+  function syncCustomTypeMode() {
     const isOther = typeSelect.value === "Other";
+
+    typeSelect.hidden = isOther;
     customTypeInput.hidden = !isOther;
 
     if (!isOther) {
       customTypeInput.value = "";
-    } else {
+    }
+  }
+
+  typeSelect.addEventListener("change", () => {
+    syncCustomTypeMode();
+
+    if (typeSelect.value === "Other") {
       customTypeInput.focus();
     }
   });
+
+  customTypeInput.addEventListener("blur", () => {
+    if (!customTypeInput.value.trim()) {
+      typeSelect.value = "Other";
+      typeSelect.hidden = false;
+      customTypeInput.hidden = true;
+    }
+  });
+
+  syncCustomTypeMode();
 
   row.querySelector(".extra-speed-remove").addEventListener("click", () => {
     row.remove();
