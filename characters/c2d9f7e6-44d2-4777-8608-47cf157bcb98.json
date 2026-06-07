@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "id": "c2d9f7e6-44d2-4777-8608-47cf157bcb98",
-  "updatedAt": "2026-06-03T21:31:15.865Z",
+  "updatedAt": "2026-06-07T07:21:13.491Z",
   "summary": {
     "name": "Crowley",
     "armorClass": "15",
@@ -65,6 +65,7 @@
     "intimidation": "+4",
     "performance": "+6",
     "persuasion": "+4",
+    "equipment": "Rapier, Leather Armour, Rope, Waterskin, Bedroll, Rations x5, Hunting Trap, Net, Cook's Utensils.",
     "hitDice": "1d8",
     "hitDiceSpent": "",
     "copperPieces": "3",
@@ -91,7 +92,7 @@
     "languages": "",
     "attunement": "",
     "equipmentInventory": "",
-    "equipment": "Rapier, Leather Armour, Rope, Waterskin, Bedroll, Rations x5, Hunting Trap, Net, Cook's Utensils."
+    "otherInventory": ""
   },
   "uiState": {
     "inspiration": false,
@@ -324,12 +325,291 @@
         "Light Armour"
       ],
       "weapons": [
-        "Simple Weapons, Hand Crossbows, Longswords, Rapiers, Shortswords"
+        "Simple Weapons",
+        "Hand Crossbows",
+        "Longswords",
+        "Rapiers",
+        "Shortswords"
       ],
       "tools": [
-        "Cook's Utensils, Lyre, Drums, Fiddle."
+        "Cook's Utensils"
       ],
-      "other": []
-    }
+      "other": [
+        "Lyre",
+        "Drums",
+        "Fiddle"
+      ]
+    },
+    "journalNotes": [],
+    "gems": [],
+    "attunementSlots": [
+      {
+        "item": "",
+        "notes": ""
+      },
+      {
+        "item": "",
+        "notes": ""
+      },
+      {
+        "item": "",
+        "notes": ""
+      }
+    ],
+    "storageLocations": [],
+    "equippedSlots": {
+      "mainHand": "item-c2d9f7e6-rapier-1",
+      "armor": "item-c2d9f7e6-leather-armour-1"
+    },
+    "customEquippedSlots": [],
+    "inventoryView": "list",
+    "inventoryItems": [
+      {
+        "id": "item-c2d9f7e6-rapier-1",
+        "name": "Rapier",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "worn",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-leather-armour-1",
+        "name": "Leather Armour",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "worn",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-rope-1",
+        "name": "Rope",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-waterskin-1",
+        "name": "Waterskin",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-bedroll-1",
+        "name": "Bedroll",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-rations-1",
+        "name": "Rations",
+        "type": "consumable",
+        "qty": "5",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-hunting-trap-1",
+        "name": "Hunting Trap",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-net-1",
+        "name": "Net",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-cook-s-utensils-1",
+        "name": "Cook's Utensils",
+        "type": "tool",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-daggers-1",
+        "name": "Daggers",
+        "type": "gear",
+        "qty": "4",
+        "value": "",
+        "location": "worn",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-caltrops-1",
+        "name": "Caltrops",
+        "type": "gear",
+        "qty": "15",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-beads-of-nourishment-1",
+        "name": "Beads of Nourishment",
+        "type": "magic",
+        "qty": "3",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      }
+    ],
+    "inventoryEquipment": [
+      {
+        "id": "item-c2d9f7e6-rapier-1",
+        "name": "Rapier",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "worn",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-leather-armour-1",
+        "name": "Leather Armour",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "worn",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-rope-1",
+        "name": "Rope",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-waterskin-1",
+        "name": "Waterskin",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-bedroll-1",
+        "name": "Bedroll",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-hunting-trap-1",
+        "name": "Hunting Trap",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-net-1",
+        "name": "Net",
+        "type": "gear",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-cook-s-utensils-1",
+        "name": "Cook's Utensils",
+        "type": "tool",
+        "qty": "",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-daggers-1",
+        "name": "Daggers",
+        "type": "gear",
+        "qty": "4",
+        "value": "",
+        "location": "worn",
+        "details": "",
+        "open": false
+      },
+      {
+        "id": "item-c2d9f7e6-caltrops-1",
+        "name": "Caltrops",
+        "type": "gear",
+        "qty": "15",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      }
+    ],
+    "magicItems": [
+      {
+        "id": "item-c2d9f7e6-beads-of-nourishment-1",
+        "name": "Beads of Nourishment",
+        "type": "magic",
+        "qty": "3",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      }
+    ],
+    "consumables": [
+      {
+        "id": "item-c2d9f7e6-rations-1",
+        "name": "Rations",
+        "type": "consumable",
+        "qty": "5",
+        "value": "",
+        "location": "",
+        "details": "",
+        "open": false
+      }
+    ]
   }
 }
