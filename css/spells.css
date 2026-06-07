@@ -352,3 +352,151 @@
 @media(max-width:1280px){.spell-card-summary-row{grid-template-columns:34px 25px minmax(140px,1fr) minmax(68px,.42fr) minmax(86px,.54fr) minmax(120px,.72fr) minmax(72px,.48fr) minmax(118px,.76fr) 68px;gap:6px;}}
 @media(max-width:1020px){.spell-card-summary-row{grid-template-columns:34px 24px minmax(0,1fr) 70px;grid-template-areas:'icon level title expand' 'quick quick quick quick';}.spell-card-summary-row .spell-school-icon{grid-area:icon}.spell-card-summary-row .spell-level-badge{grid-area:level}.spell-card-summary-row .spell-card-title-wrap{grid-area:title}.spell-card-summary-row .spell-card-expand{grid-area:expand}.spell-card-summary-row .spell-card-quick{display:grid;grid-template-columns:90px minmax(0,1fr);grid-column:1/-1;gap:6px;padding-top:3px}.spell-card-summary-row .spell-card-quick strong{align-self:center}.spell-card-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.spell-editor-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:560px){.spell-card-subrow{grid-template-columns:1fr;}.spell-editor-grid{grid-template-columns:1fr}.spell-editor-actions{grid-template-columns:1fr 1fr}.spell-editor-actions span{display:none}.spell-card-summary-row{grid-template-columns:31px 22px minmax(0,1fr) 66px;}.spell-card-summary-row .spell-card-quick{grid-template-columns:78px minmax(0,1fr);}}
+
+
+/* ─── SPELL CARD SPACING + PREPARED STATE REFINEMENT ─────────────────── */
+.spell-card-summary-row {
+  grid-template-columns: 22px 34px 27px minmax(165px, 1fr) 72px 122px 164px 96px 108px 66px;
+  gap: 8px;
+  align-items: start;
+}
+
+.spell-card-summary-row .spell-school-icon,
+.spell-card-summary-row .spell-level-badge,
+.spell-prepared-toggle {
+  align-self: center;
+}
+
+.spell-card-quick {
+  padding-top: 1px;
+}
+
+.spell-card-quick strong {
+  display: block;
+  min-height: 15px;
+  line-height: 1.15;
+}
+
+.spell-card-quick span {
+  line-height: 1.25;
+}
+
+.spell-card-school {
+  font-size: 9px;
+}
+
+.spell-card-inline-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  padding-top: 1px;
+}
+
+.spell-card-edit-inline {
+  padding: 2px 0;
+  border: none;
+  border-bottom: 1px dotted rgba(184,144,44,.42);
+  background: transparent;
+  color: rgba(28,39,80,.74);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 6.5px;
+  font-weight: 700;
+  letter-spacing: .55px;
+  text-transform: uppercase;
+}
+
+.spell-card-edit-inline:hover,
+.spell-card-edit-inline:focus-visible {
+  color: var(--gold-deep);
+  outline: none;
+}
+
+.spell-prepared-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  padding: 0;
+  border: 1px solid rgba(184,144,44,.58);
+  border-radius: 50%;
+  background: rgba(255,253,245,.24);
+  cursor: pointer;
+}
+
+.spell-prepared-toggle span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background .14s ease, box-shadow .14s ease, transform .14s ease;
+}
+
+.spell-prepared-toggle:hover span,
+.spell-prepared-toggle:focus-visible span {
+  background: rgba(184,144,44,.28);
+  outline: none;
+}
+
+.spell-prepared-toggle.is-prepared span {
+  background: var(--gold-deep);
+  box-shadow: 0 0 0 2px rgba(184,144,44,.14);
+  transform: scale(1.03);
+}
+
+.spell-area-inline {
+  gap: 4px;
+}
+
+.spell-area-inline img {
+  flex: 0 0 auto;
+}
+
+.spell-card-details[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 1280px) {
+  .spell-card-summary-row {
+    grid-template-columns: 20px 32px 25px minmax(145px, 1fr) 66px 110px 145px 88px 96px 62px;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 1040px) {
+  .spell-card-summary-row {
+    grid-template-columns: 20px 32px 25px minmax(0, 1fr) 70px;
+    grid-template-areas:
+      'prepared icon level title actions'
+      'prepared quick quick quick actions';
+    align-items: center;
+  }
+
+  .spell-prepared-toggle { grid-area: prepared; }
+  .spell-card-summary-row .spell-school-icon { grid-area: icon; }
+  .spell-card-summary-row .spell-level-badge { grid-area: level; }
+  .spell-card-summary-row .spell-card-title-wrap { grid-area: title; }
+  .spell-card-inline-actions { grid-area: actions; }
+  .spell-card-summary-row .spell-card-quick { display: none; }
+  .spell-card-summary-row::after {
+    grid-area: quick;
+    content: 'Open details for casting time, range, effects and full rules';
+    color: rgba(28,39,80,.58);
+    font-family: var(--small-italic-font);
+    font-size: 9px;
+    font-style: italic;
+  }
+}
+
+@media (max-width: 560px) {
+  .spell-card-summary-row {
+    grid-template-columns: 19px 29px 23px minmax(0,1fr) 60px;
+    padding: 7px;
+  }
+
+  .spell-card-inline-actions {
+    gap: 4px;
+  }
+}
