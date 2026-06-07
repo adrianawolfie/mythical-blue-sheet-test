@@ -446,19 +446,18 @@
 <script src="js/conditions.js"></script>
 <script src="js/storage-config.js"></script>
 <script src="js/storage-adapter.js"></script>
+
+<script src="js/core.js"></script>
+<script src="js/tables.js"></script>
+<script src="js/conditions-ui.js"></script>
+<script src="js/features.js"></script>
+<script src="js/proficiencies.js"></script>
+<script src="js/speeds.js"></script>
+<script src="js/character-overview.js"></script>
+<script src="js/live-sync.js"></script>
 <script src="js/app.js"></script>
+
 <script src="js/calendar.js"></script>
-<script>
-  // Refresh the calendar bar whenever the character sheet opens.
-  // Navigation on the index page is ephemeral; only the Save button commits.
-  (function () {
-    var _origShowSheet = showSheet;
-    showSheet = function () {
-      _origShowSheet();
-      if (typeof renderCalendarOnSheet === 'function') renderCalendarOnSheet();
-    };
-  }());
-</script>
 <script src="js/accessibility.js"></script>
 </body>
 </html>

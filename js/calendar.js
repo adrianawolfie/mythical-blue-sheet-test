@@ -263,3 +263,18 @@
   });
 
 }(window));
+
+
+// Refresh the calendar bar whenever the character sheet opens.
+// Navigation on the index page is ephemeral; only the Save button commits.
+(function () {
+  const originalShowSheet = showSheet;
+
+  showSheet = function () {
+    originalShowSheet();
+
+    if (typeof renderCalendarOnSheet === "function") {
+      renderCalendarOnSheet();
+    }
+  };
+})();

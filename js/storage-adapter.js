@@ -72,7 +72,7 @@
         return parseJsonResponse(response, "Failed to save character.");
       },
 
-      async saveHPOnly({
+      async saveCharacterStatus({
         id,
         hpCurrent,
         hpMax,
@@ -80,7 +80,7 @@
         armorClass,
         currentConditions
       }) {
-        const response = await fetch("/.netlify/functions/save-hp", {
+        const response = await fetch("/.netlify/functions/save-character-status", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -227,7 +227,7 @@
         };
       },
 
-      async saveHPOnly({
+      async saveCharacterStatus({
         id,
         hpCurrent,
         hpMax,
