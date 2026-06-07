@@ -7,15 +7,126 @@
 }
 
 .inventory-coinage-card,
+.equipped-carried-card,
+.storage-locations-card,
+.inventory-equipment-card,
+.other-inventory-card,
 .inventory-legacy-notes {
   grid-column: 1 / -1;
 }
 
 .inventory-card,
 .inventory-coinage-card,
+.equipped-carried-card,
+.storage-locations-card,
+.other-inventory-card,
 .inventory-legacy-notes {
   background: rgba(255,250,234,.28);
 }
+
+/* ─── COMPACT COINAGE — MAIN + INVENTORY ───────────────────── */
+
+.compact-main-coinage-card {
+  margin-top: 12px;
+}
+
+.compact-coinsrow,
+.inventory-coinsrow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+  padding: 7px 8px 8px;
+}
+
+.compact-coinsrow label,
+.inventory-coinsrow label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.compact-coinsrow span,
+.inventory-coinsrow span {
+  color: var(--gold-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .6px;
+}
+
+.compact-coinsrow input,
+.inventory-coinsrow input {
+  width: 100%;
+  min-width: 0;
+  padding: 2px 1px;
+  border: none;
+  border-bottom: 1px dotted rgba(184,144,44,.56);
+  border-radius: 0;
+  background: transparent;
+  color: var(--navy-deep);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  text-align: center;
+  outline: none;
+}
+
+.compact-gold-coin input,
+.inventory-gold-coin input {
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+
+/* ─── EQUIPPED & CARRIED ───────────────────────────────────── */
+
+.equipped-intro {
+  padding: 7px 8px 0;
+  color: rgba(28,39,80,.66);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  font-style: italic;
+}
+
+.equipped-slots {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  padding: 8px;
+}
+
+.equipped-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 5px 6px;
+  border: 1px solid rgba(184,144,44,.42);
+  background: rgba(255,253,245,.16);
+}
+
+.equipped-slot span {
+  color: var(--navy);
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+}
+
+.equipped-slot select {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  border-bottom: 1px dotted rgba(184,144,44,.55);
+  background: transparent;
+  color: var(--navy-deep);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  outline: none;
+}
+
+/* ─── TABLES ───────────────────────────────────────────────── */
 
 .inventory-table {
   width: 100%;
@@ -40,7 +151,8 @@
   border-bottom: 1px dotted rgba(184,144,44,.44);
 }
 
-.inventory-table input {
+.inventory-table input,
+.inventory-table select {
   width: 100%;
   min-width: 0;
   padding: 2px 1px;
@@ -48,17 +160,30 @@
   background: transparent;
   color: var(--ink);
   font-family: var(--small-italic-font);
-  font-size: 12px;
+  font-size: 11px;
   outline: none;
 }
 
-.inventory-table input:focus {
+.inventory-table input:focus,
+.inventory-table select:focus {
   background: rgba(255,253,245,.3);
 }
 
 .inventory-qty-col {
-  width: 44px;
+  width: 42px;
   text-align: center !important;
+}
+
+.inventory-value-col {
+  width: 66px;
+}
+
+.inventory-location-col {
+  width: 118px;
+}
+
+.inventory-details-col {
+  width: 48px;
 }
 
 .inventory-slot-col {
@@ -104,8 +229,54 @@
   outline: none;
 }
 
+.inventory-details-cell {
+  text-align: right;
+}
+
+.inventory-details-toggle {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--gold-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .35px;
+  text-transform: uppercase;
+  opacity: .72;
+}
+
+.inventory-details-toggle:hover,
+.inventory-details-toggle:focus-visible,
+.inventory-details-toggle.open {
+  color: var(--navy-deep);
+  opacity: 1;
+  outline: none;
+}
+
+.inventory-item-details-row td {
+  padding: 0 6px 6px;
+}
+
+.inventory-item-details-panel {
+  padding-top: 5px;
+}
+
+.inventory-item-details {
+  width: 100%;
+  min-height: 92px;
+  padding: 6px;
+  border: 1px solid rgba(184,144,44,.44);
+  background: rgba(255,253,245,.2);
+  color: var(--ink);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .inventory-add {
-  margin: 7px 7px 7px;
+  margin: 7px;
   padding: 3px 6px;
   border: 1px solid rgba(184,144,44,.52);
   border-radius: 2px;
@@ -125,6 +296,12 @@
   border-color: var(--gold-deep);
   color: var(--navy-deep);
   outline: none;
+}
+
+/* ─── OTHER + LEGACY NOTES ─────────────────────────────────── */
+
+.other-inventory-card textarea {
+  min-height: 110px;
 }
 
 .inventory-legacy-notes {
@@ -182,20 +359,47 @@
   }
 
   .inventory-coinage-card,
+  .equipped-carried-card,
+  .storage-locations-card,
+  .inventory-equipment-card,
+  .other-inventory-card,
   .inventory-legacy-notes {
     grid-column: auto;
+  }
+
+  .equipped-slots {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .inventory-notes-grid {
     grid-template-columns: 1fr;
   }
 
-  .inventory-table input {
-    font-size: 11px;
+  .inventory-table {
+    table-layout: auto;
   }
 
-  .inventory-qty-col {
-    width: 38px;
+  .inventory-table th,
+  .inventory-table td {
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+
+  .inventory-table input,
+  .inventory-table select {
+    font-size: 10px;
+  }
+
+  .inventory-value-col {
+    width: 56px;
+  }
+
+  .inventory-location-col {
+    width: 88px;
+  }
+
+  .inventory-details-col {
+    width: 42px;
   }
 
   .inventory-remove-col,

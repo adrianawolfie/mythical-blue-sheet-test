@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderProficiencyRows();
   renderArmorClassState();
   bindArmorClassControls();
+  bindInventoryControls();
 
   document.getElementById("newCharacterBtn").addEventListener("click", newCharacter);
   document.getElementById("saveCharacterBtn").addEventListener("click", saveCurrentCharacter);

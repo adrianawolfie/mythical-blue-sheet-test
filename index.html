@@ -331,8 +331,8 @@
     <div class="tabs">
       <button class="tab on" onclick="sw('main',this)">⚓ Main</button>
       <button class="tab" onclick="sw('spells',this)">✦ Spells</button>
-      <button class="tab" onclick="sw('journal',this)">📜 Journal</button>
       <button class="tab" onclick="sw('inventory',this)">🎒 Inventory</button>
+      <button class="tab" onclick="sw('journal',this)">📜 Journal</button>
     </div>
 
     <div id="pg-main" class="pg on">
@@ -459,6 +459,17 @@
   </div>
 </div>
 
+<div class="sb-card compact-main-coinage-card">
+  <div class="sb-hdr">Coinage</div>
+  <div class="compact-coinsrow">
+    <label><span>CP</span><input type="text" placeholder="0" data-coinage-key="copperPieces"></label>
+    <label><span>SP</span><input type="text" placeholder="0" data-coinage-key="silverPieces"></label>
+    <label><span>EP</span><input type="text" placeholder="0" data-coinage-key="electrumPieces"></label>
+    <label class="compact-gold-coin"><span>GP</span><input type="text" placeholder="0" data-coinage-key="goldPieces"></label>
+    <label><span>PP</span><input type="text" placeholder="0" data-coinage-key="platinumPieces"></label>
+  </div>
+</div>
+
 <div class="sb-card features-traits-main">
   <div class="sb-hdr">Features & Traits</div>
 
@@ -543,29 +554,62 @@
         <div class="sb-card"><div class="sb-hdr">Appearance</div><textarea placeholder="Height, weight, eye color, scars, tattoos, attire…" style="min-height:140px;" data-field="appearance"></textarea></div>
         <div class="sb-card"><div class="sb-hdr">Languages</div><textarea placeholder="Common, Elvish, Aquan, Thieves' Cant…" style="min-height:140px;" data-field="languages"></textarea></div>
       </div>
+      <div class="sb-card journal-notes-card" style="margin-top:12px;">
+        <div class="sb-hdr">Notes</div>
+        <textarea
+          placeholder="Session notes, reminders, plans, contacts, clues, and anything else worth remembering…"
+          style="min-height:150px;"
+          data-field="journalNotes"
+        ></textarea>
+      </div>
     </div>
 
     <div id="pg-inventory" class="pg">
       <div class="inventory-page-grid">
+
         <div class="sb-card inventory-coinage-card">
           <div class="sb-hdr">Coinage</div>
-          <div class="coinsrow">
-            <div class="cbox2"><label>CP</label><input type="text" placeholder="0" data-field="copperPieces"></div>
-            <div class="cbox2"><label>SP</label><input type="text" placeholder="0" data-field="silverPieces"></div>
-            <div class="cbox2"><label>EP</label><input type="text" placeholder="0" data-field="electrumPieces"></div>
-            <div class="cbox2 gold-coin"><label>GP</label><input type="text" placeholder="0" data-field="goldPieces"></div>
-            <div class="cbox2"><label>PP</label><input type="text" placeholder="0" data-field="platinumPieces"></div>
+          <div class="inventory-coinsrow">
+            <label><span>CP</span><input type="text" placeholder="0" data-field="copperPieces" data-coinage-key="copperPieces"></label>
+            <label><span>SP</span><input type="text" placeholder="0" data-field="silverPieces" data-coinage-key="silverPieces"></label>
+            <label><span>EP</span><input type="text" placeholder="0" data-field="electrumPieces" data-coinage-key="electrumPieces"></label>
+            <label class="inventory-gold-coin"><span>GP</span><input type="text" placeholder="0" data-field="goldPieces" data-coinage-key="goldPieces"></label>
+            <label><span>PP</span><input type="text" placeholder="0" data-field="platinumPieces" data-coinage-key="platinumPieces"></label>
           </div>
+        </div>
+
+        <div class="sb-card equipped-carried-card">
+          <div class="sb-hdr">Equipped & Carried</div>
+          <div class="equipped-intro">Choose equipped items from your inventory.</div>
+          <div id="equippedSlots" class="equipped-slots"></div>
+        </div>
+
+        <div class="sb-card storage-locations-card">
+          <div class="sb-hdr">Storage Locations</div>
+          <table class="inventory-table storage-table">
+            <thead>
+              <tr>
+                <th>Storage / Home</th>
+                <th>Type</th>
+                <th>Notes</th>
+                <th class="inventory-remove-col"></th>
+              </tr>
+            </thead>
+            <tbody id="storageLocationsBody"></tbody>
+          </table>
+          <button type="button" class="inventory-add" onclick="addStorageLocationRow()">+ Add Storage Location</button>
         </div>
 
         <div class="sb-card inventory-card inventory-equipment-card">
           <div class="sb-hdr">Equipment</div>
-          <table class="inventory-table" id="inventoryEquipmentTable">
+          <table class="inventory-table inventory-detail-table" id="inventoryEquipmentTable">
             <thead>
               <tr>
                 <th>Item</th>
                 <th class="inventory-qty-col">Qty</th>
-                <th>Notes</th>
+                <th class="inventory-value-col">Value</th>
+                <th class="inventory-location-col">Location</th>
+                <th class="inventory-details-col"></th>
                 <th class="inventory-remove-col"></th>
               </tr>
             </thead>
@@ -592,11 +636,13 @@
 
         <div class="sb-card inventory-card inventory-magic-card">
           <div class="sb-hdr">Magic Items</div>
-          <table class="inventory-table" id="inventoryMagicItemsTable">
+          <table class="inventory-table inventory-detail-table" id="inventoryMagicItemsTable">
             <thead>
               <tr>
                 <th>Magic Item</th>
-                <th>Notes</th>
+                <th class="inventory-value-col">Value</th>
+                <th class="inventory-location-col">Location</th>
+                <th class="inventory-details-col"></th>
                 <th class="inventory-remove-col"></th>
               </tr>
             </thead>
@@ -607,18 +653,28 @@
 
         <div class="sb-card inventory-card inventory-consumables-card">
           <div class="sb-hdr">Potions & Consumables</div>
-          <table class="inventory-table" id="inventoryConsumablesTable">
+          <table class="inventory-table inventory-detail-table" id="inventoryConsumablesTable">
             <thead>
               <tr>
                 <th>Potion / Consumable</th>
                 <th class="inventory-qty-col">Qty</th>
-                <th>Notes</th>
+                <th class="inventory-value-col">Value</th>
+                <th class="inventory-location-col">Location</th>
+                <th class="inventory-details-col"></th>
                 <th class="inventory-remove-col"></th>
               </tr>
             </thead>
             <tbody id="inventoryConsumablesBody"></tbody>
           </table>
           <button type="button" class="inventory-add" onclick="addInventoryConsumableRow()">+ Add Consumable</button>
+        </div>
+
+        <div class="sb-card other-inventory-card">
+          <div class="sb-hdr">Other Inventory</div>
+          <textarea
+            placeholder="Party loot, cargo manifests, unusual trinkets, temporary notes, or anything that does not fit neatly into a table…"
+            data-field="otherInventory"
+          ></textarea>
         </div>
 
         <details class="sb-card inventory-legacy-notes">
@@ -630,7 +686,7 @@
             </label>
             <label>
               <span>Inventory Notes</span>
-              <textarea placeholder="List gear, ship equipment, rations, tools, trinkets, and special items…" data-field="equipmentInventory"></textarea>
+              <textarea placeholder="Previously saved freeform inventory notes…" data-field="equipmentInventory"></textarea>
             </label>
             <label>
               <span>Treasure Notes</span>
@@ -644,7 +700,6 @@
         </details>
       </div>
     </div>
-
     <div class="ftr">
       <div class="ftr-t">✦ Mythical Blue · The Great Depth ✦</div>
       <svg width="100" height="10" viewBox="0 0 100 10"><path d="M0 5 Q10 1 20 5 Q30 9 40 5 Q50 1 60 5 Q70 9 80 5 Q90 1 100 5" stroke="#b8902c" stroke-width="1" fill="none" stroke-linecap="round" opacity=".6" /></svg>

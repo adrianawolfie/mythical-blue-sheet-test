@@ -389,6 +389,8 @@ customLists: {
   magicItems: collectInventoryMagicItemRows(),
   consumables: collectInventoryConsumableRows(),
   attunementSlots: collectInventoryAttunementRows(),
+  storageLocations: collectStorageLocations(),
+  equippedSlots: collectEquippedSlots(),
   speeds: collectExtraSpeedRows(),
   armorClass: collectArmorClassState()
 }
@@ -406,6 +408,7 @@ function loadCharacter(character) {
   );
 
   applyNamedFields(normalizedFields);
+  syncCoinageMirrorsFromCanonical();
 
 renderFeatureEntries("featList", character.customLists?.feats || []);
 resetWeaponRows(character.customLists?.weapons || DEFAULT_WEAPON_ROWS);
@@ -416,7 +419,9 @@ resetInventoryRows({
   consumables: character.customLists?.consumables || [],
   attunement:
     character.customLists?.attunementSlots ||
-    DEFAULT_INVENTORY_ATTUNEMENT_ROWS
+    DEFAULT_INVENTORY_ATTUNEMENT_ROWS,
+  storageLocations: character.customLists?.storageLocations || [],
+  equippedSlots: character.customLists?.equippedSlots || {}
 });
 renderExtraSpeedRows(character.customLists?.speeds || []);
 renderArmorClassState(

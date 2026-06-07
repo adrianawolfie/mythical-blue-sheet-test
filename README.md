@@ -114,3 +114,24 @@ Imported / Freeform Notes
 
 This means existing saves remain readable while players gradually move items
 into the structured lists.
+
+
+## Inventory phase 2
+
+Inventory now has three layers:
+
+```text
+What do I own?
+Where is it stored?
+What am I currently wearing or carrying?
+```
+
+New structured data:
+
+```text
+customLists.storageLocations
+customLists.equippedSlots
+```
+
+Coinage is mirrored between Main and Inventory, while only one canonical copy is
+stored in the character fields.
