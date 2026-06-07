@@ -127,3 +127,237 @@
   .spell-editor-actions { grid-template-columns:1fr 1fr; }
   .spell-editor-actions span { display:none; }
 }
+
+
+/* ─── PREPARED STAR + MOBILE CARD REFINEMENT ────────────────────────── */
+.spell-toolbar {
+  grid-template-columns: 130px 165px minmax(190px,1fr) auto;
+  align-items:end;
+}
+
+.spell-prepared-filter {
+  display:inline-flex !important;
+  min-height:27px;
+  flex-direction:row !important;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:3px 8px;
+  border:1px solid rgba(184,144,44,.38);
+  border-radius:999px;
+  background:rgba(255,253,245,.16);
+  color:rgba(28,39,80,.72);
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.spell-prepared-filter input {
+  position:absolute;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  opacity:0;
+  pointer-events:none;
+}
+
+.spell-prepared-filter span {
+  color:rgba(184,144,44,.58);
+  font-size:13px;
+  line-height:1;
+}
+
+.spell-prepared-filter em {
+  color:rgba(28,39,80,.70);
+  font-family:'Cinzel',serif;
+  font-size:6.5px;
+  font-style:normal;
+  font-weight:700;
+  letter-spacing:.55px;
+  text-transform:uppercase;
+}
+
+.spell-prepared-filter:has(input:checked) {
+  border-color:rgba(184,144,44,.74);
+  background:rgba(184,144,44,.13);
+}
+
+.spell-prepared-filter:has(input:checked) span {
+  color:var(--gold-deep);
+  text-shadow:0 0 5px rgba(184,144,44,.38);
+}
+
+.spell-card-topline {
+  grid-template-columns:29px 22px minmax(0,1fr);
+  padding-right:34px;
+}
+
+.spell-prepared-toggle {
+  position:absolute;
+  top:7px;
+  right:8px;
+  display:flex;
+  width:19px;
+  height:19px;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  border:none;
+  border-radius:0;
+  background:transparent;
+  color:rgba(184,144,44,.34);
+  cursor:pointer;
+}
+
+.spell-prepared-toggle span:first-child {
+  color:inherit;
+  font-size:16px;
+  line-height:1;
+}
+
+.spell-prepared-toggle:hover,
+.spell-prepared-toggle:focus-visible {
+  border:none;
+  color:rgba(184,144,44,.78);
+  outline:1px dotted rgba(184,144,44,.62);
+  outline-offset:2px;
+}
+
+.spell-prepared-toggle.is-prepared {
+  border:none;
+  background:transparent;
+  color:var(--gold-deep);
+}
+
+.spell-prepared-toggle.is-prepared span:first-child {
+  color:inherit;
+  text-shadow:0 0 6px rgba(184,144,44,.50);
+}
+
+@media (max-width:760px) {
+  .spell-toolbar {
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+  }
+
+  .spell-search-label {
+    grid-column:1 / -1;
+  }
+
+  .spell-prepared-filter {
+    grid-column:1 / -1;
+    justify-self:start;
+    min-height:24px;
+    padding:2px 7px;
+  }
+
+  .spell-card-grid {
+    gap:7px;
+    padding:7px 4px;
+  }
+
+  .spell-card {
+    border-radius:4px;
+  }
+
+  .spell-card-topline {
+    grid-template-columns:25px 19px minmax(0,1fr);
+    gap:6px;
+    padding:7px 32px 6px 7px;
+  }
+
+  .spell-school-icon {
+    width:23px;
+    height:23px;
+    padding:3px;
+  }
+
+  .spell-level-badge {
+    width:17px;
+    height:17px;
+    font-size:6px;
+  }
+
+  .spell-prepared-toggle {
+    top:6px;
+    right:7px;
+    width:18px;
+    height:18px;
+  }
+
+  .spell-prepared-toggle span:first-child {
+    font-size:15px;
+  }
+
+  .spell-card-title {
+    font-size:10.5px;
+  }
+
+  .spell-card-school {
+    font-size:8.5px;
+  }
+
+  .spell-card-meta-grid {
+    grid-template-columns:1fr 1fr;
+    gap:6px 10px;
+    padding:7px;
+  }
+
+  .spell-card-range,
+  .spell-card-damage {
+    grid-column:1 / -1;
+  }
+
+  .spell-card-subrow {
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    padding:6px 7px;
+  }
+
+  .spell-card-properties {
+    margin-bottom:0;
+  }
+
+  .spell-property-chip {
+    min-width:17px;
+    height:16px;
+    padding:0 3px;
+    font-size:6px;
+  }
+
+  .spell-card-teaser {
+    font-size:9px;
+  }
+
+  .spell-card-footer {
+    padding:0 7px 7px;
+  }
+
+  .spell-card-details {
+    margin:0 7px 7px;
+  }
+
+  .spell-card-detail-grid {
+    grid-template-columns:1fr 1fr;
+    gap:7px 9px;
+  }
+
+  .spell-card-rule-text {
+    font-size:10px;
+  }
+}
+
+@media (max-width:420px) {
+  .spell-card-meta-grid {
+    grid-template-columns:1fr;
+  }
+
+  .spell-card-range,
+  .spell-card-damage {
+    grid-column:auto;
+  }
+
+  .spell-card-detail-grid {
+    grid-template-columns:1fr;
+  }
+}
