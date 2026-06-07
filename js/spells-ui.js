@@ -61,9 +61,22 @@
   window.applySpellFilters=function(){refreshSpellCards();};
   function properties(s){const c=s.componentsText||'';const flags=[['V',/(^|,\s*)V(?:,|\s|$)/i.test(c)],['S',/(^|,\s*)S(?:,|\s|$)/i.test(c)],['M',s.material],['C',s.concentration],['R',s.ritual]];return flags.map(([l,a])=>`<span class="spell-property-chip ${a?'active':''}" title="${l}">${l}</span>`).join('');}
   function cardTeaser(s){return cleanText(s.effect||'')||firstSentence(s.details||'')||'No short effect entered yet.';}
-  function rangeArea(s){const area=s.areaShape||s.areaSize;if(!area)return `<span>${esc(s.range||'—')}</span>`;return `<span>${esc(s.range||'—')}</span><span class="spell-area-inline" title="${esc(s.areaShape||'Area of effect')}"><img src="${areaIcon(s.areaShape)}" alt="" aria-hidden="true">${esc(s.areaSize||'')}</span>`;}
-  function effectBlock(s){const main=[s.damageHealing,s.damageType].filter(Boolean).join(' · ');if(!main)return '<span>—</span>';return `<span>${esc(main)}</span>`;}
-  function cardDetails(s){return `<div class="spell-card-detail-grid"><div><strong>Level</strong><span>${esc(levelLabel(s.level))}</span></div><div><strong>Casting Time</strong><span>${esc(s.castTime||'—')}</span></div><div><strong>Range / Area</strong><span>${esc(s.range||'—')}</span>${s.areaShape||s.areaSize?`<span class="spell-area-inline" title="${esc(s.areaShape||'Area of effect')}"><img src="${areaIcon(s.areaShape)}" alt="" aria-hidden="true">${esc(s.areaSize||'')}</span>`:''}</div><div><strong>Components</strong><span>${esc(s.componentsText||'—')}</span></div><div><strong>Duration</strong><span>${esc(s.duration||'—')}</span></div><div><strong>School</strong><span>${esc(s.school||'Homebrew')}</span></div><div><strong>Attack / Save</strong><span>${esc(s.attackSave||'—')}</span></div><div><strong>Damage / Healing</strong><span>${esc([s.damageHealing,s.damageType].filter(Boolean).join(' · ')||'—')}</span></div><div><strong>Classes</strong><span>${esc(s.classes||'—')}</span></div><div><strong>Source</strong><span>${esc(s.source||'Custom')}</span></div></div><div class="spell-card-rule-text">${text(s.details||'No full description entered yet.')}</div>`;}
+  function cleanAreaSize(size='',shape=''){const raw=cleanText(size);const shapeText=cleanText(shape);if(!raw||!shapeText)return raw;return raw.replace(new RegExp(`\\s*${shapeText}\\s*$`,'i'),'').trim();}
+  function derivedEffect(s={}){
+    const details=cleanText(s.details||'');
+    let damageHealing=cleanText(s.damageHealing||'');
+    let damageType=cleanText(s.damageType||'');
+    if(!damageHealing){
+      const heal=details.match(/(?:regains?|restore(?:s|d)?|heal(?:s|ed)?)\s+(?:a number of hit points equal to\s+)?((?:\d+d\d+|\d+)(?:\s*[+−-]\s*\d+)?)/i);
+      const damage=details.match(/((?:\d+d\d+|\d+)(?:\s*[+−-]\s*\d+)?)\s+([A-Za-z]+)\s+damage/i);
+      if(heal)damageHealing=heal[1]; else if(damage)damageHealing=damage[1];
+      if(!damageType&&damage)damageType=damage[2];
+    }
+    return {damageHealing,damageType};
+  }
+  function rangeArea(s){const area=s.areaShape||s.areaSize;if(!area)return `<span>${esc(s.range||'—')}</span>`;const areaSize=cleanAreaSize(s.areaSize,s.areaShape);return `<span>${esc(s.range||'—')}</span><span class="spell-area-inline" title="${esc(s.areaShape||'Area of effect')}"><img src="${areaIcon(s.areaShape)}" alt="" aria-hidden="true"><span>${esc(areaSize||'')}</span></span>`;}
+  function effectBlock(s){const effect=derivedEffect(s);const main=[effect.damageHealing,effect.damageType].filter(Boolean).join(' · ');if(!main)return '<span>—</span>';return `<span>${esc(main)}</span>`;}
+  function cardDetails(s){const effect=derivedEffect(s);return `<div class="spell-card-detail-grid"><div><strong>Level</strong><span>${esc(levelLabel(s.level))}</span></div><div><strong>Casting Time</strong><span>${esc(s.castTime||'—')}</span></div><div><strong>Range / Area</strong>${rangeArea(s)}</div><div><strong>Components</strong><span>${esc(s.componentsText||'—')}</span></div><div><strong>Duration</strong><span>${esc(s.duration||'—')}</span></div><div><strong>School</strong><span>${esc(s.school||'Homebrew')}</span></div><div><strong>Attack / Save</strong><span>${esc(s.attackSave||'—')}</span></div><div><strong>Damage / Healing</strong><span>${esc([effect.damageHealing,effect.damageType].filter(Boolean).join(' · ')||'—')}</span></div><div><strong>Classes</strong><span>${esc(s.classes||'—')}</span></div><div><strong>Source</strong><span>${esc(s.source||'Custom')}</span></div></div><div class="spell-card-rule-text">${text(s.details||'No full description entered yet.')}</div>`;}
   window.refreshSpellCards=function(){
     const box=document.getElementById('spellCardView');
     if(!box)return;
@@ -74,7 +87,7 @@
       .sort(compareSpells);
 
     box.innerHTML=spells.map(s=>`<article class="spell-card">
-      <div class="spell-card-summary-row">
+      <div class="spell-card-topline">
         <button class="spell-prepared-toggle ${s.prepared?'is-prepared':''}" type="button" onclick="toggleSpellPrepared(${s.index})" aria-pressed="${s.prepared?'true':'false'}" title="${s.prepared?'Prepared spell':'Mark as prepared'}"><span aria-hidden="true"></span></button>
         <img class="spell-school-icon" src="${icon(s.school||'Homebrew')}" alt="" aria-hidden="true">
         <span class="spell-level-badge"><span>${esc(s.level||'—')}</span></span>
@@ -82,15 +95,17 @@
           <div class="spell-card-title">${esc(s.name)}</div>
           <div class="spell-card-school">${esc(s.school||'Homebrew')}</div>
         </div>
+        <div class="spell-card-inline-actions">
+          <button class="spell-card-expand" type="button" onclick="toggleSpellCardDetails(this)" aria-expanded="false">Details ▾</button>
+          <button class="spell-card-edit-inline" type="button" onclick="editSpellFromCard(${s.index})">Edit</button>
+        </div>
+      </div>
+      <div class="spell-card-meta-grid">
         <div class="spell-card-quick"><strong>Cast</strong><span>${esc(s.castTime||'—')}</span></div>
         <div class="spell-card-quick"><strong>Duration</strong><span>${esc(s.duration||'—')}</span></div>
         <div class="spell-card-quick spell-card-range"><strong>Range / Area</strong>${rangeArea(s)}</div>
         <div class="spell-card-quick"><strong>Attack / Save</strong><span>${esc(s.attackSave||'—')}</span></div>
         <div class="spell-card-quick spell-card-damage"><strong>Damage / Healing</strong>${effectBlock(s)}</div>
-        <div class="spell-card-inline-actions">
-          <button class="spell-card-expand" type="button" onclick="toggleSpellCardDetails(this)" aria-expanded="false">Details ▾</button>
-          <button class="spell-card-edit-inline" type="button" onclick="editSpellFromCard(${s.index})">Edit</button>
-        </div>
       </div>
       <div class="spell-card-subrow">
         <div class="spell-card-properties">${properties(s)}</div>
