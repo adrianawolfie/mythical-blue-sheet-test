@@ -41,7 +41,6 @@ const INVENTORY_ITEM_TYPE_OPTIONS = [
 
 const STANDARD_ITEM_LOCATIONS = [
   { value: "", label: "Unassigned" },
-  { value: "carried", label: "Carried" },
   { value: "worn", label: "Equipped & Carried" }
 ];
 
@@ -325,6 +324,10 @@ function normalizeInventoryType(type = "gear") {
   return type === "equipment" ? "gear" : String(type || "gear");
 }
 
+function normalizeInventoryLocation(location = "") {
+  return location === "carried" ? "worn" : String(location || "");
+}
+
 function normalizeInventoryItem(data = {}, prefix = "gear") {
   return {
     id: String(data.id || inventoryId(prefix)),
@@ -332,7 +335,7 @@ function normalizeInventoryItem(data = {}, prefix = "gear") {
     type: normalizeInventoryType(data.type || prefix || "gear"),
     qty: String(data.qty || ""),
     value: String(data.value || ""),
-    location: String(data.location || ""),
+    location: normalizeInventoryLocation(data.location),
     details: String(data.details || ""),
     open: data.open === true
   };
@@ -390,7 +393,7 @@ function inventoryTypeCell(value = "gear") {
       <select class="inventory-item-type">
         ${INVENTORY_ITEM_TYPE_OPTIONS
           .map(option => `
-            <option value="${inventorySafeValue(option.value)}"${option.value === value ? " selected" : ""}>
+            <option value="${inventorySafeValue(option.value)}"${option.value === normalizedValue ? " selected" : ""}>
               ${inventorySafeValue(option.label)}
             </option>
           `)
@@ -401,7 +404,8 @@ function inventoryTypeCell(value = "gear") {
 }
 
 function inventoryTypeLabel(type = "gear") {
-  return INVENTORY_ITEM_TYPE_OPTIONS.find(option => option.value === type)?.label || "Other";
+  const normalizedType = normalizeInventoryType(type);
+  return INVENTORY_ITEM_TYPE_OPTIONS.find(option => option.value === normalizedType)?.label || "Other";
 }
 
 function inventoryDetailsCell(open = false) {
@@ -459,7 +463,9 @@ function locationOptions() {
 function refreshLocationSelect(select) {
   if (!select) return;
 
-  const previous = select.value || select.dataset.selectedLocation || "";
+  const previous = normalizeInventoryLocation(
+    select.value || select.dataset.selectedLocation || ""
+  );
 
   select.innerHTML = locationOptions()
     .map(option => `
@@ -752,7 +758,7 @@ function addInventoryGemRow(data = {}) {
     name: String(data.name || ""),
     qty: String(data.qty || ""),
     value: String(data.value || ""),
-    location: String(data.location || ""),
+    location: normalizeInventoryLocation(data.location),
     notes: String(data.notes || "")
   };
 
@@ -949,7 +955,7 @@ function collectUnifiedInventoryRows() {
         type: normalizeInventoryType(row.querySelector(".inventory-item-type")?.value || "gear"),
         qty: row.querySelector(".inventory-item-qty")?.value.trim() || "",
         value: row.querySelector(".inventory-item-value")?.value.trim() || "",
-        location: row.querySelector(".inventory-location")?.value.trim() || "",
+        location: normalizeInventoryLocation(row.querySelector(".inventory-location")?.value.trim() || ""),
         details: detailsRow?.querySelector(".inventory-item-details")?.value || "",
         open: detailsRow?.style.display !== "none"
       };
@@ -1003,7 +1009,7 @@ function collectInventoryGemRows() {
       name: row.querySelector(".inventory-gem-name")?.value.trim() || "",
       qty: row.querySelector(".inventory-gem-qty")?.value.trim() || "",
       value: row.querySelector(".inventory-gem-value")?.value.trim() || "",
-      location: row.querySelector(".inventory-location")?.value.trim() || "",
+      location: normalizeInventoryLocation(row.querySelector(".inventory-location")?.value.trim() || ""),
       notes: row.querySelector(".inventory-gem-notes")?.value.trim() || ""
     }))
     .filter(row =>

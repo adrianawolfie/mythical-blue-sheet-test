@@ -1464,3 +1464,25 @@
     padding-top: 0;
   }
 }
+
+
+/* ─── EQUIPMENT · MOBILE NO-HORIZONTAL-SCROLL OVERRIDE ────────────────── */
+@media (max-width: 768px) {
+  .inventory-unified-card,
+  .inventory-table-wrap { width: 100%; max-width: 100%; overflow: visible !important; }
+  .inventory-unified-table, .inventory-unified-table tbody, .inventory-unified-table tr, .inventory-unified-table td { box-sizing: border-box; }
+  .inventory-unified-table { display:block !important; width:100% !important; max-width:100% !important; min-width:0 !important; table-layout:auto !important; }
+  .inventory-unified-table thead { display:none !important; }
+  .inventory-unified-table tbody { display:block !important; width:100% !important; max-width:100% !important; padding:6px; }
+  .inventory-unified-row { display:grid !important; width:100% !important; max-width:100% !important; min-width:0 !important; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:7px 9px; margin:0 0 8px; padding:8px; border:1px solid rgba(184,144,44,.4); background:rgba(255,253,245,.16); }
+  .inventory-unified-row td { display:flex !important; flex-direction:column; gap:3px; width:auto !important; max-width:100% !important; min-width:0 !important; padding:0 !important; border-bottom:none !important; }
+  .inventory-unified-row td:nth-child(1), .inventory-unified-row td:nth-child(5) { grid-column:1 / -1; }
+  .inventory-unified-row input, .inventory-unified-row select { box-sizing:border-box; width:100% !important; max-width:100% !important; min-width:0 !important; }
+  .inventory-unified-row td:nth-child(6), .inventory-unified-row td:nth-child(7) { align-self:end; justify-content:flex-end; }
+  .inventory-unified-row td:nth-child(6) { grid-column:1; }
+  .inventory-unified-row td:nth-child(7) { grid-column:2; }
+  .inventory-unified-row + .inventory-item-details-row { display:block; width:auto !important; max-width:100% !important; margin:-8px 6px 9px; }
+  .inventory-unified-row + .inventory-item-details-row[style*="display: none"] { display:none !important; }
+  .inventory-unified-row + .inventory-item-details-row td { display:block !important; width:100% !important; max-width:100% !important; padding:0 !important; border-bottom:none !important; }
+  .inventory-item-details { box-sizing:border-box; width:100% !important; max-width:100% !important; }
+}
