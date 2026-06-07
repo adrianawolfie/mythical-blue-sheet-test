@@ -36,7 +36,7 @@ const STANDARD_ITEM_LOCATIONS = [
 ];
 
 
-const SILHOUETTE_VIEW_DEFAULT = "silhouette";
+const SILHOUETTE_VIEW_DEFAULT = "list";
 
 const EQUIPPED_SILHOUETTE_COLUMNS = {
   left: ["head", "cape", "armor", "mainHand", "glovesBracers", "ring1", "footwear"],
@@ -57,7 +57,7 @@ const EQUIPPED_SLOT_ICON_MAP = {
   glovesBracers: "assets/equipment-icons/gloves-bracers.png",
   footwear: "assets/equipment-icons/boots.png",
   backStorage: "assets/equipment-icons/backpack.png",
-  otherWorn: "assets/equipment-icons/clothing.png"
+  otherWorn: "assets/equipment-icons/other-worn-gem.svg"
 };
 
 const CUSTOM_SLOT_NODE_HINTS = [
@@ -78,33 +78,22 @@ let currentEquippedSlotsState = Object.fromEntries(
 );
 
 function getInventoryView() {
-  return document.getElementById("equippedLayout")?.dataset.view || SILHOUETTE_VIEW_DEFAULT;
+  return "list";
 }
 
 function setInventoryView(view = SILHOUETTE_VIEW_DEFAULT) {
   const layout = document.getElementById("equippedLayout");
   if (!layout) return;
 
-  const selectedView = view === "list" ? "list" : SILHOUETTE_VIEW_DEFAULT;
-  layout.dataset.view = selectedView;
-  layout.classList.toggle("is-list-view", selectedView === "list");
-  layout.classList.toggle("is-silhouette-view", selectedView !== "list");
-
-  document.querySelectorAll(".inventory-view-btn").forEach(button => {
-    const active = button.dataset.inventoryView === selectedView;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-selected", active ? "true" : "false");
-  });
+  layout.dataset.view = "list";
+  layout.classList.add("is-list-view", "equipped-list-only");
+  layout.classList.remove("is-silhouette-view");
 
   renderEquippedActiveView();
 }
 
 function bindInventoryViewToggle() {
-  document.querySelectorAll(".inventory-view-btn").forEach(button => {
-    button.addEventListener("click", () => {
-      setInventoryView(button.dataset.inventoryView || SILHOUETTE_VIEW_DEFAULT);
-    });
-  });
+  // List-only view: toggle removed intentionally.
 }
 
 function getSelectedOptionLabel(select) {
@@ -264,27 +253,7 @@ function setEquippedHoverState(slotKey, active) {
 }
 
 function bindSilhouetteNodeInteractions() {
-  document.querySelectorAll(".silhouette-node").forEach(node => {
-    if (node.dataset.interactionsBound === "true") return;
-
-    const slotKey = node.dataset.slotKey;
-    node.dataset.interactionsBound = "true";
-    node.setAttribute("tabindex", "0");
-    node.setAttribute("role", "button");
-
-    node.addEventListener("click", () => focusEquippedSlot(slotKey));
-    node.addEventListener("keydown", event => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        focusEquippedSlot(slotKey);
-      }
-    });
-
-    node.addEventListener("mouseenter", () => setEquippedHoverState(slotKey, true));
-    node.addEventListener("mouseleave", () => setEquippedHoverState(slotKey, false));
-    node.addEventListener("focus", () => setEquippedHoverState(slotKey, true));
-    node.addEventListener("blur", () => setEquippedHoverState(slotKey, false));
-  });
+  // Silhouette view removed.
 }
 
 function bindEquippedCardInteractions(scope = document) {
@@ -303,38 +272,19 @@ function bindEquippedCardInteractions(scope = document) {
 function renderEquippedNodeMap() {
   const states = resolveEquippedNodeStates();
 
-  document.querySelectorAll('.silhouette-node').forEach(node => {
-    const slotKey = node.dataset.slotKey;
-    const active = Boolean(states[slotKey]?.filled);
-    node.classList.toggle('is-active', active);
-    node.title = active ? states[slotKey]?.label || findEquippedSlotDefinition(slotKey)?.label || '' : findEquippedSlotDefinition(slotKey)?.label || '';
-  });
-
   document.querySelectorAll('.equipped-slot-card').forEach(card => {
     const slotKey = card.dataset.slotKey;
     const active = Boolean(states[slotKey]?.filled);
     card.classList.toggle('is-active', active);
   });
 
-  bindSilhouetteNodeInteractions();
   bindEquippedCardInteractions();
 }
 
 function renderEquippedActiveView() {
-  const view = getInventoryView();
-  const silhouetteShell = document.getElementById('equippedSilhouetteShell');
   const listView = document.getElementById('equippedListView');
-
-  if (view === 'list') {
-    if (silhouetteShell) silhouetteShell.hidden = true;
-    if (listView) listView.hidden = false;
-    renderEquippedListView(currentEquippedSlotsState);
-  } else {
-    if (silhouetteShell) silhouetteShell.hidden = false;
-    if (listView) listView.hidden = true;
-    renderEquippedSilhouetteColumns(currentEquippedSlotsState);
-  }
-
+  if (listView) listView.hidden = false;
+  renderEquippedListView(currentEquippedSlotsState);
   renderEquippedNodeMap();
 }
 

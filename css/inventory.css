@@ -1035,3 +1035,34 @@
     animation: none;
   }
 }
+
+
+/* ─── EQUIPPED & CARRIED · LIST-ONLY REFINEMENT ───────────────── */
+.equipped-layout.equipped-list-only {
+  padding-top: 2px;
+}
+
+.equipped-layout.equipped-list-only .equipped-list-view {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.equipped-layout.equipped-list-only .custom-equipped-section {
+  margin-top: 12px;
+}
+
+.equipped-layout.equipped-list-only .equipped-slot-card {
+  min-height: 58px;
+}
+
+.equipped-layout.equipped-list-only .equipped-slot-card[data-slot-key="otherWorn"] .equipped-slot-icon {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 900px) {
+  .equipped-layout.equipped-list-only .equipped-list-view {
+    grid-template-columns: 1fr;
+  }
+}
