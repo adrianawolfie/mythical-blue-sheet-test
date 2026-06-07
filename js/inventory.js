@@ -4,6 +4,7 @@
 const DEFAULT_INVENTORY_EQUIPMENT_ROWS = [];
 const DEFAULT_INVENTORY_MAGIC_ITEM_ROWS = [];
 const DEFAULT_INVENTORY_CONSUMABLE_ROWS = [];
+const DEFAULT_UNIFIED_INVENTORY_ROWS = [];
 const DEFAULT_INVENTORY_GEM_ROWS = [];
 const DEFAULT_STORAGE_LOCATION_ROWS = [];
 const DEFAULT_INVENTORY_ATTUNEMENT_ROWS = [
@@ -27,6 +28,14 @@ const EQUIPPED_SLOT_DEFINITIONS = [
   { key: "footwear", label: "Footwear" },
   { key: "backStorage", label: "Backpack / Carried Storage" },
   { key: "otherWorn", label: "Other Worn Item" }
+];
+
+
+const INVENTORY_ITEM_TYPE_OPTIONS = [
+  { value: "equipment", label: "Equipment" },
+  { value: "magic", label: "Magic Item" },
+  { value: "consumable", label: "Potion / Consumable" },
+  { value: "other", label: "Other" }
 ];
 
 const STANDARD_ITEM_LOCATIONS = [
@@ -315,6 +324,7 @@ function normalizeInventoryItem(data = {}, prefix = "item") {
   return {
     id: String(data.id || inventoryId(prefix)),
     name: String(data.name || ""),
+    type: String(data.type || prefix || "equipment"),
     qty: String(data.qty || ""),
     value: String(data.value || ""),
     location: String(data.location || ""),
@@ -365,6 +375,26 @@ function inventoryLocationCell(value = "") {
       </select>
     </td>
   `;
+}
+
+function inventoryTypeCell(value = "equipment") {
+  return `
+    <td>
+      <select class="inventory-item-type">
+        ${INVENTORY_ITEM_TYPE_OPTIONS
+          .map(option => `
+            <option value="${inventorySafeValue(option.value)}"${option.value === value ? " selected" : ""}>
+              ${inventorySafeValue(option.label)}
+            </option>
+          `)
+          .join("")}
+      </select>
+    </td>
+  `;
+}
+
+function inventoryTypeLabel(type = "equipment") {
+  return INVENTORY_ITEM_TYPE_OPTIONS.find(option => option.value === type)?.label || "Other";
 }
 
 function inventoryDetailsCell(open = false) {
@@ -444,50 +474,39 @@ function refreshAllLocationSelects() {
 }
 
 function getEquippableItems() {
-  const equipment = [];
-  const magicItems = [];
-  const storageItems = [];
+  const groups = {
+    equipment: [],
+    magicItems: [],
+    consumables: [],
+    other: [],
+    storageItems: []
+  };
 
   document
-    .querySelectorAll("#inventoryEquipmentBody .inventory-equipment-row")
+    .querySelectorAll("#inventoryItemsBody .inventory-unified-row")
     .forEach(row => {
-      const name = row.querySelector(".inventory-equipment-name")?.value.trim() || "";
+      const name = row.querySelector(".inventory-item-name")?.value.trim() || "";
+      const type = row.querySelector(".inventory-item-type")?.value || "equipment";
+      if (!name) return;
 
-      if (name) {
-        equipment.push({
-          id: row.dataset.itemId,
-          label: name
-        });
-      }
-    });
+      const item = { id: row.dataset.itemId, label: name };
 
-  document
-    .querySelectorAll("#inventoryMagicItemsBody .inventory-magic-row")
-    .forEach(row => {
-      const name = row.querySelector(".inventory-magic-name")?.value.trim() || "";
-
-      if (name) {
-        magicItems.push({
-          id: row.dataset.itemId,
-          label: name
-        });
-      }
+      if (type === "magic") groups.magicItems.push(item);
+      else if (type === "consumable") groups.consumables.push(item);
+      else if (type === "other") groups.other.push(item);
+      else groups.equipment.push(item);
     });
 
   getStorageLocations()
     .filter(location => location.name)
     .forEach(location => {
-      storageItems.push({
+      groups.storageItems.push({
         id: `storage:${location.id}`,
         label: location.name
       });
     });
 
-  return {
-    equipment,
-    magicItems,
-    storageItems
-  };
+  return groups;
 }
 
 function equippedOptionGroup(label, items) {
@@ -516,6 +535,8 @@ function refreshEquippedSelect(select) {
     <option value="">— None —</option>
     ${equippedOptionGroup("Equipment", groups.equipment)}
     ${equippedOptionGroup("Magic Items", groups.magicItems)}
+    ${equippedOptionGroup("Potions / Consumables", groups.consumables)}
+    ${equippedOptionGroup("Other", groups.other)}
     ${equippedOptionGroup("Storage / Bags", groups.storageItems)}
   `;
 
@@ -557,7 +578,7 @@ function refreshLocationFilter() {
     ? previous
     : "all";
 
-  applyInventoryLocationFilter();
+  applyInventoryFilters();
 }
 
 function setFilteredRowVisibility(row, visible) {
@@ -570,23 +591,56 @@ function setFilteredRowVisibility(row, visible) {
   }
 }
 
-function applyInventoryLocationFilter() {
-  const filterValue =
-    document.getElementById("inventoryLocationFilter")?.value ||
-    "all";
+function applyInventoryFilters() {
+  const locationFilter = document.getElementById("inventoryLocationFilter")?.value || "all";
+  const typeFilter = document.getElementById("inventoryTypeFilter")?.value || "all";
+  const searchText = (document.getElementById("inventorySearchInput")?.value || "")
+    .trim()
+    .toLowerCase();
 
   document
-    .querySelectorAll(".inventory-item-row, .inventory-gem-row")
+    .querySelectorAll("#inventoryItemsBody .inventory-unified-row")
     .forEach(row => {
-      const itemLocation =
-        row.querySelector(".inventory-location")?.value ||
-        "";
+      const location = row.querySelector(".inventory-location")?.value || "";
+      const type = row.querySelector(".inventory-item-type")?.value || "equipment";
+      const searchable = [
+        row.querySelector(".inventory-item-name")?.value || "",
+        inventoryTypeLabel(type),
+        row.nextElementSibling?.querySelector(".inventory-item-details")?.value || ""
+      ]
+        .join(" ")
+        .toLowerCase();
 
-      setFilteredRowVisibility(
-        row,
-        filterValue === "all" || itemLocation === filterValue
-      );
+      const visible =
+        (locationFilter === "all" || location === locationFilter) &&
+        (typeFilter === "all" || type === typeFilter) &&
+        (!searchText || searchable.includes(searchText));
+
+      setFilteredRowVisibility(row, visible);
     });
+
+  document
+    .querySelectorAll("#inventoryGemsBody .inventory-gem-row")
+    .forEach(row => {
+      const location = row.querySelector(".inventory-location")?.value || "";
+      const searchable = [
+        row.querySelector(".inventory-gem-name")?.value || "",
+        row.querySelector(".inventory-gem-notes")?.value || ""
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      const visible =
+        (locationFilter === "all" || location === locationFilter) &&
+        typeFilter === "all" &&
+        (!searchText || searchable.includes(searchText));
+
+      row.hidden = !visible;
+    });
+}
+
+function applyInventoryLocationFilter() {
+  applyInventoryFilters();
 }
 
 function refreshInventoryDependentOptions() {
@@ -600,6 +654,8 @@ function attachItemRowBehavior(mainRow, detailsRow) {
   const remove = mainRow.querySelector(".inventory-remove");
   const nameInput = mainRow.querySelector(".inventory-item-name");
   const locationSelect = mainRow.querySelector(".inventory-location");
+  const typeSelect = mainRow.querySelector(".inventory-item-type");
+  const detailsTextarea = detailsRow.querySelector(".inventory-item-details");
 
   toggle?.addEventListener("click", event => {
     event.preventDefault();
@@ -612,11 +668,7 @@ function attachItemRowBehavior(mainRow, detailsRow) {
     toggle.classList.toggle("open", opening);
 
     requestAnimationFrame(() => {
-      window.scrollTo({
-        left: scrollX,
-        top: scrollY,
-        behavior: "auto"
-      });
+      window.scrollTo({ left: scrollX, top: scrollY, behavior: "auto" });
     });
   });
 
@@ -626,92 +678,62 @@ function attachItemRowBehavior(mainRow, detailsRow) {
     refreshInventoryDependentOptions();
   });
 
-  nameInput?.addEventListener("input", refreshAllEquippedSelects);
+  nameInput?.addEventListener("input", () => {
+    refreshAllEquippedSelects();
+    applyInventoryFilters();
+  });
+
+  detailsTextarea?.addEventListener("input", applyInventoryFilters);
 
   locationSelect?.addEventListener("change", () => {
     locationSelect.dataset.selectedLocation = locationSelect.value;
-    applyInventoryLocationFilter();
+    applyInventoryFilters();
+  });
+
+  typeSelect?.addEventListener("change", () => {
+    refreshAllEquippedSelects();
+    applyInventoryFilters();
   });
 }
 
-function addInventoryEquipmentRow(data = {}) {
-  const body = document.getElementById("inventoryEquipmentBody");
+function addUnifiedInventoryRow(data = {}) {
+  const body = document.getElementById("inventoryItemsBody");
   if (!body) return;
 
-  const item = normalizeInventoryItem(data, "equipment");
+  const item = normalizeInventoryItem(data, data.type || "equipment");
 
   const row = document.createElement("tr");
-  row.className = "inventory-equipment-row inventory-item-row";
+  row.className = "inventory-unified-row inventory-item-row";
   row.dataset.itemId = item.id;
 
   row.innerHTML =
-    inventoryInputCell("inventory-equipment-name inventory-item-name", item.name, "Item…") +
-    inventoryInputCell("inventory-equipment-qty", item.qty, "1") +
-    inventoryInputCell("inventory-equipment-value", item.value, "—") +
+    inventoryInputCell("inventory-item-name", item.name, "Item…") +
+    inventoryTypeCell(item.type) +
+    inventoryInputCell("inventory-item-qty", item.qty, "1") +
+    inventoryInputCell("inventory-item-value", item.value, "—") +
     inventoryLocationCell(item.location) +
     inventoryDetailsCell(item.open) +
-    inventoryRemoveButton("equipment item");
+    inventoryRemoveButton("inventory item");
 
-  const detailsRow = inventoryDetailsRow(item.details, item.open, 6);
+  const detailsRow = inventoryDetailsRow(item.details, item.open, 7);
 
   body.appendChild(row);
   body.appendChild(detailsRow);
 
   attachItemRowBehavior(row, detailsRow);
   refreshInventoryDependentOptions();
+}
+
+function addInventoryEquipmentRow(data = {}) {
+  addUnifiedInventoryRow({ ...data, type: data.type || "equipment" });
 }
 
 function addInventoryMagicItemRow(data = {}) {
-  const body = document.getElementById("inventoryMagicItemsBody");
-  if (!body) return;
-
-  const item = normalizeInventoryItem(data, "magic");
-
-  const row = document.createElement("tr");
-  row.className = "inventory-magic-row inventory-item-row";
-  row.dataset.itemId = item.id;
-
-  row.innerHTML =
-    inventoryInputCell("inventory-magic-name inventory-item-name", item.name, "Magic item…") +
-    inventoryInputCell("inventory-magic-value", item.value, "—") +
-    inventoryLocationCell(item.location) +
-    inventoryDetailsCell(item.open) +
-    inventoryRemoveButton("magic item");
-
-  const detailsRow = inventoryDetailsRow(item.details, item.open, 5);
-
-  body.appendChild(row);
-  body.appendChild(detailsRow);
-
-  attachItemRowBehavior(row, detailsRow);
-  refreshInventoryDependentOptions();
+  addUnifiedInventoryRow({ ...data, type: data.type || "magic" });
 }
 
 function addInventoryConsumableRow(data = {}) {
-  const body = document.getElementById("inventoryConsumablesBody");
-  if (!body) return;
-
-  const item = normalizeInventoryItem(data, "consumable");
-
-  const row = document.createElement("tr");
-  row.className = "inventory-consumable-row inventory-item-row";
-  row.dataset.itemId = item.id;
-
-  row.innerHTML =
-    inventoryInputCell("inventory-consumable-name inventory-item-name", item.name, "Potion or consumable…") +
-    inventoryInputCell("inventory-consumable-qty", item.qty, "1") +
-    inventoryInputCell("inventory-consumable-value", item.value, "—") +
-    inventoryLocationCell(item.location) +
-    inventoryDetailsCell(item.open) +
-    inventoryRemoveButton("consumable");
-
-  const detailsRow = inventoryDetailsRow(item.details, item.open, 6);
-
-  body.appendChild(row);
-  body.appendChild(detailsRow);
-
-  attachItemRowBehavior(row, detailsRow);
-  refreshInventoryDependentOptions();
+  addUnifiedInventoryRow({ ...data, type: data.type || "consumable" });
 }
 
 function addInventoryGemRow(data = {}) {
@@ -745,12 +767,12 @@ function addInventoryGemRow(data = {}) {
 
   locationSelect?.addEventListener("change", () => {
     locationSelect.dataset.selectedLocation = locationSelect.value;
-    applyInventoryLocationFilter();
+    applyInventoryFilters();
   });
 
   row.querySelector(".inventory-remove")?.addEventListener("click", () => {
     row.remove();
-    applyInventoryLocationFilter();
+    applyInventoryFilters();
   });
 
   refreshInventoryDependentOptions();
@@ -908,64 +930,53 @@ function collectStorageLocations() {
     .filter(location => location.name || location.type || location.notes);
 }
 
-function collectItemRows(selector, fields) {
-  return Array.from(document.querySelectorAll(selector))
+function collectUnifiedInventoryRows() {
+  return Array.from(
+    document.querySelectorAll("#inventoryItemsBody .inventory-unified-row")
+  )
     .map(row => {
       const detailsRow = row.nextElementSibling;
-      const data = {
+      return {
         id: row.dataset.itemId,
+        name: row.querySelector(".inventory-item-name")?.value.trim() || "",
+        type: row.querySelector(".inventory-item-type")?.value || "equipment",
+        qty: row.querySelector(".inventory-item-qty")?.value.trim() || "",
+        value: row.querySelector(".inventory-item-value")?.value.trim() || "",
+        location: row.querySelector(".inventory-location")?.value.trim() || "",
         details: detailsRow?.querySelector(".inventory-item-details")?.value || "",
         open: detailsRow?.style.display !== "none"
       };
-
-      fields.forEach(([key, fieldSelector]) => {
-        data[key] = row.querySelector(fieldSelector)?.value.trim() || "";
-      });
-
-      return data;
     })
-    .filter(row =>
-      row.name ||
-      row.qty ||
-      row.value ||
-      row.location ||
-      row.details
-    );
+    .filter(row => row.name || row.qty || row.value || row.location || row.details);
 }
 
 function collectInventoryEquipmentRows() {
-  return collectItemRows(
-    "#inventoryEquipmentBody .inventory-equipment-row",
-    [
-      ["name", ".inventory-equipment-name"],
-      ["qty", ".inventory-equipment-qty"],
-      ["value", ".inventory-equipment-value"],
-      ["location", ".inventory-location"]
-    ]
-  );
+  return collectUnifiedInventoryRows().filter(row => row.type === "equipment");
 }
 
 function collectInventoryMagicItemRows() {
-  return collectItemRows(
-    "#inventoryMagicItemsBody .inventory-magic-row",
-    [
-      ["name", ".inventory-magic-name"],
-      ["value", ".inventory-magic-value"],
-      ["location", ".inventory-location"]
-    ]
-  );
+  return collectUnifiedInventoryRows().filter(row => row.type === "magic");
 }
 
 function collectInventoryConsumableRows() {
-  return collectItemRows(
-    "#inventoryConsumablesBody .inventory-consumable-row",
-    [
-      ["name", ".inventory-consumable-name"],
-      ["qty", ".inventory-consumable-qty"],
-      ["value", ".inventory-consumable-value"],
-      ["location", ".inventory-location"]
-    ]
-  );
+  return collectUnifiedInventoryRows().filter(row => row.type === "consumable");
+}
+
+function mergeLegacyInventoryRows({
+  inventoryItems = [],
+  equipment = [],
+  magicItems = [],
+  consumables = []
+} = {}) {
+  if (Array.isArray(inventoryItems) && inventoryItems.length) {
+    return inventoryItems.map(item => ({ ...item, type: item.type || "equipment" }));
+  }
+
+  return [
+    ...(equipment || []).map(item => ({ ...item, type: item.type || "equipment" })),
+    ...(magicItems || []).map(item => ({ ...item, type: item.type || "magic" })),
+    ...(consumables || []).map(item => ({ ...item, type: item.type || "consumable" }))
+  ];
 }
 
 function collectInventoryGemRows() {
@@ -999,6 +1010,7 @@ function collectInventoryAttunementRows() {
 }
 
 function resetInventoryRows({
+  inventoryItems = DEFAULT_UNIFIED_INVENTORY_ROWS,
   equipment = DEFAULT_INVENTORY_EQUIPMENT_ROWS,
   magicItems = DEFAULT_INVENTORY_MAGIC_ITEM_ROWS,
   consumables = DEFAULT_INVENTORY_CONSUMABLE_ROWS,
@@ -1009,24 +1021,25 @@ function resetInventoryRows({
   customEquippedSlots = [],
   inventoryView = SILHOUETTE_VIEW_DEFAULT
 } = {}) {
-  const equipmentBody = document.getElementById("inventoryEquipmentBody");
-  const magicBody = document.getElementById("inventoryMagicItemsBody");
-  const consumablesBody = document.getElementById("inventoryConsumablesBody");
+  const itemsBody = document.getElementById("inventoryItemsBody");
   const gemsBody = document.getElementById("inventoryGemsBody");
   const attunementBody = document.getElementById("inventoryAttunementBody");
   const storageBody = document.getElementById("storageLocationsBody");
 
-  if (equipmentBody) equipmentBody.innerHTML = "";
-  if (magicBody) magicBody.innerHTML = "";
-  if (consumablesBody) consumablesBody.innerHTML = "";
+  if (itemsBody) itemsBody.innerHTML = "";
   if (gemsBody) gemsBody.innerHTML = "";
   if (attunementBody) attunementBody.innerHTML = "";
   if (storageBody) storageBody.innerHTML = "";
 
   (storageLocations || []).forEach(addStorageLocationRow);
-  (equipment || []).forEach(addInventoryEquipmentRow);
-  (magicItems || []).forEach(addInventoryMagicItemRow);
-  (consumables || []).forEach(addInventoryConsumableRow);
+
+  mergeLegacyInventoryRows({
+    inventoryItems,
+    equipment,
+    magicItems,
+    consumables
+  }).forEach(addUnifiedInventoryRow);
+
   (gems || []).forEach(addInventoryGemRow);
   (attunement || []).forEach(addInventoryAttunementRow);
 
@@ -1076,7 +1089,15 @@ function bindInventoryControls() {
 
   document
     .getElementById("inventoryLocationFilter")
-    ?.addEventListener("change", applyInventoryLocationFilter);
+    ?.addEventListener("change", applyInventoryFilters);
+
+  document
+    .getElementById("inventoryTypeFilter")
+    ?.addEventListener("change", applyInventoryFilters);
+
+  document
+    .getElementById("inventorySearchInput")
+    ?.addEventListener("input", applyInventoryFilters);
 
   refreshLocationFilter();
   setInventoryView(SILHOUETTE_VIEW_DEFAULT);

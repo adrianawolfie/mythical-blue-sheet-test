@@ -556,11 +556,38 @@
       </div>
       <div class="sb-card journal-notes-card" style="margin-top:12px;">
         <div class="sb-hdr">Notes</div>
-        <textarea
-          placeholder="Session notes, reminders, plans, contacts, clues, and anything else worth remembering…"
-          style="min-height:150px;"
-          data-field="journalNotes"
-        ></textarea>
+
+        <div class="journal-note-toolbar">
+          <label>
+            <span>Show</span>
+            <select id="journalNoteFilter">
+              <option value="all">All Categories</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Category</span>
+            <input id="journalNewNoteCategory" list="journalNoteCategoryOptions" placeholder="NPCs, Quests, Lore…">
+          </label>
+
+          <label class="journal-note-title-input">
+            <span>Title</span>
+            <input id="journalNewNoteTitle" placeholder="Captain Elara, Sunken Archive…">
+          </label>
+
+          <button type="button" class="journal-note-add" onclick="addJournalNoteFromToolbar()">+ Add Note</button>
+        </div>
+
+        <datalist id="journalNoteCategoryOptions"></datalist>
+        <div id="journalNotesList" class="journal-notes-list"></div>
+
+        <details class="journal-imported-notes">
+          <summary>Imported / Freeform Notes</summary>
+          <textarea
+            placeholder="Previously saved freeform notes remain available here…"
+            data-field="journalNotes"
+          ></textarea>
+        </details>
       </div>
     </div>
 
@@ -618,29 +645,50 @@
           </div>
         </div>
 
-        <div class="sb-card inventory-filter-card">
-          <label class="inventory-filter-label" for="inventoryLocationFilter">Show items in</label>
-          <select id="inventoryLocationFilter" class="inventory-filter-select">
-            <option value="all">All Locations</option>
-          </select>
+        <div class="sb-card inventory-filter-card inventory-filter-toolbar">
+          <label>
+            <span>Location</span>
+            <select id="inventoryLocationFilter" class="inventory-filter-select">
+              <option value="all">All Locations</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Type</span>
+            <select id="inventoryTypeFilter" class="inventory-filter-select">
+              <option value="all">All Types</option>
+              <option value="equipment">Equipment</option>
+              <option value="magic">Magic Item</option>
+              <option value="consumable">Potion / Consumable</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+
+          <label class="inventory-search-label">
+            <span>Search</span>
+            <input id="inventorySearchInput" class="inventory-search-input" placeholder="Search items…">
+          </label>
         </div>
 
-        <div class="sb-card inventory-card inventory-equipment-card">
-          <div class="sb-hdr">Equipment</div>
-          <table class="inventory-table inventory-detail-table" id="inventoryEquipmentTable">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th class="inventory-qty-col">Qty</th>
-                <th class="inventory-value-col">Value</th>
-                <th class="inventory-location-col">Location</th>
-                <th class="inventory-details-col"></th>
-                <th class="inventory-remove-col"></th>
-              </tr>
-            </thead>
-            <tbody id="inventoryEquipmentBody"></tbody>
-          </table>
-          <button type="button" class="inventory-add" onclick="addInventoryEquipmentRow()">+ Add Item</button>
+        <div class="sb-card inventory-card inventory-unified-card">
+          <div class="sb-hdr">Inventory</div>
+          <div class="inventory-table-wrap">
+            <table class="inventory-table inventory-detail-table inventory-unified-table" id="inventoryItemsTable">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="inventory-type-col">Type</th>
+                  <th class="inventory-qty-col">Qty</th>
+                  <th class="inventory-value-col">Value</th>
+                  <th class="inventory-location-col">Location</th>
+                  <th class="inventory-details-col"></th>
+                  <th class="inventory-remove-col"></th>
+                </tr>
+              </thead>
+              <tbody id="inventoryItemsBody"></tbody>
+            </table>
+          </div>
+          <button type="button" class="inventory-add" onclick="addUnifiedInventoryRow()">+ Add Item</button>
         </div>
 
         <div class="inventory-support-grid">
@@ -676,42 +724,6 @@
             <button type="button" class="inventory-add" onclick="addInventoryAttunementRow()">+ Add Slot</button>
           </div>
         </div>
-
-        <div class="sb-card inventory-card inventory-magic-card">
-          <div class="sb-hdr">Magic Items</div>
-          <table class="inventory-table inventory-detail-table" id="inventoryMagicItemsTable">
-            <thead>
-              <tr>
-                <th>Magic Item</th>
-                <th class="inventory-value-col">Value</th>
-                <th class="inventory-location-col">Location</th>
-                <th class="inventory-details-col"></th>
-                <th class="inventory-remove-col"></th>
-              </tr>
-            </thead>
-            <tbody id="inventoryMagicItemsBody"></tbody>
-          </table>
-          <button type="button" class="inventory-add" onclick="addInventoryMagicItemRow()">+ Add Magic Item</button>
-        </div>
-
-        <div class="sb-card inventory-card inventory-consumables-card">
-          <div class="sb-hdr">Potions & Consumables</div>
-          <table class="inventory-table inventory-detail-table" id="inventoryConsumablesTable">
-            <thead>
-              <tr>
-                <th>Potion / Consumable</th>
-                <th class="inventory-qty-col">Qty</th>
-                <th class="inventory-value-col">Value</th>
-                <th class="inventory-location-col">Location</th>
-                <th class="inventory-details-col"></th>
-                <th class="inventory-remove-col"></th>
-              </tr>
-            </thead>
-            <tbody id="inventoryConsumablesBody"></tbody>
-          </table>
-          <button type="button" class="inventory-add" onclick="addInventoryConsumableRow()">+ Add Consumable</button>
-        </div>
-
         <div class="sb-card other-inventory-card">
           <div class="sb-hdr">Other Inventory</div>
           <textarea
@@ -762,6 +774,7 @@
 <script src="js/features.js"></script>
 <script src="js/proficiencies.js"></script>
 <script src="js/inventory.js"></script>
+<script src="js/journal-notes.js"></script>
 <script src="js/speeds.js"></script>
 <script src="js/armor-class.js"></script>
 <script src="js/character-overview.js"></script>

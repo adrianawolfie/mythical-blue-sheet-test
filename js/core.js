@@ -385,6 +385,8 @@ customLists: {
   weapons: collectWeaponRows(),
   spells: collectSpellRows(),
   proficiencies: collectProficiencyRows(),
+  journalNotes: collectJournalNotes(),
+  inventoryItems: collectUnifiedInventoryRows(),
   inventoryEquipment: collectInventoryEquipmentRows(),
   magicItems: collectInventoryMagicItemRows(),
   consumables: collectInventoryConsumableRows(),
@@ -416,7 +418,9 @@ function loadCharacter(character) {
 renderFeatureEntries("featList", character.customLists?.feats || []);
 resetWeaponRows(character.customLists?.weapons || DEFAULT_WEAPON_ROWS);
 resetSpellRows(character.customLists?.spells || DEFAULT_SPELL_ROWS);
+resetJournalNotes(character.customLists?.journalNotes || []);
 resetInventoryRows({
+  inventoryItems: character.customLists?.inventoryItems || [],
   equipment: character.customLists?.inventoryEquipment || [],
   magicItems: character.customLists?.magicItems || [],
   consumables: character.customLists?.consumables || [],
@@ -427,7 +431,7 @@ resetInventoryRows({
   storageLocations: character.customLists?.storageLocations || [],
   equippedSlots: character.customLists?.equippedSlots || {},
   customEquippedSlots: character.customLists?.customEquippedSlots || [],
-  inventoryView: character.customLists?.inventoryView || "silhouette"
+  inventoryView: character.customLists?.inventoryView || "list"
 });
 renderExtraSpeedRows(character.customLists?.speeds || []);
 renderArmorClassState(
@@ -504,6 +508,7 @@ function newCharacter() {
 renderFeatureEntries("featList", []);
 resetWeaponRows();
 resetSpellRows();
+resetJournalNotes();
 resetInventoryRows();
 renderExtraSpeedRows();
 renderArmorClassState();
