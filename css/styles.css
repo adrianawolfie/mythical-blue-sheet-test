@@ -187,7 +187,7 @@ background-position: top center;
   }
   .hdr-row { display: grid; gap: 18px; margin-bottom: 12px; }
   .hdr-row.r1 { grid-template-columns: 2fr 1.25fr 1.45fr .85fr; }
-.hdr-row.r2 { grid-template-columns: .55fr 1.15fr 1.5fr 2fr; }
+.hdr-row.r2 { grid-template-columns: .5fr 1.05fr 1.3fr 2.65fr; }
 .hdr-row.r3 {
   grid-template-columns: 78px auto 78px 1fr 95px;
   gap: 10px;
@@ -2312,19 +2312,24 @@ background-position: top center;
 
 /* ─── OPTIONAL MOVEMENT SPEEDS ──────────────────────────────── */
 .movement-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  min-width: 170px;
+  display: grid;
+  grid-template-columns: auto minmax(170px, 1fr);
+  align-items: start;
+  gap: 12px;
+  min-width: 280px;
+}
+
+.movement-wrap .hmini-row {
+  justify-content: flex-start;
 }
 
 .extra-speed-panel {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 4px;
   width: 100%;
+  padding-top: 16px;
 }
 
 .extra-speed-add {
@@ -2361,6 +2366,7 @@ background-position: top center;
   flex-direction: column;
   gap: 3px;
   width: 100%;
+  max-width: 220px;
 }
 
 .extra-speed-row {
@@ -2436,12 +2442,29 @@ background-position: top center;
 
 @media (max-width: 768px) {
   .movement-wrap {
-    width: min(280px, 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: min(290px, 100%);
+    min-width: 0;
     margin: 0 auto;
+    gap: 5px;
+  }
+
+  .movement-wrap .hmini-row {
+    justify-content: center;
   }
 
   .extra-speed-panel {
+    align-items: center;
+    width: 100%;
     margin-top: 2px;
+    padding-top: 0;
+  }
+
+  .extra-speed-rows {
+    width: 100%;
+    max-width: 240px;
   }
 
   .extra-speed-add {
