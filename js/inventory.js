@@ -39,6 +39,176 @@ const INVENTORY_ITEM_TYPE_OPTIONS = [
   { value: "other", label: "Other" }
 ];
 
+const MOBILE_INVENTORY_GROUP_ORDER = [
+  "gear",
+  "tool",
+  "magic",
+  "consumable",
+  "other"
+];
+
+const mobileInventoryGroupState = Object.fromEntries(
+  MOBILE_INVENTORY_GROUP_ORDER.map(type => [type, true])
+);
+
+function isMobileInventoryLayout() {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
+function mobileInventorySummaryCell(item = {}) {
+  return `
+    <td class="inventory-mobile-summary" colspan="7">
+      <button type="button" class="inventory-mobile-row-toggle" aria-expanded="false">
+        <span class="inventory-mobile-summary-main">
+          <span class="inventory-mobile-summary-name">${inventorySafeValue(item.name || "New Item")}</span>
+          <span class="inventory-mobile-summary-qty">${item.qty ? `×${inventorySafeValue(item.qty)}` : ""}</span>
+        </span>
+        <span class="inventory-mobile-summary-side">
+          <span class="inventory-mobile-summary-location">Unassigned</span>
+          <span class="inventory-mobile-chevron">⌄</span>
+        </span>
+      </button>
+    </td>
+  `;
+}
+
+function inventoryGroupLabel(type = "gear") {
+  return inventoryTypeLabel(type);
+}
+
+function createMobileInventoryGroupHeader(type = "gear") {
+  const row = document.createElement("tr");
+  row.className = "inventory-mobile-group-header";
+  row.dataset.inventoryGroup = type;
+
+  row.innerHTML = `
+    <td colspan="8">
+      <button
+        type="button"
+        class="inventory-mobile-group-toggle"
+        aria-expanded="${mobileInventoryGroupState[type] !== false ? "true" : "false"}"
+      >
+        <span>${inventorySafeValue(inventoryGroupLabel(type))}</span>
+        <span class="inventory-mobile-group-count">0</span>
+        <span class="inventory-mobile-group-chevron">⌄</span>
+      </button>
+    </td>
+  `;
+
+  row
+    .querySelector(".inventory-mobile-group-toggle")
+    ?.addEventListener("click", () => {
+      mobileInventoryGroupState[type] = mobileInventoryGroupState[type] === false;
+      applyInventoryFilters();
+    });
+
+  return row;
+}
+
+function rebuildMobileInventoryGroups() {
+  const body = document.getElementById("inventoryItemsBody");
+  if (!body) return;
+
+  body
+    .querySelectorAll(".inventory-mobile-group-header")
+    .forEach(header => header.remove());
+
+  const pairs = Array.from(
+    body.querySelectorAll(".inventory-unified-row")
+  ).map(row => ({
+    row,
+    details: row.nextElementSibling?.classList.contains("inventory-item-details-row")
+      ? row.nextElementSibling
+      : null,
+    type: normalizeInventoryType(
+      row.querySelector(".inventory-item-type")?.value || "gear"
+    )
+  }));
+
+  MOBILE_INVENTORY_GROUP_ORDER.forEach(type => {
+    const groupPairs = pairs.filter(pair => pair.type === type);
+    if (!groupPairs.length) return;
+
+    body.appendChild(createMobileInventoryGroupHeader(type));
+
+    groupPairs.forEach(pair => {
+      body.appendChild(pair.row);
+      if (pair.details) body.appendChild(pair.details);
+    });
+  });
+}
+
+function updateMobileInventorySummary(row) {
+  if (!row) return;
+
+  const name = row.querySelector(".inventory-item-name")?.value.trim() || "New Item";
+  const qty = row.querySelector(".inventory-item-qty")?.value.trim() || "";
+  const locationSelect = row.querySelector(".inventory-location");
+  const location =
+    locationSelect?.selectedOptions?.[0]?.textContent?.trim() ||
+    "Unassigned";
+
+  const nameTarget = row.querySelector(".inventory-mobile-summary-name");
+  const qtyTarget = row.querySelector(".inventory-mobile-summary-qty");
+  const locationTarget = row.querySelector(".inventory-mobile-summary-location");
+
+  if (nameTarget) nameTarget.textContent = name;
+  if (qtyTarget) qtyTarget.textContent = qty ? `×${qty}` : "";
+  if (locationTarget) locationTarget.textContent = location;
+}
+
+function updateAllMobileInventorySummaries() {
+  document
+    .querySelectorAll("#inventoryItemsBody .inventory-unified-row")
+    .forEach(updateMobileInventorySummary);
+}
+
+function updateMobileInventoryGroupHeaders() {
+  const body = document.getElementById("inventoryItemsBody");
+  if (!body) return;
+
+  body
+    .querySelectorAll(".inventory-mobile-group-header")
+    .forEach(header => {
+      const type = header.dataset.inventoryGroup || "gear";
+      const matchingRows = Array.from(
+        body.querySelectorAll(".inventory-unified-row")
+      ).filter(row => {
+        const rowType = normalizeInventoryType(
+          row.querySelector(".inventory-item-type")?.value || "gear"
+        );
+
+        return rowType === type && row.dataset.inventoryFilterMatch === "true";
+      });
+
+      const open = mobileInventoryGroupState[type] !== false;
+      const toggle = header.querySelector(".inventory-mobile-group-toggle");
+      const count = header.querySelector(".inventory-mobile-group-count");
+
+      header.hidden = !matchingRows.length;
+      toggle?.setAttribute("aria-expanded", open ? "true" : "false");
+
+      if (count) count.textContent = String(matchingRows.length);
+    });
+}
+
+function bindMobileInventorySummary(row) {
+  if (!row || row.dataset.mobileSummaryBound === "true") return;
+
+  row.dataset.mobileSummaryBound = "true";
+
+  row
+    .querySelector(".inventory-mobile-row-toggle")
+    ?.addEventListener("click", () => {
+      const expanded = !row.classList.contains("mobile-expanded");
+      row.classList.toggle("mobile-expanded", expanded);
+
+      row
+        .querySelector(".inventory-mobile-row-toggle")
+        ?.setAttribute("aria-expanded", expanded ? "true" : "false");
+    });
+}
+
 const STANDARD_ITEM_LOCATIONS = [
   { value: "", label: "Unassigned" },
   { value: "worn", label: "Equipped & Carried" }
@@ -484,6 +654,7 @@ function refreshLocationSelect(select) {
 
 function refreshAllLocationSelects() {
   document.querySelectorAll(".inventory-location").forEach(refreshLocationSelect);
+  updateAllMobileInventorySummaries();
 }
 
 function getEquippableItems() {
@@ -615,7 +786,9 @@ function applyInventoryFilters() {
     .querySelectorAll("#inventoryItemsBody .inventory-unified-row")
     .forEach(row => {
       const location = row.querySelector(".inventory-location")?.value || "";
-      const type = row.querySelector(".inventory-item-type")?.value || "gear";
+      const type = normalizeInventoryType(
+        row.querySelector(".inventory-item-type")?.value || "gear"
+      );
       const searchable = [
         row.querySelector(".inventory-item-name")?.value || "",
         inventoryTypeLabel(type),
@@ -624,13 +797,20 @@ function applyInventoryFilters() {
         .join(" ")
         .toLowerCase();
 
-      const visible =
+      const filterMatch =
         (locationFilter === "all" || location === locationFilter) &&
         (typeFilter === "all" || type === typeFilter) &&
         (!searchText || searchable.includes(searchText));
 
-      setFilteredRowVisibility(row, visible);
+      const categoryOpen =
+        !isMobileInventoryLayout() ||
+        mobileInventoryGroupState[type] !== false;
+
+      row.dataset.inventoryFilterMatch = filterMatch ? "true" : "false";
+      setFilteredRowVisibility(row, filterMatch && categoryOpen);
     });
+
+  updateMobileInventoryGroupHeaders();
 
   document
     .querySelectorAll("#inventoryGemsBody .inventory-gem-row")
@@ -688,23 +868,32 @@ function attachItemRowBehavior(mainRow, detailsRow) {
   remove?.addEventListener("click", () => {
     detailsRow.remove();
     mainRow.remove();
+    rebuildMobileInventoryGroups();
     refreshInventoryDependentOptions();
   });
 
   nameInput?.addEventListener("input", () => {
     refreshAllEquippedSelects();
+    updateMobileInventorySummary(mainRow);
     applyInventoryFilters();
   });
+
+  mainRow
+    .querySelector(".inventory-item-qty")
+    ?.addEventListener("input", () => updateMobileInventorySummary(mainRow));
 
   detailsTextarea?.addEventListener("input", applyInventoryFilters);
 
   locationSelect?.addEventListener("change", () => {
     locationSelect.dataset.selectedLocation = locationSelect.value;
+    updateMobileInventorySummary(mainRow);
     applyInventoryFilters();
   });
 
   typeSelect?.addEventListener("change", () => {
     refreshAllEquippedSelects();
+    rebuildMobileInventoryGroups();
+    updateMobileInventorySummary(mainRow);
     applyInventoryFilters();
   });
 }
@@ -720,6 +909,7 @@ function addUnifiedInventoryRow(data = {}) {
   row.dataset.itemId = item.id;
 
   row.innerHTML =
+    mobileInventorySummaryCell(item) +
     inventoryInputCell("inventory-item-name", item.name, "Item…") +
     inventoryTypeCell(item.type) +
     inventoryInputCell("inventory-item-qty", item.qty, "1") +
@@ -728,12 +918,15 @@ function addUnifiedInventoryRow(data = {}) {
     inventoryDetailsCell(item.open) +
     inventoryRemoveButton("inventory item");
 
-  const detailsRow = inventoryDetailsRow(item.details, item.open, 7);
+  const detailsRow = inventoryDetailsRow(item.details, item.open, 8);
 
   body.appendChild(row);
   body.appendChild(detailsRow);
 
   attachItemRowBehavior(row, detailsRow);
+  bindMobileInventorySummary(row);
+  rebuildMobileInventoryGroups();
+  updateMobileInventorySummary(row);
   refreshInventoryDependentOptions();
 }
 
@@ -1107,6 +1300,8 @@ function bindCoinageMirrors() {
 function bindInventoryControls() {
   bindCoinageMirrors();
   bindInventoryViewToggle();
+
+  window.addEventListener("resize", applyInventoryFilters);
 
   document
     .getElementById("inventoryLocationFilter")
