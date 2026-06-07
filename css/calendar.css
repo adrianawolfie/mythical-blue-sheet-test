@@ -385,3 +385,90 @@
     font-size: 10px;
   }
 }
+
+
+/* ── SUBTLE CALENDAR CORRECTION CONTROLS ─────────────────────────────────
+   Replaces the chunky travel buttons with thin inline − / + controls. */
+
+.cal-travel-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 11px;
+}
+
+.cal-travel-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cal-travel-step-label {
+  min-width: 36px;
+  color: var(--navy);
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  opacity: .72;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.cal-travel-step-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--gold-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: .52;
+  transition:
+    color .15s ease,
+    opacity .15s ease,
+    transform .15s ease;
+}
+
+.cal-travel-step-btn:hover,
+.cal-travel-step-btn:focus-visible {
+  color: var(--navy-deep);
+  opacity: 1;
+  outline: none;
+  transform: scale(1.08);
+}
+
+.cal-travel-step-btn:disabled {
+  cursor: default;
+  opacity: .72;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .cal-travel-controls {
+    gap: 8px;
+  }
+
+  .cal-travel-step {
+    gap: 3px;
+  }
+
+  .cal-travel-step-label {
+    min-width: 31px;
+    font-size: 7.5px;
+  }
+
+  .cal-travel-step-btn {
+    width: 14px;
+    height: 14px;
+    font-size: 13px;
+  }
+}

@@ -83,18 +83,60 @@
         >
       </div>
 
-      <div class="cal-travel-controls">
-        <button type="button" class="cal-travel-btn" id="calTravelMinusMonth">−1 Month</button>
-        <button type="button" class="cal-travel-btn" id="calTravelMinusWeek">−1 Week</button>
-        <button type="button" class="cal-travel-btn" id="calTravelMinusDay">−1 Day</button>
-        <button type="button" class="cal-travel-btn" id="calTravelAddDay">+1 Day</button>
-        <button type="button" class="cal-travel-btn" id="calTravelAddWeek">+1 Week</button>
-        <button
-          type="button"
-          class="cal-travel-btn"
-          id="calTravelAddMonth"
-          title="Advance 28 days"
-        >+1 Month</button>
+      <div class="cal-travel-controls" aria-label="Adjust traveled time">
+        <div class="cal-travel-step">
+          <button
+            type="button"
+            class="cal-travel-step-btn"
+            id="calTravelMinusMonth"
+            title="Subtract one month"
+            aria-label="Subtract one month"
+          >−</button>
+          <span class="cal-travel-step-label">Month</span>
+          <button
+            type="button"
+            class="cal-travel-step-btn"
+            id="calTravelAddMonth"
+            title="Add one month"
+            aria-label="Add one month"
+          >+</button>
+        </div>
+
+        <div class="cal-travel-step">
+          <button
+            type="button"
+            class="cal-travel-step-btn"
+            id="calTravelMinusWeek"
+            title="Subtract one week"
+            aria-label="Subtract one week"
+          >−</button>
+          <span class="cal-travel-step-label">Week</span>
+          <button
+            type="button"
+            class="cal-travel-step-btn"
+            id="calTravelAddWeek"
+            title="Add one week"
+            aria-label="Add one week"
+          >+</button>
+        </div>
+
+        <div class="cal-travel-step">
+          <button
+            type="button"
+            class="cal-travel-step-btn"
+            id="calTravelMinusDay"
+            title="Subtract one day"
+            aria-label="Subtract one day"
+          >−</button>
+          <span class="cal-travel-step-label">Day</span>
+          <button
+            type="button"
+            class="cal-travel-step-btn"
+            id="calTravelAddDay"
+            title="Add one day"
+            aria-label="Add one day"
+          >+</button>
+        </div>
       </div>
     </div>
   </div>
