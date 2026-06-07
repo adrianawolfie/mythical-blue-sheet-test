@@ -45,14 +45,14 @@ const EQUIPPED_SILHOUETTE_COLUMNS = {
 
 const EQUIPPED_SLOT_ICON_MAP = {
   head: "assets/equipment-icons/head-hood.png",
-  neck: "assets/equipment-icons/necklace.png",
+  neck: "assets/equipment-icons/necklace.svg",
   cape: "assets/equipment-icons/cape.png",
   armor: "assets/equipment-icons/armor.png",
   clothing: "assets/equipment-icons/clothing.png",
   mainHand: "assets/equipment-icons/main-hand.png",
   offHand: "assets/equipment-icons/off-hand.png",
-  ring1: "assets/equipment-icons/ring.png",
-  ring2: "assets/equipment-icons/ring.png",
+  ring1: "assets/equipment-icons/ring.svg",
+  ring2: "assets/equipment-icons/ring.svg",
   belt: "assets/equipment-icons/belt.png",
   glovesBracers: "assets/equipment-icons/gloves-bracers.png",
   footwear: "assets/equipment-icons/boots.png",

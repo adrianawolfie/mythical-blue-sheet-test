@@ -289,7 +289,7 @@
 
 .equipped-slot-card {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr);
+  grid-template-columns: 38px minmax(0, 1fr);
   align-items: center;
   gap: 8px;
   min-width: 0;
@@ -306,8 +306,8 @@
 }
 
 .equipped-slot-icon-wrap {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -316,8 +316,8 @@
 }
 
 .equipped-slot-icon {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
   opacity: .9;
 }
@@ -818,4 +818,24 @@
   .inventory-remove-cell {
     width: 16px;
   }
+}
+
+/* Fine-tuned equipped slot icon presentation */
+.equipped-slot-icon-wrap {
+  overflow: hidden;
+  padding: 2px;
+}
+
+.equipped-slot-card[data-slot-key="armor"] .equipped-slot-icon,
+.equipped-slot-card[data-slot-key="backStorage"] .equipped-slot-icon,
+.equipped-slot-card[data-slot-key="belt"] .equipped-slot-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.equipped-slot-card[data-slot-key="neck"] .equipped-slot-icon,
+.equipped-slot-card[data-slot-key="ring1"] .equipped-slot-icon,
+.equipped-slot-card[data-slot-key="ring2"] .equipped-slot-icon {
+  width: 24px;
+  height: 24px;
 }
