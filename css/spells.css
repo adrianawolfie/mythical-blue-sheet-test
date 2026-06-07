@@ -57,3 +57,265 @@
 .spell-picker-footer { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; border-top:1px solid rgba(184,144,44,.48); color:rgba(28,39,80,.66); font-size:9px; }
 @media (max-width:1100px){.spell-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media (max-width:720px){.spell-toolbar{grid-template-columns:1fr 1fr}.spell-search-label{grid-column:1/-1}.spell-card-grid{grid-template-columns:1fr;padding:8px 5px}.spell-picker-toolbar{grid-template-columns:1fr 1fr}.spell-picker-toolbar label:first-child{grid-column:1/-1}.spell-structured-grid{grid-template-columns:1fr 1fr}.spellbook-actions{padding-left:5px;padding-right:5px}.spell-list-view .spell-table-wrap{overflow-x:auto}.spell-list-view .stbl{min-width:900px}}
+
+/* ─── SPELLBOOK POLISH · COMPACT LIST ICONS + EXPANDABLE CARD RECORDS ─── */
+
+/* Keep the spell-school symbol subtle inside the editable list. */
+.spell-list-school-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 5px;
+  padding: 1px;
+  border: 1px solid rgba(184,144,44,.28);
+  border-radius: 50%;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+#spellTable .spell-main-row td:nth-child(2) {
+  white-space: nowrap;
+}
+
+#spellTable .spell-main-row td:nth-child(2) .spell-name {
+  width: calc(100% - 28px);
+  vertical-align: middle;
+}
+
+/* The card view is intentionally one expandable record per row.
+   It keeps the playful spell-card styling while remaining easy to scan. */
+.spell-card-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding: 10px 8px;
+}
+
+.spell-card {
+  overflow: hidden;
+  border: 1px solid rgba(184,144,44,.42);
+  border-radius: 4px;
+  background:
+    linear-gradient(135deg, rgba(255,253,245,.36), rgba(255,248,226,.13));
+  box-shadow: 0 1px 0 rgba(255,255,255,.22);
+}
+
+.spell-card::after {
+  width: 120px;
+  height: 120px;
+  right: -40px;
+  bottom: -54px;
+  opacity: .68;
+}
+
+.spell-card-summary-row {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 36px 27px minmax(150px, 1.25fr) minmax(90px, .68fr) minmax(110px, .82fr) minmax(75px, .58fr) auto 74px;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 9px;
+  border-bottom: 1px dotted rgba(184,144,44,.36);
+  background: rgba(255,253,245,.12);
+}
+
+.spell-card-summary-row .spell-school-icon {
+  width: 30px;
+  height: 30px;
+  padding: 3px;
+}
+
+.spell-card-summary-row .spell-level-badge {
+  width: 21px;
+  height: 21px;
+  font-size: 7px;
+}
+
+.spell-card-title {
+  font-size: 12px;
+}
+
+.spell-card-school {
+  margin-top: 1px;
+  font-size: 9px;
+}
+
+.spell-card-quick {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  color: rgba(28,39,80,.82);
+  font-size: 10px;
+}
+
+.spell-card-quick strong,
+.spell-card-detail-grid strong {
+  color: rgba(28,39,80,.60);
+  font-family: 'Cinzel', serif;
+  font-size: 6.5px;
+  font-weight: 700;
+  letter-spacing: .55px;
+  text-transform: uppercase;
+}
+
+.spell-card-summary-row .spell-card-properties {
+  display: flex;
+  min-width: 124px;
+  gap: 3px;
+  margin: 0;
+  flex-wrap: nowrap;
+}
+
+.spell-property-chip {
+  min-width: 18px;
+  height: 17px;
+  padding: 0 4px;
+  font-size: 6.5px;
+}
+
+.spell-card-expand {
+  border: none;
+  border-bottom: 1px dotted rgba(184,144,44,.55);
+  background: transparent;
+  color: var(--gold-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .55px;
+  text-transform: uppercase;
+}
+
+.spell-card-expand:hover,
+.spell-card-expand:focus-visible {
+  color: var(--navy-deep);
+  outline: none;
+}
+
+.spell-card-teaser {
+  position: relative;
+  z-index: 1;
+  padding: 7px 10px 8px;
+  color: rgba(28,39,80,.80);
+  font-family: var(--small-italic-font);
+  font-size: 10px;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.spell-card-details {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 10px;
+  border-top: 1px solid rgba(184,144,44,.45);
+  background: rgba(255,253,245,.22);
+  color: rgba(28,39,80,.84);
+  font-size: 11px;
+  line-height: 1.45;
+  white-space: normal;
+}
+
+.spell-card-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px 12px;
+  margin-bottom: 10px;
+  padding-bottom: 9px;
+  border-bottom: 2px solid rgba(184,144,44,.56);
+}
+
+.spell-card-detail-grid > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.spell-card-detail-grid span {
+  color: var(--navy-deep);
+  font-size: 11px;
+}
+
+.spell-card-rule-text {
+  color: rgba(28,39,80,.88);
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.spell-card-actions {
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+@media (max-width: 1180px) {
+  .spell-card-summary-row {
+    grid-template-columns: 34px 25px minmax(145px, 1fr) minmax(78px, .65fr) minmax(95px, .78fr) minmax(65px, .55fr) auto 70px;
+    gap: 6px;
+  }
+
+  .spell-card-summary-row .spell-card-properties {
+    min-width: 112px;
+  }
+}
+
+@media (max-width: 920px) {
+  .spell-card-summary-row {
+    grid-template-columns: 34px 25px minmax(0, 1fr) 70px;
+    grid-template-areas:
+      'icon level title expand'
+      'quick quick quick props';
+  }
+
+  .spell-card-summary-row .spell-school-icon { grid-area: icon; }
+  .spell-card-summary-row .spell-level-badge { grid-area: level; }
+  .spell-card-summary-row .spell-card-title-wrap { grid-area: title; }
+  .spell-card-summary-row .spell-card-expand { grid-area: expand; }
+  .spell-card-summary-row .spell-card-quick { display: none; }
+  .spell-card-summary-row .spell-card-properties { grid-area: props; justify-content: flex-end; min-width: 0; }
+  .spell-card-summary-row::after {
+    grid-area: quick;
+    content: 'Open details for casting time, range, duration and full rules';
+    color: rgba(28,39,80,.58);
+    font-family: var(--small-italic-font);
+    font-size: 9px;
+    font-style: italic;
+  }
+
+  .spell-card-detail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .spell-card-grid {
+    padding-right: 5px;
+    padding-left: 5px;
+  }
+
+  .spell-card-summary-row {
+    grid-template-columns: 31px 23px minmax(0, 1fr) 68px;
+    padding: 7px;
+  }
+
+  .spell-card-summary-row .spell-school-icon {
+    width: 27px;
+    height: 27px;
+  }
+
+  .spell-card-title {
+    font-size: 11px;
+  }
+
+  .spell-card-teaser {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .spell-card-details {
+    padding: 8px;
+  }
+}
