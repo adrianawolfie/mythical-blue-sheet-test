@@ -43,21 +43,72 @@
     <div class="cal-sign" id="calWidgetSign">Year of the Void Wyrm · Abzutarus</div>
 
     <div class="cal-date-block">
-      <div class="cal-season"    id="calWidgetSeason">Winter (Hiver)</div>
+      <div class="cal-season" id="calWidgetSeason">Winter (Hiver)</div>
 
-      <div class="cal-month-row">
+      <div class="cal-inline-adjust-row cal-month-row">
+        <button
+          type="button"
+          class="cal-inline-adjust"
+          id="calTravelMinusMonth"
+          title="Subtract one month"
+          aria-label="Subtract one month"
+        >−</button>
+
         <span class="cal-month-num" id="calWidgetMonthNum">Month 3</span>
         <span class="cal-month-sep">·</span>
-        <span class="cal-month-of"  id="calWidgetMonth">Trelus</span>
+        <span class="cal-month-of" id="calWidgetMonth">Trelus</span>
+
+        <button
+          type="button"
+          class="cal-inline-adjust"
+          id="calTravelAddMonth"
+          title="Add one month"
+          aria-label="Add one month"
+        >+</button>
       </div>
 
-      <div class="cal-week"    id="calWidgetWeek">Week 4 of 4</div>
+      <div class="cal-inline-adjust-row cal-week-row">
+        <button
+          type="button"
+          class="cal-inline-adjust"
+          id="calTravelMinusWeek"
+          title="Subtract one week"
+          aria-label="Subtract one week"
+        >−</button>
+
+        <span class="cal-week" id="calWidgetWeek">Week 4 of 4</span>
+
+        <button
+          type="button"
+          class="cal-inline-adjust"
+          id="calTravelAddWeek"
+          title="Add one week"
+          aria-label="Add one week"
+        >+</button>
+      </div>
+
       <div class="cal-weekday" id="calWidgetWeekday">Final Solaris · Solis</div>
 
-      <div class="cal-day-row">
+      <div class="cal-inline-adjust-row cal-day-row">
+        <button
+          type="button"
+          class="cal-inline-adjust"
+          id="calTravelMinusDay"
+          title="Subtract one day"
+          aria-label="Subtract one day"
+        >−</button>
+
         <span class="cal-ornament">❖</span>
         <span class="cal-day-num" id="calWidgetDay">the 28th</span>
         <span class="cal-ornament">❖</span>
+
+        <button
+          type="button"
+          class="cal-inline-adjust"
+          id="calTravelAddDay"
+          title="Add one day"
+          aria-label="Add one day"
+        >+</button>
       </div>
     </div>
 
@@ -83,61 +134,7 @@
         >
       </div>
 
-      <div class="cal-travel-controls" aria-label="Adjust traveled time">
-        <div class="cal-travel-step">
-          <button
-            type="button"
-            class="cal-travel-step-btn"
-            id="calTravelMinusMonth"
-            title="Subtract one month"
-            aria-label="Subtract one month"
-          >−</button>
-          <span class="cal-travel-step-label">Month</span>
-          <button
-            type="button"
-            class="cal-travel-step-btn"
-            id="calTravelAddMonth"
-            title="Add one month"
-            aria-label="Add one month"
-          >+</button>
-        </div>
 
-        <div class="cal-travel-step">
-          <button
-            type="button"
-            class="cal-travel-step-btn"
-            id="calTravelMinusWeek"
-            title="Subtract one week"
-            aria-label="Subtract one week"
-          >−</button>
-          <span class="cal-travel-step-label">Week</span>
-          <button
-            type="button"
-            class="cal-travel-step-btn"
-            id="calTravelAddWeek"
-            title="Add one week"
-            aria-label="Add one week"
-          >+</button>
-        </div>
-
-        <div class="cal-travel-step">
-          <button
-            type="button"
-            class="cal-travel-step-btn"
-            id="calTravelMinusDay"
-            title="Subtract one day"
-            aria-label="Subtract one day"
-          >−</button>
-          <span class="cal-travel-step-label">Day</span>
-          <button
-            type="button"
-            class="cal-travel-step-btn"
-            id="calTravelAddDay"
-            title="Add one day"
-            aria-label="Add one day"
-          >+</button>
-        </div>
-      </div>
     </div>
   </div>
   <!-- ════════════════════════════════════════════════════════════════ -->
