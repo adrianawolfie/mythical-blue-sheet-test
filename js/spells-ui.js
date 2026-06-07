@@ -88,17 +88,13 @@
 
     box.innerHTML=spells.map(s=>`<article class="spell-card">
       <div class="spell-card-topline">
-        <button class="spell-prepared-toggle ${s.prepared?'is-prepared':''}" type="button" onclick="toggleSpellPrepared(${s.index})" aria-pressed="${s.prepared?'true':'false'}" title="${s.prepared?'Prepared spell':'Mark as prepared'}"><span aria-hidden="true"></span></button>
         <img class="spell-school-icon" src="${icon(s.school||'Homebrew')}" alt="" aria-hidden="true">
         <span class="spell-level-badge"><span>${esc(s.level||'—')}</span></span>
         <div class="spell-card-title-wrap">
           <div class="spell-card-title">${esc(s.name)}</div>
           <div class="spell-card-school">${esc(s.school||'Homebrew')}</div>
         </div>
-        <div class="spell-card-inline-actions">
-          <button class="spell-card-expand" type="button" onclick="toggleSpellCardDetails(this)" aria-expanded="false">Details ▾</button>
-          <button class="spell-card-edit-inline" type="button" onclick="editSpellFromCard(${s.index})">Edit</button>
-        </div>
+        <button class="spell-prepared-toggle ${s.prepared?'is-prepared':''}" type="button" onclick="toggleSpellPrepared(${s.index})" aria-pressed="${s.prepared?'true':'false'}" title="${s.prepared?'Prepared spell':'Mark as prepared'}"><span aria-hidden="true">✦</span><span class="spell-prepared-label">${s.prepared?'Prepared':'Prepare'}</span></button>
       </div>
       <div class="spell-card-meta-grid">
         <div class="spell-card-quick"><strong>Cast</strong><span>${esc(s.castTime||'—')}</span></div>
@@ -111,6 +107,10 @@
         <div class="spell-card-properties">${properties(s)}</div>
         <div class="spell-card-teaser">${text(cardTeaser(s))}</div>
       </div>
+      <div class="spell-card-footer">
+        <button class="spell-card-expand" type="button" onclick="toggleSpellCardDetails(this)" aria-expanded="false">Details ▾</button>
+        <button class="spell-card-edit-inline" type="button" onclick="editSpellFromCard(${s.index})">Edit</button>
+      </div>
       <div class="spell-card-details" hidden>${cardDetails(s)}<div class="spell-card-actions"><button class="spell-card-btn" type="button" onclick="editSpellFromCard(${s.index})">Edit Spell</button></div></div>
     </article>`).join('')||'<p class="spell-picker-empty">No spells match the current filters.</p>';
   };
@@ -120,7 +120,7 @@
     row.dataset.prepared=row.dataset.prepared==='true'?'false':'true';
     refreshSpellCards();
   };
-  window.toggleSpellCardDetails=function(btn){const d=btn.closest('.spell-card')?.querySelector('.spell-card-details');if(!d)return;d.hidden=!d.hidden;btn.textContent=d.hidden?'Details ▾':'Details ▴';btn.setAttribute('aria-expanded',d.hidden?'false':'true');};
+  window.toggleSpellCardDetails=function(btn){const card=btn.closest('.spell-card');const d=card?.querySelector('.spell-card-details');if(!d)return;d.hidden=!d.hidden;card.classList.toggle('is-open',!d.hidden);btn.textContent=d.hidden?'Details ▾':'Details ▴';btn.setAttribute('aria-expanded',d.hidden?'false':'true');};
 
   function ensureEditor(){if(document.getElementById('spellEditorModal'))return;document.body.insertAdjacentHTML('beforeend',`<div id="spellEditorModal" class="spell-editor-backdrop" hidden><section class="spell-editor-modal" role="dialog" aria-modal="true" aria-labelledby="spellEditorTitle"><div class="spell-editor-header"><div><div class="sb-hdr" id="spellEditorTitle">Edit Spell</div><p>Adjust the structured card fields or write your own homebrew spell.</p></div><button type="button" class="spell-picker-close" onclick="closeSpellEditor()" aria-label="Close spell editor">×</button></div><div class="spell-editor-grid"><label><span>Name</span><input id="spellEditName"></label><label><span>Level</span><input id="spellEditLevel" placeholder="C, 1, 2…"></label><label><span>School</span><input id="spellEditSchool"></label><label><span>Source</span><input id="spellEditSource"></label><label><span>Casting Time</span><input id="spellEditCast"></label><label><span>Range</span><input id="spellEditRange"></label><label><span>Duration</span><input id="spellEditDuration"></label><label><span>Components</span><input id="spellEditComponents"></label><label><span>Classes</span><input id="spellEditClasses"></label><label><span>Attack / Save</span><input id="spellEditAttackSave"></label><label><span>Damage / Healing</span><input id="spellEditDamageHealing"></label><label><span>Damage Type / Effect</span><input id="spellEditDamageType"></label><label><span>Area Shape</span><select id="spellEditAreaShape"><option value="">None</option><option>Sphere</option><option>Cone</option><option>Square</option><option>Cube</option><option>Cylinder</option><option>Line</option><option>Emanation</option></select></label><label><span>Area Size</span><input id="spellEditAreaSize" placeholder="20 ft radius"></label></div><div class="spell-editor-checks"><label><input id="spellEditConcentration" type="checkbox"> Concentration</label><label><input id="spellEditRitual" type="checkbox"> Ritual</label><label><input id="spellEditMaterial" type="checkbox"> Material</label><label><input id="spellEditPrepared" type="checkbox"> Prepared</label></div><label class="spell-editor-wide"><span>Short Card Effect</span><textarea id="spellEditEffect" rows="3"></textarea></label><label class="spell-editor-wide"><span>Full Rules Text</span><textarea id="spellEditDetails" rows="12"></textarea></label><div class="spell-editor-actions"><button type="button" class="add-btn spell-editor-delete" onclick="deleteEditedSpell()">Delete Spell</button><span></span><button type="button" class="add-btn" onclick="closeSpellEditor()">Cancel</button><button type="button" class="add-btn" onclick="saveSpellEditor()">Save Spell</button></div></section></div>`);document.getElementById('spellEditorModal')?.addEventListener('click',e=>{if(e.target.id==='spellEditorModal')closeSpellEditor();});}
   function setVal(id,v=''){const el=document.getElementById(id);if(el)el.value=v||'';} function setCheck(id,v){const el=document.getElementById(id);if(el)el.checked=!!v;}
