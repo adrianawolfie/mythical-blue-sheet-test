@@ -142,10 +142,15 @@
 
 .equipped-card-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
-  padding-right: 8px;
+  flex-wrap: wrap;
+  padding: 0 8px 4px;
+}
+
+.equipped-card-heading-group {
+  min-width: 0;
 }
 
 .inventory-view-toggle {
@@ -178,35 +183,42 @@
 }
 
 .equipped-layout {
-  display: grid;
-  grid-template-columns: minmax(240px, .88fr) minmax(0, 1.12fr);
-  gap: 8px;
   padding: 0 8px 8px;
 }
 
-.equipped-layout.is-list-view {
-  display: block;
+.equipped-silhouette-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 280px) minmax(0, 1fr);
+  grid-template-areas: 'left sil right';
+  align-items: start;
+  gap: 10px;
 }
 
-.equipped-visual-panel {
-  display: block;
+.equipped-slot-column-left { grid-area: left; }
+.equipped-slot-column-right { grid-area: right; }
+.equipped-silhouette-panel { grid-area: sil; }
+
+.equipped-slot-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
 }
 
-.equipped-layout.is-list-view .equipped-visual-panel {
-  display: none;
+.equipped-silhouette-panel {
+  min-width: 0;
 }
 
 .equipped-silhouette-frame {
-  height: 100%;
-  min-height: 480px;
-  padding: 10px 10px 6px;
+  min-height: 420px;
+  padding: 12px 10px 8px;
   border: 1px solid rgba(184,144,44,.38);
-  background: rgba(255,253,245,.16);
+  background: rgba(255,253,245,.13);
 }
 
 .equipped-silhouette-stage {
   position: relative;
-  width: min(100%, 300px);
+  width: min(100%, 250px);
   margin: 0 auto;
   aspect-ratio: 3 / 5;
 }
@@ -215,11 +227,11 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  opacity: .95;
+  opacity: .92;
 }
 
 .equipped-silhouette-note {
-  margin-top: 6px;
+  margin-top: 7px;
   text-align: center;
   color: rgba(28,39,80,.66);
   font-family: var(--small-italic-font);
@@ -227,168 +239,97 @@
   font-style: italic;
 }
 
-.silhouette-overlay {
+.silhouette-node {
   position: absolute;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .18s ease;
-  filter: drop-shadow(0 1px 1px rgba(184,144,44,.16));
+  width: 10px;
+  height: 10px;
+  border: 1px solid rgba(184,144,44,.72);
+  border-radius: 999px;
+  background: rgba(255,253,245,.78);
+  box-shadow: 0 0 0 2px rgba(255,253,245,.45);
+  transition: transform .16s ease, background .16s ease, box-shadow .16s ease, opacity .16s ease;
+  opacity: .58;
 }
 
-.silhouette-overlay.is-active {
-  opacity: .96;
+.silhouette-node.is-active {
+  background: rgba(184,144,44,.95);
+  box-shadow: 0 0 0 2px rgba(255,248,220,.68), 0 0 7px rgba(184,144,44,.42);
+  transform: scale(1.14);
+  opacity: 1;
 }
 
-.overlay-head {
-  top: 1%;
-  left: 35%;
-  width: 30%;
-  height: 18%;
-  z-index: 18;
-  background-image: url('../assets/equipment-icons/head-hood.png');
-}
+.node-head { top: 12%; left: 50%; transform: translate(-50%, 0); }
+.node-neck { top: 24%; left: 50%; transform: translate(-50%, 0); }
+.node-cape { top: 25%; left: 34%; }
+.node-armor { top: 37%; left: 44%; }
+.node-clothing { top: 41%; left: 56%; }
+.node-main-hand { top: 46%; left: 17%; }
+.node-off-hand { top: 46%; right: 17%; }
+.node-ring-1 { top: 56%; left: 17%; }
+.node-ring-2 { top: 56%; right: 17%; }
+.node-belt { top: 51%; left: 50%; transform: translate(-50%, 0); }
+.node-gloves-bracers { top: 48%; left: 71%; }
+.node-footwear { top: 83%; left: 50%; transform: translate(-50%, 0); }
+.node-back-storage { top: 39%; right: 9%; }
+.node-other-worn { top: 62%; right: 24%; }
 
-.overlay-neck {
-  top: 17%;
-  left: 43%;
-  width: 14%;
-  height: 9%;
-  z-index: 19;
-  background-image: url('../assets/equipment-icons/necklace.png');
-}
-
-.overlay-cape {
-  top: 12%;
-  left: 27%;
-  width: 46%;
-  height: 39%;
-  z-index: 6;
-  background-image: url('../assets/equipment-icons/cape.png');
-}
-
-.overlay-armor {
-  top: 20%;
-  left: 32%;
-  width: 36%;
-  height: 23%;
-  z-index: 16;
-  background-image: url('../assets/equipment-icons/armor.png');
-}
-
-.overlay-clothing {
-  top: 20%;
-  left: 31%;
-  width: 38%;
-  height: 35%;
-  z-index: 15;
-  background-image: url('../assets/equipment-icons/clothing.png');
-}
-
-.overlay-main-hand {
-  top: 31%;
-  left: 12%;
-  width: 16%;
-  height: 39%;
-  z-index: 17;
-  background-image: url('../assets/equipment-icons/main-hand.png');
-}
-
-.overlay-off-hand {
-  top: 32%;
-  right: 10%;
-  width: 20%;
-  height: 30%;
-  z-index: 17;
-  background-image: url('../assets/equipment-icons/off-hand.png');
-}
-
-.overlay-ring-1 {
-  top: 49%;
-  left: 22%;
-  width: 8%;
-  height: 8%;
-  z-index: 19;
-  background-image: url('../assets/equipment-icons/ring.png');
-}
-
-.overlay-ring-2 {
-  top: 49%;
-  right: 22%;
-  width: 8%;
-  height: 8%;
-  z-index: 19;
-  background-image: url('../assets/equipment-icons/ring.png');
-}
-
-.overlay-belt {
-  top: 44%;
-  left: 34%;
-  width: 32%;
-  height: 13%;
-  z-index: 17;
-  background-image: url('../assets/equipment-icons/belt.png');
-}
-
-.overlay-gloves-bracers {
-  top: 39%;
-  left: 22%;
-  width: 56%;
-  height: 19%;
-  z-index: 18;
-  background-image: url('../assets/equipment-icons/gloves-bracers.png');
-}
-
-.overlay-footwear {
-  bottom: 3%;
-  left: 31%;
-  width: 38%;
-  height: 18%;
-  z-index: 16;
-  background-image: url('../assets/equipment-icons/boots.png');
-}
-
-.overlay-back-storage {
-  top: 23%;
-  right: 11%;
-  width: 23%;
-  height: 21%;
-  z-index: 8;
-  background-image: url('../assets/equipment-icons/backpack.png');
-}
-
-.equipped-controls-panel {
-  min-width: 0;
-}
-
-.equipped-intro {
-  padding: 7px 8px 0;
-  color: rgba(28,39,80,.66);
-  font-family: var(--small-italic-font);
-  font-size: 11px;
-  font-style: italic;
-}
-
-.equipped-slots {
+.equipped-list-view {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 7px;
-  padding: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
-.equipped-slot {
+.equipped-layout.is-list-view .equipped-silhouette-shell {
+  display: none;
+}
+
+.equipped-layout.is-list-view .equipped-list-view {
+  display: grid;
+}
+
+.equipped-slot-card {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 7px;
+  border: 1px solid rgba(184,144,44,.42);
+  background: rgba(255,253,245,.16);
+  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.equipped-slot-card.is-active {
+  border-color: rgba(184,144,44,.72);
+  background: rgba(184,144,44,.09);
+  box-shadow: inset 0 0 0 1px rgba(184,144,44,.12);
+}
+
+.equipped-slot-icon-wrap {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(184,144,44,.24);
+  background: rgba(255,253,245,.28);
+}
+
+.equipped-slot-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  opacity: .9;
+}
+
+.equipped-slot-content {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  min-width: 0;
-  padding: 5px 6px;
-  border: 1px solid rgba(184,144,44,.42);
-  background: rgba(255,253,245,.16);
 }
 
-.equipped-slot span {
+.equipped-slot-label {
   color: var(--navy);
   font-family: 'Cinzel', serif;
   font-size: 7px;
@@ -397,7 +338,7 @@
   text-transform: uppercase;
 }
 
-.equipped-slot select,
+.equipped-slot-card select,
 .custom-equipped-slot select {
   width: 100%;
   min-width: 0;
@@ -410,8 +351,16 @@
   outline: none;
 }
 
+.equipped-intro {
+  color: rgba(28,39,80,.66);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  font-style: italic;
+}
+
 .custom-equipped-section {
-  padding: 0 8px 3px;
+  margin-top: 10px;
+  padding: 0 1px 3px;
   border-top: 1px dotted rgba(184,144,44,.5);
 }
 
@@ -445,6 +394,47 @@
   font-family: var(--small-italic-font);
   font-size: 11px;
   outline: none;
+}
+
+@media (max-width: 980px) {
+  .equipped-silhouette-shell {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      'sil sil'
+      'left right';
+  }
+
+  .equipped-silhouette-frame {
+    min-height: 360px;
+  }
+
+  .equipped-list-view {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .equipped-card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inventory-view-toggle {
+    align-self: flex-start;
+    margin-top: 0;
+  }
+
+  .equipped-silhouette-shell {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'sil'
+      'left'
+      'right';
+  }
+
+  .equipped-silhouette-frame {
+    min-height: 330px;
+  }
 }
 
 /* ─── FILTER ───────────────────────────────────────────────── */

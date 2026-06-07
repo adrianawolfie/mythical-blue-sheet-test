@@ -601,45 +601,53 @@
 
         <div class="sb-card equipped-carried-card">
           <div class="equipped-card-header">
-            <div class="sb-hdr">Equipped & Carried</div>
-            <div class="inventory-view-toggle" role="tablist" aria-label="Equipped items view">
-              <button type="button" class="inventory-view-btn active" data-inventory-view="silhouette">Silhouette</button>
-              <button type="button" class="inventory-view-btn" data-inventory-view="list">List</button>
+            <div class="equipped-card-heading-group">
+              <div class="sb-hdr">Equipped & Carried</div>
+              <div class="equipped-intro">Choose items or carried containers from your inventory.</div>
+            </div>
+
+            <div class="inventory-view-toggle" role="tablist" aria-label="Equipped item display mode">
+              <button type="button" class="inventory-view-btn active" data-inventory-view="silhouette" aria-selected="true">Silhouette</button>
+              <button type="button" class="inventory-view-btn" data-inventory-view="list" aria-selected="false">List</button>
             </div>
           </div>
 
-          <div id="equippedLayout" class="equipped-layout" data-view="silhouette">
-            <div class="equipped-visual-panel">
-              <div class="equipped-silhouette-frame">
-                <div class="equipped-silhouette-stage" aria-hidden="true">
-                  <img class="equipped-silhouette-base" src="assets/equipment-silhouette-transparent.png" alt="">
-                  <div class="silhouette-overlay overlay-head" data-overlay-slot="head"></div>
-                  <div class="silhouette-overlay overlay-neck" data-overlay-slot="neck"></div>
-                  <div class="silhouette-overlay overlay-cape" data-overlay-slot="cape"></div>
-                  <div class="silhouette-overlay overlay-armor" data-overlay-slot="armor"></div>
-                  <div class="silhouette-overlay overlay-clothing" data-overlay-slot="clothing"></div>
-                  <div class="silhouette-overlay overlay-main-hand" data-overlay-slot="mainHand"></div>
-                  <div class="silhouette-overlay overlay-off-hand" data-overlay-slot="offHand"></div>
-                  <div class="silhouette-overlay overlay-ring-1" data-overlay-slot="ring1"></div>
-                  <div class="silhouette-overlay overlay-ring-2" data-overlay-slot="ring2"></div>
-                  <div class="silhouette-overlay overlay-belt" data-overlay-slot="belt"></div>
-                  <div class="silhouette-overlay overlay-gloves-bracers" data-overlay-slot="glovesBracers"></div>
-                  <div class="silhouette-overlay overlay-footwear" data-overlay-slot="footwear"></div>
-                  <div class="silhouette-overlay overlay-back-storage" data-overlay-slot="backStorage"></div>
+          <div id="equippedLayout" class="equipped-layout is-silhouette-view" data-view="silhouette">
+            <div id="equippedSilhouetteShell" class="equipped-silhouette-shell">
+              <div id="equippedLeftColumn" class="equipped-slot-column equipped-slot-column-left"></div>
+
+              <div class="equipped-silhouette-panel">
+                <div class="equipped-silhouette-frame">
+                  <div class="equipped-silhouette-stage">
+                    <img src="assets/equipment-silhouette-transparent.png" alt="" class="equipped-silhouette-base">
+                    <span class="silhouette-node node-head" data-slot-key="head" aria-hidden="true"></span>
+                    <span class="silhouette-node node-neck" data-slot-key="neck" aria-hidden="true"></span>
+                    <span class="silhouette-node node-cape" data-slot-key="cape" aria-hidden="true"></span>
+                    <span class="silhouette-node node-armor" data-slot-key="armor" aria-hidden="true"></span>
+                    <span class="silhouette-node node-clothing" data-slot-key="clothing" aria-hidden="true"></span>
+                    <span class="silhouette-node node-main-hand" data-slot-key="mainHand" aria-hidden="true"></span>
+                    <span class="silhouette-node node-off-hand" data-slot-key="offHand" aria-hidden="true"></span>
+                    <span class="silhouette-node node-ring-1" data-slot-key="ring1" aria-hidden="true"></span>
+                    <span class="silhouette-node node-ring-2" data-slot-key="ring2" aria-hidden="true"></span>
+                    <span class="silhouette-node node-belt" data-slot-key="belt" aria-hidden="true"></span>
+                    <span class="silhouette-node node-gloves-bracers" data-slot-key="glovesBracers" aria-hidden="true"></span>
+                    <span class="silhouette-node node-footwear" data-slot-key="footwear" aria-hidden="true"></span>
+                    <span class="silhouette-node node-back-storage" data-slot-key="backStorage" aria-hidden="true"></span>
+                    <span class="silhouette-node node-other-worn" data-slot-key="otherWorn" aria-hidden="true"></span>
+                  </div>
                 </div>
-                <div class="equipped-silhouette-note">A stylized preview of occupied equipment slots.</div>
+                <div class="equipped-silhouette-note">A stylized equipment map with softly glowing occupied slots.</div>
               </div>
+
+              <div id="equippedRightColumn" class="equipped-slot-column equipped-slot-column-right"></div>
             </div>
 
-            <div class="equipped-controls-panel">
-              <div class="equipped-intro">Choose items or carried containers from your inventory.</div>
-              <div id="equippedSlots" class="equipped-slots"></div>
+            <div id="equippedListView" class="equipped-list-view" hidden></div>
 
-              <div class="custom-equipped-section">
-                <div class="inventory-subheading">Custom Slots</div>
-                <div id="customEquippedSlots" class="custom-equipped-slots"></div>
-                <button type="button" class="inventory-add" onclick="addCustomEquippedSlot()">+ Add Custom Slot</button>
-              </div>
+            <div class="custom-equipped-section">
+              <div class="inventory-subheading">Custom Slots</div>
+              <div id="customEquippedSlots" class="custom-equipped-slots"></div>
+              <button type="button" class="inventory-add" onclick="addCustomEquippedSlot()">+ Add Custom Slot</button>
             </div>
           </div>
         </div>
