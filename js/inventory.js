@@ -563,14 +563,18 @@ function renderEquippedSlots(savedSlots = {}, customSlots = []) {
   const container = document.getElementById("equippedSlots");
   if (!container) return;
 
-  container.innerHTML = EQUIPPED_SLOT_DEFINITIONS
+  container.innerHTML = `
+    <div class="equipped-silhouette-wrap" aria-hidden="true">
+      <img class="equipped-silhouette" src="assets/equipment-silhouette.png" alt="">
+    </div>
+  ` + EQUIPPED_SLOT_DEFINITIONS
     .map(slot => `
       <label class="equipped-slot equipped-slot-${inventorySafeValue(slot.key)}">
         <span>${inventorySafeValue(slot.label)}</span>
         <select
           class="equipped-slot-select"
           data-equipped-slot="${inventorySafeValue(slot.key)}"
-          data-selected-item-id="${inventorySafeValue(savedSlots[slot.key] || "")}"
+          data-selected-item-id="${inventorySafeValue(savedSlots[slot.key] || "")}" 
         ></select>
       </label>
     `)

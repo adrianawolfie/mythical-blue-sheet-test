@@ -150,9 +150,35 @@
 
 .equipped-slots {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 7px;
-  padding: 8px;
+  grid-template-columns: minmax(124px, 1fr) minmax(160px, 220px) minmax(124px, 1fr);
+  grid-template-areas:
+    "head silhouette neck"
+    "cape silhouette ring1"
+    "armor silhouette ring2"
+    "mainHand silhouette offHand"
+    "belt silhouette clothing"
+    "footwear silhouette otherWorn";
+  column-gap: 12px;
+  row-gap: 8px;
+  padding: 10px 12px 12px;
+  align-items: center;
+}
+
+.equipped-silhouette-wrap {
+  grid-area: silhouette;
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.equipped-silhouette {
+  width: 100%;
+  max-width: 210px;
+  height: auto;
+  opacity: .92;
+  mix-blend-mode: multiply;
 }
 
 .equipped-slot {
@@ -164,6 +190,19 @@
   border: 1px solid rgba(184,144,44,.42);
   background: rgba(255,253,245,.16);
 }
+
+.equipped-slot-head { grid-area: head; }
+.equipped-slot-neck { grid-area: neck; }
+.equipped-slot-cape { grid-area: cape; }
+.equipped-slot-armor { grid-area: armor; }
+.equipped-slot-clothing { grid-area: clothing; }
+.equipped-slot-mainHand { grid-area: mainHand; }
+.equipped-slot-offHand { grid-area: offHand; }
+.equipped-slot-ring1 { grid-area: ring1; }
+.equipped-slot-ring2 { grid-area: ring2; }
+.equipped-slot-belt { grid-area: belt; }
+.equipped-slot-footwear { grid-area: footwear; }
+.equipped-slot-otherWorn { grid-area: otherWorn; }
 
 .equipped-slot span {
   color: var(--navy);
@@ -526,7 +565,26 @@
   }
 
   .equipped-slots {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "head neck"
+      "cape ring1"
+      "armor ring2"
+      "mainHand offHand"
+      "belt clothing"
+      "footwear otherWorn"
+      "silhouette silhouette";
+    column-gap: 8px;
+    row-gap: 7px;
+  }
+
+  .equipped-silhouette-wrap {
+    min-height: 220px;
+    padding-top: 4px;
+  }
+
+  .equipped-silhouette {
+    max-width: 160px;
   }
 
   .custom-equipped-slot {
