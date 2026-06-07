@@ -385,6 +385,10 @@ customLists: {
   weapons: collectWeaponRows(),
   spells: collectSpellRows(),
   proficiencies: collectProficiencyRows(),
+  inventoryEquipment: collectInventoryEquipmentRows(),
+  magicItems: collectInventoryMagicItemRows(),
+  consumables: collectInventoryConsumableRows(),
+  attunementSlots: collectInventoryAttunementRows(),
   speeds: collectExtraSpeedRows(),
   armorClass: collectArmorClassState()
 }
@@ -406,6 +410,14 @@ function loadCharacter(character) {
 renderFeatureEntries("featList", character.customLists?.feats || []);
 resetWeaponRows(character.customLists?.weapons || DEFAULT_WEAPON_ROWS);
 resetSpellRows(character.customLists?.spells || DEFAULT_SPELL_ROWS);
+resetInventoryRows({
+  equipment: character.customLists?.inventoryEquipment || [],
+  magicItems: character.customLists?.magicItems || [],
+  consumables: character.customLists?.consumables || [],
+  attunement:
+    character.customLists?.attunementSlots ||
+    DEFAULT_INVENTORY_ATTUNEMENT_ROWS
+});
 renderExtraSpeedRows(character.customLists?.speeds || []);
 renderArmorClassState(
   character.customLists?.armorClass || null,
@@ -481,6 +493,7 @@ function newCharacter() {
 renderFeatureEntries("featList", []);
 resetWeaponRows();
 resetSpellRows();
+resetInventoryRows();
 renderExtraSpeedRows();
 renderArmorClassState();
 renderProficiencyRows();

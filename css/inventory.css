@@ -1,0 +1,205 @@
+/* ─── INVENTORY PAGE ───────────────────────────────────────── */
+
+.inventory-page-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.inventory-coinage-card,
+.inventory-legacy-notes {
+  grid-column: 1 / -1;
+}
+
+.inventory-card,
+.inventory-coinage-card,
+.inventory-legacy-notes {
+  background: rgba(255,250,234,.28);
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.inventory-table th {
+  padding: 5px 6px;
+  border-bottom: 1px solid rgba(184,144,44,.52);
+  color: var(--navy);
+  font-family: 'Cinzel', serif;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.inventory-table td {
+  padding: 2px 4px;
+  border-bottom: 1px dotted rgba(184,144,44,.44);
+}
+
+.inventory-table input {
+  width: 100%;
+  min-width: 0;
+  padding: 2px 1px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--small-italic-font);
+  font-size: 12px;
+  outline: none;
+}
+
+.inventory-table input:focus {
+  background: rgba(255,253,245,.3);
+}
+
+.inventory-qty-col {
+  width: 44px;
+  text-align: center !important;
+}
+
+.inventory-slot-col {
+  width: 36px;
+  text-align: center !important;
+}
+
+.inventory-remove-col,
+.inventory-remove-cell {
+  width: 18px;
+  text-align: right;
+}
+
+.inventory-slot-number {
+  color: var(--gold-deep);
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 11px;
+  text-align: center;
+}
+
+.inventory-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--gold-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: .42;
+}
+
+.inventory-remove:hover,
+.inventory-remove:focus-visible {
+  color: var(--navy-deep);
+  opacity: 1;
+  outline: none;
+}
+
+.inventory-add {
+  margin: 7px 7px 7px;
+  padding: 3px 6px;
+  border: 1px solid rgba(184,144,44,.52);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--gold-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.inventory-add:hover,
+.inventory-add:focus-visible {
+  background: rgba(184,144,44,.1);
+  border-color: var(--gold-deep);
+  color: var(--navy-deep);
+  outline: none;
+}
+
+.inventory-legacy-notes {
+  border: 1px solid var(--gold);
+}
+
+.inventory-legacy-notes > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.inventory-legacy-notes > summary::-webkit-details-marker {
+  display: none;
+}
+
+.inventory-legacy-notes > summary::after {
+  content: "▾";
+  margin-left: 8px;
+  color: var(--gold-deep);
+}
+
+.inventory-legacy-notes[open] > summary::after {
+  content: "▴";
+}
+
+.inventory-notes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  padding: 9px;
+}
+
+.inventory-notes-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inventory-notes-grid span {
+  color: var(--navy);
+  font-family: 'Cinzel', serif;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.inventory-notes-grid textarea {
+  min-height: 92px;
+}
+
+@media (max-width: 768px) {
+  .inventory-page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-coinage-card,
+  .inventory-legacy-notes {
+    grid-column: auto;
+  }
+
+  .inventory-notes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-table input {
+    font-size: 11px;
+  }
+
+  .inventory-qty-col {
+    width: 38px;
+  }
+
+  .inventory-remove-col,
+  .inventory-remove-cell {
+    width: 16px;
+  }
+}

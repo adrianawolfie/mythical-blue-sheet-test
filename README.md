@@ -39,6 +39,7 @@ css/
   base.css                   global layout and base styles
   character-sheet.css        sheet sections and mobile layout
   components.css             shared sheet components such as HP tracker
+  inventory.css              inventory-page layout and tables
   character-overview.css     Saved Characters cards and live controls
   speeds.css                 optional movement speeds
   calendar.css               Materra calendar
@@ -54,13 +55,13 @@ js/
   conditions-ui.js           sheet condition controls
   features.js                features and traits
   proficiencies.js           proficiency rows
+  inventory.js               structured inventory tables
   speeds.js                  optional movement speeds
   character-overview.js      Saved Characters cards
   live-sync.js               HP / AC / conditions autosave and polling
   app.js                     startup and event binding
 
-  campaign-state.js          shared campaign-state storage adapter
-  calendar.js                Materra calendar and travel controls
+  calendar.js                Materra calendar behavior
   accessibility.js           font-size controls
 
 netlify/
@@ -69,8 +70,6 @@ netlify/
     get-character.js
     save-character.js
     save-character-status.js
-    get-campaign-state.js
-    save-campaign-state.js
     delete-character.js
 ```
 
@@ -95,27 +94,23 @@ Conditions
 ```
 
 
-## Shared campaign calendar
+## Inventory page
 
-The calendar and travel counter are campaign-wide rather than character-specific.
-
-```text
-GitHub Pages test site
-→ local campaign-state test data
-
-Netlify production
-→ campaign/campaign-state.json
-→ shared between users and devices
-```
-
-The Saved Characters overview allows the DM to:
+The fourth sheet tab contains structured inventory lists:
 
 ```text
-set the campaign date manually
-add 1 traveled day
-remove 1 traveled day
-add 1 traveled week
-add 1 Materra month (28 days)
+Equipment
+Attunement
+Magic Items
+Potions & Consumables
+Coinage
 ```
 
-Character sheets show the saved campaign date as a read-only bar.
+Older freeform character text remains available under:
+
+```text
+Imported / Freeform Notes
+```
+
+This means existing saves remain readable while players gradually move items
+into the structured lists.

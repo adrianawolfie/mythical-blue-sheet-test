@@ -332,6 +332,7 @@
       <button class="tab on" onclick="sw('main',this)">⚓ Main</button>
       <button class="tab" onclick="sw('spells',this)">✦ Spells</button>
       <button class="tab" onclick="sw('journal',this)">📜 Journal</button>
+      <button class="tab" onclick="sw('inventory',this)">🎒 Inventory</button>
     </div>
 
     <div id="pg-main" class="pg on">
@@ -422,10 +423,6 @@
             </table>
           </div>
 
-          <div class="sb-card main-equipment-card">
-            <div class="sb-hdr">Equipment</div>
-            <textarea placeholder="Weapons, armor, adventuring gear, tools, supplies…" data-field="equipment"></textarea>
-          </div>
         </div>
 
         <div class="rp">
@@ -460,18 +457,6 @@
     <button type="button" class="add-btn" onclick="addWeaponRow()">+ Add Row</button>
     <button type="button" class="add-btn" onclick="toggleTableEditMode('weaponTable', this)">Edit Rows</button>
   </div>
-</div>
-
-<div class="sb-card treasure-card">
-  <div class="sb-hdr">Treasure & Coinage</div>
-  <div class="coinsrow">
-    <div class="cbox2"><label>CP</label><input type="text" placeholder="0" data-field="copperPieces"></div>
-    <div class="cbox2"><label>SP</label><input type="text" placeholder="0" data-field="silverPieces"></div>
-    <div class="cbox2"><label>EP</label><input type="text" placeholder="0" data-field="electrumPieces"></div>
-    <div class="cbox2 gold-coin"><label>GP</label><input type="text" placeholder="0" data-field="goldPieces"></div>
-    <div class="cbox2"><label>PP</label><input type="text" placeholder="0" data-field="platinumPieces"></div>
-  </div>
-  <textarea placeholder="Notable loot, ship's cargo manifest…" data-field="treasureNotes"></textarea>
 </div>
 
 <div class="sb-card features-traits-main">
@@ -554,12 +539,110 @@
         <div class="sb-card"><div class="sb-hdr">Backstory</div><textarea placeholder="Where did your character come from? What drove them to the sea? What unfinished business waits on shore?" style="min-height:240px;" data-field="backstory"></textarea></div>
         <div class="sb-card"><div class="sb-hdr">Personality, Ideals & Bonds</div><textarea placeholder="Personality traits, ideals, bonds, flaws, mannerisms…" style="min-height:240px;" data-field="personalityIdealsBonds"></textarea></div>
       </div>
-      <div class="three-col" style="margin-top:12px;">
+      <div class="two-col" style="margin-top:12px;">
         <div class="sb-card"><div class="sb-hdr">Appearance</div><textarea placeholder="Height, weight, eye color, scars, tattoos, attire…" style="min-height:140px;" data-field="appearance"></textarea></div>
         <div class="sb-card"><div class="sb-hdr">Languages</div><textarea placeholder="Common, Elvish, Aquan, Thieves' Cant…" style="min-height:140px;" data-field="languages"></textarea></div>
-        <div class="sb-card"><div class="sb-hdr">Attunement</div><textarea placeholder="◆ ___________&#10;◆ ___________&#10;◆ ___________" style="min-height:140px;" data-field="attunement"></textarea></div>
       </div>
-      <div class="sb-card" style="margin-top:12px;"><div class="sb-hdr">Inventory</div><textarea placeholder="List your gear, ship equipment, rations, tools, trinkets, and special items…" style="min-height:140px;" data-field="equipmentInventory"></textarea></div>
+    </div>
+
+    <div id="pg-inventory" class="pg">
+      <div class="inventory-page-grid">
+        <div class="sb-card inventory-coinage-card">
+          <div class="sb-hdr">Coinage</div>
+          <div class="coinsrow">
+            <div class="cbox2"><label>CP</label><input type="text" placeholder="0" data-field="copperPieces"></div>
+            <div class="cbox2"><label>SP</label><input type="text" placeholder="0" data-field="silverPieces"></div>
+            <div class="cbox2"><label>EP</label><input type="text" placeholder="0" data-field="electrumPieces"></div>
+            <div class="cbox2 gold-coin"><label>GP</label><input type="text" placeholder="0" data-field="goldPieces"></div>
+            <div class="cbox2"><label>PP</label><input type="text" placeholder="0" data-field="platinumPieces"></div>
+          </div>
+        </div>
+
+        <div class="sb-card inventory-card inventory-equipment-card">
+          <div class="sb-hdr">Equipment</div>
+          <table class="inventory-table" id="inventoryEquipmentTable">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th class="inventory-qty-col">Qty</th>
+                <th>Notes</th>
+                <th class="inventory-remove-col"></th>
+              </tr>
+            </thead>
+            <tbody id="inventoryEquipmentBody"></tbody>
+          </table>
+          <button type="button" class="inventory-add" onclick="addInventoryEquipmentRow()">+ Add Item</button>
+        </div>
+
+        <div class="sb-card inventory-card inventory-attunement-card">
+          <div class="sb-hdr">Attunement</div>
+          <table class="inventory-table" id="inventoryAttunementTable">
+            <thead>
+              <tr>
+                <th class="inventory-slot-col">Slot</th>
+                <th>Item</th>
+                <th>Notes</th>
+                <th class="inventory-remove-col"></th>
+              </tr>
+            </thead>
+            <tbody id="inventoryAttunementBody"></tbody>
+          </table>
+          <button type="button" class="inventory-add" onclick="addInventoryAttunementRow()">+ Add Slot</button>
+        </div>
+
+        <div class="sb-card inventory-card inventory-magic-card">
+          <div class="sb-hdr">Magic Items</div>
+          <table class="inventory-table" id="inventoryMagicItemsTable">
+            <thead>
+              <tr>
+                <th>Magic Item</th>
+                <th>Notes</th>
+                <th class="inventory-remove-col"></th>
+              </tr>
+            </thead>
+            <tbody id="inventoryMagicItemsBody"></tbody>
+          </table>
+          <button type="button" class="inventory-add" onclick="addInventoryMagicItemRow()">+ Add Magic Item</button>
+        </div>
+
+        <div class="sb-card inventory-card inventory-consumables-card">
+          <div class="sb-hdr">Potions & Consumables</div>
+          <table class="inventory-table" id="inventoryConsumablesTable">
+            <thead>
+              <tr>
+                <th>Potion / Consumable</th>
+                <th class="inventory-qty-col">Qty</th>
+                <th>Notes</th>
+                <th class="inventory-remove-col"></th>
+              </tr>
+            </thead>
+            <tbody id="inventoryConsumablesBody"></tbody>
+          </table>
+          <button type="button" class="inventory-add" onclick="addInventoryConsumableRow()">+ Add Consumable</button>
+        </div>
+
+        <details class="sb-card inventory-legacy-notes">
+          <summary class="sb-hdr">Imported / Freeform Notes</summary>
+          <div class="inventory-notes-grid">
+            <label>
+              <span>Equipment Notes</span>
+              <textarea placeholder="Weapons, armor, adventuring gear, tools, supplies…" data-field="equipment"></textarea>
+            </label>
+            <label>
+              <span>Inventory Notes</span>
+              <textarea placeholder="List gear, ship equipment, rations, tools, trinkets, and special items…" data-field="equipmentInventory"></textarea>
+            </label>
+            <label>
+              <span>Treasure Notes</span>
+              <textarea placeholder="Notable loot, ship's cargo manifest…" data-field="treasureNotes"></textarea>
+            </label>
+            <label>
+              <span>Legacy Attunement Notes</span>
+              <textarea placeholder="Previously saved freeform attunement notes…" data-field="attunement"></textarea>
+            </label>
+          </div>
+        </details>
+      </div>
     </div>
 
     <div class="ftr">
@@ -580,6 +663,7 @@
 <script src="js/conditions-ui.js"></script>
 <script src="js/features.js"></script>
 <script src="js/proficiencies.js"></script>
+<script src="js/inventory.js"></script>
 <script src="js/speeds.js"></script>
 <script src="js/armor-class.js"></script>
 <script src="js/character-overview.js"></script>
