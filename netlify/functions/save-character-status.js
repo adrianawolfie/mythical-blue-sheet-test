@@ -99,6 +99,10 @@ exports.handler = async (event) => {
     const hpMax = body.hpMax ?? "";
     const tempHp = body.tempHp ?? "";
     const armorClass = body.armorClass ?? "";
+    const armorClassState =
+      body.armorClassState && typeof body.armorClassState === "object"
+        ? body.armorClassState
+        : null;
     const currentConditions = body.currentConditions ?? "";
 
     character.summary = character.summary || {};
@@ -109,6 +113,11 @@ exports.handler = async (event) => {
     character.summary.tempHp = tempHp;
     character.summary.armorClass = armorClass;
     character.summary.currentConditions = currentConditions;
+
+    if (armorClassState) {
+      character.customLists = character.customLists || {};
+      character.customLists.armorClass = armorClassState;
+    }
 
     character.fields.hpCurrent = hpCurrent;
     character.fields.hpMax = hpMax;

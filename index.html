@@ -148,7 +148,54 @@
 </div>
       </div>
 <div class="hdr-row r3">
-  <div class="hstat"><label>Armor Class</label><input type="text" placeholder="—" data-field="armorClass"></div>
+  <div class="hstat armor-class-tracker">
+    <label>Armor Class</label>
+    <input
+      id="armorClassInput"
+      class="armor-class-total"
+      type="text"
+      placeholder="—"
+      data-field="armorClass"
+      readonly
+      aria-label="Total Armor Class"
+    >
+
+    <button
+      id="toggleArmorClassPanelBtn"
+      type="button"
+      class="armor-class-toggle"
+      aria-expanded="false"
+      aria-controls="armorClassPanel"
+    >+ Modify AC</button>
+
+    <div id="armorClassPanel" class="armor-class-panel" hidden>
+      <div class="armor-class-panel-title">Armor Class</div>
+
+      <label class="armor-class-base-row">
+        <span>Base AC</span>
+        <input
+          id="armorClassBaseInput"
+          type="number"
+          inputmode="numeric"
+          placeholder="10"
+          aria-label="Base Armor Class"
+        >
+      </label>
+
+      <div id="armorClassModifierRows" class="armor-class-modifier-rows"></div>
+
+      <select
+        id="addArmorClassModifierSelect"
+        class="armor-class-add-select"
+        aria-label="Add Armor Class modifier"
+      >
+        <option value="">+ Add Modifier</option>
+        <option value="mage-armor">Mage Armor (+3)</option>
+        <option value="shield">Shield (+2)</option>
+        <option value="custom">Custom Modifier</option>
+      </select>
+    </div>
+  </div>
   <div class="hstat hp-tracker">
     <label>Hit Points</label>
     <div class="hp-controls">
@@ -453,6 +500,7 @@
 <script src="js/features.js"></script>
 <script src="js/proficiencies.js"></script>
 <script src="js/speeds.js"></script>
+<script src="js/armor-class.js"></script>
 <script src="js/character-overview.js"></script>
 <script src="js/live-sync.js"></script>
 <script src="js/app.js"></script>

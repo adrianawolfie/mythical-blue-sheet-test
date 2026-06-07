@@ -385,7 +385,8 @@ customLists: {
   weapons: collectWeaponRows(),
   spells: collectSpellRows(),
   proficiencies: collectProficiencyRows(),
-  speeds: collectExtraSpeedRows()
+  speeds: collectExtraSpeedRows(),
+  armorClass: collectArmorClassState()
 }
   };
 }
@@ -406,6 +407,10 @@ renderFeatureEntries("featList", character.customLists?.feats || []);
 resetWeaponRows(character.customLists?.weapons || DEFAULT_WEAPON_ROWS);
 resetSpellRows(character.customLists?.spells || DEFAULT_SPELL_ROWS);
 renderExtraSpeedRows(character.customLists?.speeds || []);
+renderArmorClassState(
+  character.customLists?.armorClass || null,
+  character.summary?.armorClass ?? normalizedFields.armorClass ?? ""
+);
 renderProficiencyRows(
   character.customLists?.proficiencies ||
   proficienciesFromNamedFields(normalizedFields)
@@ -477,6 +482,7 @@ renderFeatureEntries("featList", []);
 resetWeaponRows();
 resetSpellRows();
 renderExtraSpeedRows();
+renderArmorClassState();
 renderProficiencyRows();
 applyUiState({});
 focusedCondition = "";

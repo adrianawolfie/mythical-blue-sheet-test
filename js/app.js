@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderSelectedConditions();
   renderFeatureEntries("featList", []);
   renderProficiencyRows();
+  renderArmorClassState();
+  bindArmorClassControls();
 
   document.getElementById("newCharacterBtn").addEventListener("click", newCharacter);
   document.getElementById("saveCharacterBtn").addEventListener("click", saveCurrentCharacter);
@@ -14,10 +16,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("addExtraSpeedBtn")?.addEventListener("click", () => {
     addExtraSpeedRow();
   });
-
-  document
-    .querySelector('[data-field="armorClass"]')
-    ?.addEventListener("input", scheduleHPAutoSave);
 
   document.getElementById("backToStartBtn").addEventListener("click", async () => {
     currentCharacterId = null;

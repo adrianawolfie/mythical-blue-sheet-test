@@ -19,6 +19,7 @@ function createLiveUpdatePayload({
   hpMax,
   tempHp,
   armorClass,
+  armorClassState,
   currentConditions,
   updatedAt
 }) {
@@ -29,6 +30,10 @@ function createLiveUpdatePayload({
     hpMax: hpMax ?? "",
     tempHp: tempHp ?? "",
     armorClass: armorClass ?? "",
+    armorClassState:
+      armorClassState && typeof armorClassState === "object"
+        ? armorClassState
+        : undefined,
     currentConditions: currentConditions ?? "",
     updatedAt: updatedAt || new Date().toISOString(),
     nonce:
@@ -70,6 +75,9 @@ function receiveLiveUpdate(payload) {
         tempHp: payload.tempHp,
         armorClass: payload.armorClass,
         currentConditions: payload.currentConditions
+      },
+      customLists: {
+        armorClass: payload.armorClassState
       }
     });
   }
@@ -173,6 +181,10 @@ function scheduleHPAutoSave() {
         tempHp: document.getElementById("tempHpInput")?.value ?? "",
         armorClass:
           document.querySelector('[data-field="armorClass"]')?.value ?? "",
+        armorClassState:
+          typeof collectArmorClassState === "function"
+            ? collectArmorClassState()
+            : undefined,
         currentConditions:
           document.getElementById("currentConditionsInput")?.value ?? ""
       };
@@ -324,7 +336,18 @@ function applySheetLiveUpdates(character) {
   const armorClassInput = document.querySelector('[data-field="armorClass"]');
   const conditionsInput = document.getElementById("currentConditionsInput");
 
-  if (armorClassInput && document.activeElement !== armorClassInput) {
+  const remoteArmorClassState = character.customLists?.armorClass;
+
+  if (
+    remoteArmorClassState &&
+    typeof renderArmorClassState === "function"
+  ) {
+    renderArmorClassState(
+      remoteArmorClassState,
+      character.summary?.armorClass ?? "",
+      { scheduleSave: false }
+    );
+  } else if (armorClassInput && document.activeElement !== armorClassInput) {
     armorClassInput.value = character.summary?.armorClass ?? "";
   }
 

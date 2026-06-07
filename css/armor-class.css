@@ -1,0 +1,216 @@
+/* ─── ARMOR CLASS MODIFIERS ─────────────────────────────────── */
+.armor-class-tracker {
+  position: relative;
+  min-width: 78px;
+}
+
+.armor-class-total[readonly] {
+  cursor: default;
+}
+
+.armor-class-toggle {
+  padding: 2px 4px;
+  border: 1px solid rgba(184,144,44,.48);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--gold-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .45px;
+  opacity: .72;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background .16s ease,
+    border-color .16s ease,
+    color .16s ease,
+    opacity .16s ease;
+}
+
+.armor-class-toggle:hover,
+.armor-class-toggle:focus-visible {
+  background: rgba(214,168,56,.10);
+  border-color: var(--gold-deep);
+  color: var(--navy-deep);
+  opacity: 1;
+  outline: none;
+}
+
+.armor-class-panel {
+  position: absolute;
+  z-index: 40;
+  top: 76px;
+  left: 0;
+  width: 250px;
+  padding: 8px;
+  border: 1px solid var(--gold);
+  border-radius: 2px;
+  background: rgba(237,225,192,.98);
+  box-shadow: 0 6px 18px rgba(0,0,0,.18);
+  text-align: left;
+}
+
+.armor-class-panel[hidden] {
+  display: none;
+}
+
+.armor-class-panel-title {
+  margin-bottom: 6px;
+  color: var(--navy-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.armor-class-base-row,
+.armor-class-modifier-row {
+  display: grid;
+  align-items: center;
+  gap: 5px;
+}
+
+.armor-class-base-row {
+  grid-template-columns: 1fr 42px;
+  margin-bottom: 6px;
+  padding-bottom: 5px;
+  border-bottom: 1px dotted rgba(184,144,44,.55);
+}
+
+.armor-class-base-row span {
+  color: var(--navy-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+}
+
+.armor-class-panel input {
+  min-width: 0;
+  height: 22px;
+  border: none;
+  border-bottom: 1px dotted rgba(184,144,44,.58);
+  border-radius: 0;
+  background: transparent;
+  color: var(--navy-deep);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  font-weight: 400;
+  text-align: left;
+}
+
+.armor-class-base-row input,
+.armor-class-modifier-value {
+  text-align: center;
+}
+
+.armor-class-modifier-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.armor-class-modifier-row {
+  grid-template-columns: 18px minmax(0,1fr) 40px 15px;
+}
+
+.armor-class-active {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
+}
+
+.armor-class-active-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.armor-class-active-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border: 1px solid rgba(184,144,44,.62);
+  border-radius: 2px;
+  color: transparent;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.armor-class-active-input:checked + .armor-class-active-mark {
+  background: rgba(214,168,56,.18);
+  color: var(--gold-deep);
+}
+
+.armor-class-active-input:focus-visible + .armor-class-active-mark {
+  outline: 1px solid var(--gold-deep);
+  outline-offset: 1px;
+}
+
+.armor-class-modifier-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--gold-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: .42;
+  transition:
+    background .16s ease,
+    color .16s ease,
+    opacity .16s ease;
+}
+
+.armor-class-modifier-row:hover .armor-class-modifier-remove,
+.armor-class-modifier-remove:focus-visible {
+  background: rgba(214,168,56,.10);
+  color: var(--gold-deep);
+  opacity: .9;
+  outline: none;
+}
+
+.armor-class-add-select {
+  width: 100%;
+  margin-top: 7px;
+  padding: 3px 5px;
+  border: 1px solid rgba(184,144,44,.58);
+  background: rgba(255,253,245,.32);
+  color: var(--gold-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .armor-class-panel {
+    top: 78px;
+    left: 0;
+    width: min(250px, calc(100vw - 34px));
+  }
+
+  .armor-class-toggle {
+    font-size: 7px;
+    padding: 3px 5px;
+  }
+}

@@ -78,6 +78,7 @@
         hpMax,
         tempHp,
         armorClass,
+        armorClassState,
         currentConditions
       }) {
         const response = await fetch("/.netlify/functions/save-character-status", {
@@ -89,6 +90,7 @@
             hpMax,
             tempHp,
             armorClass,
+            armorClassState,
             currentConditions
           })
         });
@@ -233,6 +235,7 @@
         hpMax,
         tempHp,
         armorClass,
+        armorClassState,
         currentConditions
       }) {
         const characters = readCharacters();
@@ -252,6 +255,11 @@
         character.summary.tempHp = tempHp;
         character.summary.armorClass = armorClass;
         character.summary.currentConditions = currentConditions;
+
+        if (armorClassState && typeof armorClassState === "object") {
+          character.customLists = character.customLists || {};
+          character.customLists.armorClass = clone(armorClassState);
+        }
 
         character.fields.hpCurrent = hpCurrent;
         character.fields.hpMax = hpMax;
