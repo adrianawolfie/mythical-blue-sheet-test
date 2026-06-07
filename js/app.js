@@ -1095,6 +1095,81 @@ function proficienciesFromNamedFields(namedFields = {}) {
   });
 }
 
+const EXTRA_SPEED_TYPES = [
+  "Swimming",
+  "Climbing",
+  "Flying",
+  "Burrowing",
+  "Other"
+];
+
+function addExtraSpeedRow(data = {}) {
+  const container = document.getElementById("extraSpeedRows");
+  if (!container) return;
+
+  const row = document.createElement("div");
+  row.className = "extra-speed-row";
+
+  const speedType = String(data.type || "Swimming");
+  const speedValue = String(data.value || "");
+
+  row.innerHTML = `
+    <select class="extra-speed-type" aria-label="Movement speed type">
+      ${EXTRA_SPEED_TYPES.map(type => `
+        <option value="${escapeHtml(type)}" ${type === speedType ? "selected" : ""}>
+          ${escapeHtml(type)}
+        </option>
+      `).join("")}
+    </select>
+
+    <input
+      class="extra-speed-value"
+      type="text"
+      inputmode="numeric"
+      placeholder="30"
+      value="${escapeHtml(speedValue)}"
+      aria-label="${escapeHtml(speedType)} speed"
+    />
+
+    <span class="extra-speed-unit">ft</span>
+
+    <button
+      type="button"
+      class="extra-speed-remove"
+      title="Remove movement speed"
+      aria-label="Remove movement speed"
+    >×</button>
+  `;
+
+  row.querySelector(".extra-speed-remove").addEventListener("click", () => {
+    row.remove();
+  });
+
+  container.appendChild(row);
+}
+
+function renderExtraSpeedRows(speeds = []) {
+  const container = document.getElementById("extraSpeedRows");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  (Array.isArray(speeds) ? speeds : []).forEach(speed => {
+    addExtraSpeedRow(speed);
+  });
+}
+
+function collectExtraSpeedRows() {
+  return Array.from(
+    document.querySelectorAll("#extraSpeedRows .extra-speed-row")
+  )
+    .map(row => ({
+      type: row.querySelector(".extra-speed-type")?.value || "Other",
+      value: row.querySelector(".extra-speed-value")?.value.trim() || ""
+    }))
+    .filter(speed => speed.value);
+}
+
 function addProficiencyValueRow(typeKey, value = "") {
   const container = document.querySelector(
     `.proficiency-values[data-proficiency-type="${typeKey}"]`
@@ -1217,7 +1292,8 @@ customLists: {
   feats: collectFeatureEntries("featList"),
   weapons: collectWeaponRows(),
   spells: collectSpellRows(),
-  proficiencies: collectProficiencyRows()
+  proficiencies: collectProficiencyRows(),
+  speeds: collectExtraSpeedRows()
 }
   };
 }
@@ -1237,6 +1313,7 @@ function loadCharacter(character) {
 renderFeatureEntries("featList", character.customLists?.feats || []);
 resetWeaponRows(character.customLists?.weapons || DEFAULT_WEAPON_ROWS);
 resetSpellRows(character.customLists?.spells || DEFAULT_SPELL_ROWS);
+renderExtraSpeedRows(character.customLists?.speeds || []);
 renderProficiencyRows(
   character.customLists?.proficiencies ||
   proficienciesFromNamedFields(normalizedFields)
@@ -1307,6 +1384,7 @@ function newCharacter() {
 renderFeatureEntries("featList", []);
 resetWeaponRows();
 resetSpellRows();
+renderExtraSpeedRows();
 renderProficiencyRows();
 applyUiState({});
 focusedCondition = "";
@@ -1679,6 +1757,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("newCharacterBtn").addEventListener("click", newCharacter);
   document.getElementById("saveCharacterBtn").addEventListener("click", saveCurrentCharacter);
   document.getElementById("deleteCharacterBtn").addEventListener("click", deleteCurrentCharacter);
+  document.getElementById("addExtraSpeedBtn")?.addEventListener("click", () => {
+    addExtraSpeedRow();
+  });
 
   document
     .querySelector('[data-field="armorClass"]')

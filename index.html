@@ -122,9 +122,29 @@
         <div class="hfl"><label>Level</label><input type="number" min="1" max="20" placeholder="1" data-field="level"></div>
         <div class="hfl"><label>Class</label><input type="text" placeholder="fighter…" data-field="class"></div>
         <div class="hfl"><label>Subclass</label><input type="text" placeholder="psi warrior…" data-field="subclass"></div>
-<div class="hmini-row">
-  <div class="hstat hmini"><label>Initiative</label><input type="text" placeholder="+0" data-field="initiative"></div>
-  <div class="hstat hmini"><label>Speed</label><input type="text" placeholder="30" data-field="speed"></div>
+<div class="movement-wrap">
+  <div class="hmini-row">
+    <div class="hstat hmini">
+      <label>Initiative</label>
+      <input type="text" placeholder="+0" data-field="initiative">
+    </div>
+    <div class="hstat hmini">
+      <label>Speed</label>
+      <input type="text" placeholder="30" data-field="speed">
+    </div>
+  </div>
+
+  <div class="extra-speed-panel">
+    <button
+      id="addExtraSpeedBtn"
+      type="button"
+      class="extra-speed-add"
+      title="Add another movement speed"
+      aria-label="Add another movement speed"
+    >+ Add Speed</button>
+
+    <div id="extraSpeedRows" class="extra-speed-rows"></div>
+  </div>
 </div>
       </div>
 <div class="hdr-row r3">
