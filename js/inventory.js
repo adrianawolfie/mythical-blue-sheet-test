@@ -855,13 +855,28 @@ function attachItemRowBehavior(mainRow, detailsRow) {
 
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
+    const tableWrap = mainRow.closest(".inventory-table-wrap");
+    const tableScrollLeft = tableWrap?.scrollLeft || 0;
+    const tableScrollTop = tableWrap?.scrollTop || 0;
     const opening = detailsRow.style.display === "none";
 
     detailsRow.style.display = opening ? "" : "none";
     toggle.classList.toggle("open", opening);
 
     requestAnimationFrame(() => {
+      if (tableWrap) {
+        tableWrap.scrollLeft = tableScrollLeft;
+        tableWrap.scrollTop = tableScrollTop;
+      }
+
       window.scrollTo({ left: scrollX, top: scrollY, behavior: "auto" });
+
+      requestAnimationFrame(() => {
+        if (tableWrap) {
+          tableWrap.scrollLeft = tableScrollLeft;
+          tableWrap.scrollTop = tableScrollTop;
+        }
+      });
     });
   });
 

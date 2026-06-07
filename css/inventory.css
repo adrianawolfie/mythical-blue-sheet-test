@@ -1942,3 +1942,56 @@
     min-height: 56px;
   }
 }
+
+
+/* ─── EQUIPMENT TABLE · DESKTOP COLUMN BALANCE + STABLE DETAILS ─────────
+   Give Type and Location more breathing room and keep horizontal position
+   fixed when item Details expand or collapse. */
+
+@media (min-width: 769px) {
+  .inventory-unified-table {
+    min-width: 980px;
+  }
+
+  .inventory-unified-table th:first-child {
+    width: 34%;
+  }
+
+  .inventory-unified-table .inventory-type-col {
+    width: 188px;
+  }
+
+  .inventory-unified-table .inventory-location-col {
+    width: 218px;
+  }
+
+  .inventory-unified-table .inventory-qty-col {
+    width: 52px;
+  }
+
+  .inventory-unified-table .inventory-value-col {
+    width: 84px;
+  }
+}
+
+.inventory-unified-row,
+.inventory-item-details-row,
+.inventory-item-details-panel {
+  overflow-anchor: none;
+}
+
+.inventory-item-details-row td {
+  width: 100%;
+  max-width: 100%;
+}
+
+.inventory-item-details-panel,
+.inventory-item-details {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+.inventory-item-details {
+  display: block;
+}
