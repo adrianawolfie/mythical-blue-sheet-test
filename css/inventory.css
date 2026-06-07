@@ -839,3 +839,199 @@
   width: 24px;
   height: 24px;
 }
+
+/* ─── SILHOUETTE MAP POLISH ────────────────────────────────── */
+
+.equipped-silhouette-frame {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 43%, rgba(255,253,245,.46), rgba(255,253,245,.12) 48%, rgba(184,144,44,.04) 76%),
+    linear-gradient(180deg, rgba(255,253,245,.22), rgba(255,253,245,.08));
+}
+
+.equipped-silhouette-frame::before,
+.equipped-silhouette-frame::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.equipped-silhouette-frame::before {
+  inset: 18px;
+  border: 1px solid rgba(184,144,44,.18);
+  border-radius: 999px 999px 16px 16px;
+}
+
+.equipped-silhouette-frame::after {
+  width: 170px;
+  height: 170px;
+  left: 50%;
+  top: 36%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(184,144,44,.13);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 28px rgba(184,144,44,.035),
+    0 0 0 56px rgba(184,144,44,.02);
+}
+
+.equipped-silhouette-stage {
+  z-index: 1;
+}
+
+.silhouette-node {
+  z-index: 3;
+  cursor: pointer;
+}
+
+.silhouette-node::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(184,144,44,.16);
+  border-radius: inherit;
+  opacity: 0;
+  transform: scale(.82);
+  transition: opacity .16s ease, transform .16s ease;
+}
+
+.silhouette-node:hover,
+.silhouette-node:focus-visible,
+.silhouette-node.is-hovered {
+  outline: none;
+  opacity: 1;
+  background: rgba(255,248,220,.96);
+  box-shadow:
+    0 0 0 2px rgba(255,248,220,.74),
+    0 0 9px rgba(184,144,44,.5);
+}
+
+.silhouette-node:hover::after,
+.silhouette-node:focus-visible::after,
+.silhouette-node.is-hovered::after,
+.silhouette-node.is-active::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.silhouette-node.is-active {
+  animation: silhouetteNodePulse 2.2s ease-in-out infinite;
+}
+
+@keyframes silhouetteNodePulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px rgba(255,248,220,.68),
+      0 0 7px rgba(184,144,44,.42);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(255,248,220,.82),
+      0 0 12px rgba(184,144,44,.58);
+  }
+}
+
+.equipped-slot-card.is-hovered,
+.equipped-slot-card.is-focused {
+  border-color: rgba(184,144,44,.9);
+  background: rgba(184,144,44,.13);
+  box-shadow:
+    inset 0 0 0 1px rgba(184,144,44,.18),
+    0 0 8px rgba(184,144,44,.12);
+}
+
+.equipped-silhouette-note {
+  position: relative;
+  z-index: 2;
+  max-width: 240px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* More natural equipment-node placement */
+.node-head {
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.node-neck {
+  top: 21.5%;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.node-cape {
+  top: 28%;
+  left: 31%;
+}
+
+.node-armor {
+  top: 35%;
+  left: 44%;
+}
+
+.node-clothing {
+  top: 40%;
+  left: 56%;
+}
+
+.node-main-hand {
+  top: 49%;
+  left: 14%;
+}
+
+.node-off-hand {
+  top: 49%;
+  right: 14%;
+}
+
+.node-ring-1 {
+  top: 57%;
+  left: 14%;
+}
+
+.node-ring-2 {
+  top: 57%;
+  right: 14%;
+}
+
+.node-belt {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.node-gloves-bracers {
+  top: 45%;
+  left: 73%;
+}
+
+.node-footwear {
+  top: 86%;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.node-back-storage {
+  top: 32%;
+  right: 7%;
+}
+
+.node-other-worn {
+  top: 64%;
+  right: 22%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .silhouette-node,
+  .silhouette-node::after,
+  .equipped-slot-card {
+    transition: none;
+  }
+
+  .silhouette-node.is-active {
+    animation: none;
+  }
+}

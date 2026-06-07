@@ -173,6 +173,8 @@ function renderEquippedSilhouetteColumns(equippedSlots = currentEquippedSlotsSta
   bindEquippedSlotEvents(right);
   populateEquippedSelects(left);
   populateEquippedSelects(right);
+  bindEquippedCardInteractions(left);
+  bindEquippedCardInteractions(right);
 }
 
 function renderEquippedListView(equippedSlots = currentEquippedSlotsState) {
@@ -185,6 +187,7 @@ function renderEquippedListView(equippedSlots = currentEquippedSlotsState) {
 
   bindEquippedSlotEvents(list);
   populateEquippedSelects(list);
+  bindEquippedCardInteractions(list);
 }
 
 function resolveEquippedNodeStates() {
@@ -226,6 +229,77 @@ function resolveEquippedNodeStates() {
   return states;
 }
 
+function focusEquippedSlot(slotKey) {
+  const selector = `.equipped-slot-select[data-equipped-slot="${slotKey}"]`;
+  const select = document.querySelector(selector);
+  if (!select) return;
+
+  select.focus({ preventScroll: false });
+  select.closest(".equipped-slot-card")?.classList.add("is-focused");
+  window.setTimeout(() => {
+    select.closest(".equipped-slot-card")?.classList.remove("is-focused");
+  }, 700);
+}
+
+function clearEquippedHoverState() {
+  document.querySelectorAll(".silhouette-node.is-hovered").forEach(node => {
+    node.classList.remove("is-hovered");
+  });
+
+  document.querySelectorAll(".equipped-slot-card.is-hovered").forEach(card => {
+    card.classList.remove("is-hovered");
+  });
+}
+
+function setEquippedHoverState(slotKey, active) {
+  if (!slotKey) return;
+
+  document
+    .querySelectorAll(`.silhouette-node[data-slot-key="${slotKey}"]`)
+    .forEach(node => node.classList.toggle("is-hovered", active));
+
+  document
+    .querySelectorAll(`.equipped-slot-card[data-slot-key="${slotKey}"]`)
+    .forEach(card => card.classList.toggle("is-hovered", active));
+}
+
+function bindSilhouetteNodeInteractions() {
+  document.querySelectorAll(".silhouette-node").forEach(node => {
+    if (node.dataset.interactionsBound === "true") return;
+
+    const slotKey = node.dataset.slotKey;
+    node.dataset.interactionsBound = "true";
+    node.setAttribute("tabindex", "0");
+    node.setAttribute("role", "button");
+
+    node.addEventListener("click", () => focusEquippedSlot(slotKey));
+    node.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        focusEquippedSlot(slotKey);
+      }
+    });
+
+    node.addEventListener("mouseenter", () => setEquippedHoverState(slotKey, true));
+    node.addEventListener("mouseleave", () => setEquippedHoverState(slotKey, false));
+    node.addEventListener("focus", () => setEquippedHoverState(slotKey, true));
+    node.addEventListener("blur", () => setEquippedHoverState(slotKey, false));
+  });
+}
+
+function bindEquippedCardInteractions(scope = document) {
+  scope.querySelectorAll(".equipped-slot-card").forEach(card => {
+    if (card.dataset.interactionsBound === "true") return;
+
+    const slotKey = card.dataset.slotKey;
+    card.dataset.interactionsBound = "true";
+    card.addEventListener("mouseenter", () => setEquippedHoverState(slotKey, true));
+    card.addEventListener("mouseleave", () => setEquippedHoverState(slotKey, false));
+    card.addEventListener("focusin", () => setEquippedHoverState(slotKey, true));
+    card.addEventListener("focusout", () => setEquippedHoverState(slotKey, false));
+  });
+}
+
 function renderEquippedNodeMap() {
   const states = resolveEquippedNodeStates();
 
@@ -241,6 +315,9 @@ function renderEquippedNodeMap() {
     const active = Boolean(states[slotKey]?.filled);
     card.classList.toggle('is-active', active);
   });
+
+  bindSilhouetteNodeInteractions();
+  bindEquippedCardInteractions();
 }
 
 function renderEquippedActiveView() {
