@@ -1,5 +1,5 @@
 // Mythical Blue · Inventory page
-// Structured items, storage locations, mirrored coinage, and equipped slots.
+// Structured items, storage locations, mirrored coinage, equipped slots, and filters.
 
 const DEFAULT_INVENTORY_EQUIPMENT_ROWS = [];
 const DEFAULT_INVENTORY_MAGIC_ITEM_ROWS = [];
@@ -167,10 +167,7 @@ function locationOptions() {
 function refreshLocationSelect(select) {
   if (!select) return;
 
-  const previous =
-    select.value ||
-    select.dataset.selectedLocation ||
-    "";
+  const previous = select.value || select.dataset.selectedLocation || "";
 
   select.innerHTML = locationOptions()
     .map(option => `
@@ -278,9 +275,63 @@ function refreshAllEquippedSelects() {
   document.querySelectorAll(".equipped-slot-select").forEach(refreshEquippedSelect);
 }
 
+function refreshLocationFilter() {
+  const filter = document.getElementById("inventoryLocationFilter");
+  if (!filter) return;
+
+  const previous = filter.value || "all";
+
+  filter.innerHTML = `
+    <option value="all">All Locations</option>
+    ${locationOptions()
+      .map(option => `
+        <option value="${inventorySafeValue(option.value)}">
+          ${inventorySafeValue(option.label)}
+        </option>
+      `)
+      .join("")}
+  `;
+
+  filter.value = Array.from(filter.options).some(option => option.value === previous)
+    ? previous
+    : "all";
+
+  applyInventoryLocationFilter();
+}
+
+function setFilteredRowVisibility(row, visible) {
+  row.hidden = !visible;
+
+  const detailsRow = row.nextElementSibling;
+
+  if (detailsRow?.classList.contains("inventory-item-details-row")) {
+    detailsRow.hidden = !visible;
+  }
+}
+
+function applyInventoryLocationFilter() {
+  const filterValue =
+    document.getElementById("inventoryLocationFilter")?.value ||
+    "all";
+
+  document
+    .querySelectorAll(".inventory-item-row, .inventory-gem-row")
+    .forEach(row => {
+      const itemLocation =
+        row.querySelector(".inventory-location")?.value ||
+        "";
+
+      setFilteredRowVisibility(
+        row,
+        filterValue === "all" || itemLocation === filterValue
+      );
+    });
+}
+
 function refreshInventoryDependentOptions() {
   refreshAllLocationSelects();
   refreshAllEquippedSelects();
+  refreshLocationFilter();
 }
 
 function attachItemRowBehavior(mainRow, detailsRow) {
@@ -318,6 +369,7 @@ function attachItemRowBehavior(mainRow, detailsRow) {
 
   locationSelect?.addEventListener("change", () => {
     locationSelect.dataset.selectedLocation = locationSelect.value;
+    applyInventoryLocationFilter();
   });
 }
 
@@ -432,13 +484,15 @@ function addInventoryGemRow(data = {}) {
 
   locationSelect?.addEventListener("change", () => {
     locationSelect.dataset.selectedLocation = locationSelect.value;
+    applyInventoryLocationFilter();
   });
 
   row.querySelector(".inventory-remove")?.addEventListener("click", () => {
     row.remove();
+    applyInventoryLocationFilter();
   });
 
-  refreshAllLocationSelects();
+  refreshInventoryDependentOptions();
 }
 
 function addInventoryAttunementRow(data = {}) {
@@ -479,7 +533,7 @@ function addStorageLocationRow(data = {}) {
     inventoryInputCell("storage-location-name", storage.name, "Backpack, ship cabin, home…") +
     inventoryInputCell("storage-location-type", storage.type, "Bag, room, chest…") +
     inventoryInputCell("storage-location-notes", storage.notes, "Notes…") +
-    inventoryRemoveButton("storage location");
+    inventoryRemoveButton("container or location");
 
   body.appendChild(row);
 
@@ -505,7 +559,7 @@ function renumberInventoryAttunementRows() {
     });
 }
 
-function renderEquippedSlots(savedSlots = {}) {
+function renderEquippedSlots(savedSlots = {}, customSlots = []) {
   const container = document.getElementById("equippedSlots");
   if (!container) return;
 
@@ -522,6 +576,7 @@ function renderEquippedSlots(savedSlots = {}) {
     `)
     .join("");
 
+  renderCustomEquippedSlots(customSlots);
   refreshAllEquippedSelects();
 
   container
@@ -533,11 +588,81 @@ function renderEquippedSlots(savedSlots = {}) {
     });
 }
 
+function addCustomEquippedSlot(data = {}) {
+  const container = document.getElementById("customEquippedSlots");
+  if (!container) return;
+
+  const row = document.createElement("div");
+  row.className = "custom-equipped-slot";
+  row.dataset.customSlotId = String(data.id || inventoryId("slot"));
+
+  row.innerHTML = `
+    <input
+      class="custom-equipped-slot-name"
+      type="text"
+      value="${inventorySafeValue(data.label || "")}"
+      placeholder="Gloves, bracers, quiver…"
+      aria-label="Custom equipped slot name"
+    >
+
+    <select
+      class="equipped-slot-select custom-equipped-slot-select"
+      data-selected-item-id="${inventorySafeValue(data.itemId || "")}"
+      aria-label="Custom equipped item"
+    ></select>
+
+    <button
+      type="button"
+      class="inventory-remove custom-equipped-remove"
+      title="Remove custom slot"
+      aria-label="Remove custom equipped slot"
+    >×</button>
+  `;
+
+  container.appendChild(row);
+
+  const select = row.querySelector(".equipped-slot-select");
+
+  refreshEquippedSelect(select);
+
+  select?.addEventListener("change", () => {
+    select.dataset.selectedItemId = select.value;
+  });
+
+  row.querySelector(".custom-equipped-remove")?.addEventListener("click", () => {
+    row.remove();
+  });
+}
+
+function renderCustomEquippedSlots(customSlots = []) {
+  const container = document.getElementById("customEquippedSlots");
+  if (!container) return;
+
+  container.innerHTML = "";
+  (customSlots || []).forEach(addCustomEquippedSlot);
+}
+
 function collectEquippedSlots() {
   return Object.fromEntries(
-    Array.from(document.querySelectorAll(".equipped-slot-select"))
-      .map(select => [select.dataset.equippedSlot, select.value || ""])
+    Array.from(
+      document.querySelectorAll("#equippedSlots .equipped-slot-select")
+    ).map(select => [
+      select.dataset.equippedSlot,
+      select.value || ""
+    ])
   );
+}
+
+function collectCustomEquippedSlots() {
+  return Array.from(
+    document.querySelectorAll("#customEquippedSlots .custom-equipped-slot")
+  )
+    .map(row => ({
+      id: row.dataset.customSlotId,
+      label: row.querySelector(".custom-equipped-slot-name")?.value.trim() || "",
+      itemId: row.querySelector(".equipped-slot-select")?.value || ""
+    }))
+    .filter(slot => slot.label || slot.itemId);
 }
 
 function collectStorageLocations() {
@@ -546,26 +671,28 @@ function collectStorageLocations() {
 }
 
 function collectItemRows(selector, fields) {
-  return Array.from(document.querySelectorAll(selector)).map(row => {
-    const detailsRow = row.nextElementSibling;
-    const data = {
-      id: row.dataset.itemId,
-      details: detailsRow?.querySelector(".inventory-item-details")?.value || "",
-      open: detailsRow?.style.display !== "none"
-    };
+  return Array.from(document.querySelectorAll(selector))
+    .map(row => {
+      const detailsRow = row.nextElementSibling;
+      const data = {
+        id: row.dataset.itemId,
+        details: detailsRow?.querySelector(".inventory-item-details")?.value || "",
+        open: detailsRow?.style.display !== "none"
+      };
 
-    fields.forEach(([key, fieldSelector]) => {
-      data[key] = row.querySelector(fieldSelector)?.value.trim() || "";
-    });
+      fields.forEach(([key, fieldSelector]) => {
+        data[key] = row.querySelector(fieldSelector)?.value.trim() || "";
+      });
 
-    return data;
-  }).filter(row =>
-    row.name ||
-    row.qty ||
-    row.value ||
-    row.location ||
-    row.details
-  );
+      return data;
+    })
+    .filter(row =>
+      row.name ||
+      row.qty ||
+      row.value ||
+      row.location ||
+      row.details
+    );
 }
 
 function collectInventoryEquipmentRows() {
@@ -640,7 +767,8 @@ function resetInventoryRows({
   gems = DEFAULT_INVENTORY_GEM_ROWS,
   attunement = DEFAULT_INVENTORY_ATTUNEMENT_ROWS,
   storageLocations = DEFAULT_STORAGE_LOCATION_ROWS,
-  equippedSlots = {}
+  equippedSlots = {},
+  customEquippedSlots = []
 } = {}) {
   const equipmentBody = document.getElementById("inventoryEquipmentBody");
   const magicBody = document.getElementById("inventoryMagicItemsBody");
@@ -664,7 +792,7 @@ function resetInventoryRows({
   (attunement || []).forEach(addInventoryAttunementRow);
 
   renumberInventoryAttunementRows();
-  renderEquippedSlots(equippedSlots || {});
+  renderEquippedSlots(equippedSlots || {}, customEquippedSlots || []);
   refreshInventoryDependentOptions();
   syncCoinageMirrorsFromCanonical();
 }
@@ -703,4 +831,10 @@ function bindCoinageMirrors() {
 
 function bindInventoryControls() {
   bindCoinageMirrors();
+
+  document
+    .getElementById("inventoryLocationFilter")
+    ?.addEventListener("change", applyInventoryLocationFilter);
+
+  refreshLocationFilter();
 }

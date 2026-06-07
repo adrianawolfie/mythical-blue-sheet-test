@@ -8,8 +8,9 @@
 
 .inventory-coinage-card,
 .equipped-carried-card,
-.storage-locations-card,
+.inventory-filter-card,
 .inventory-equipment-card,
+.inventory-support-grid,
 .other-inventory-card,
 .inventory-legacy-notes {
   grid-column: 1 / -1;
@@ -18,64 +19,123 @@
 .inventory-card,
 .inventory-coinage-card,
 .equipped-carried-card,
-.storage-locations-card,
+.inventory-filter-card,
+.containers-locations-card,
 .other-inventory-card,
 .inventory-legacy-notes {
   background: rgba(255,250,234,.28);
 }
 
-/* ─── COMPACT COINAGE — MAIN + INVENTORY ───────────────────── */
+/* ─── COINAGE — RESTORED CIRCLES ───────────────────────────── */
 
 .compact-main-coinage-card {
   margin-top: 12px;
 }
 
-.compact-coinsrow,
-.inventory-coinsrow {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 5px;
+.compact-main-coinage-card .coinsrow,
+.inventory-coinage-card .coinsrow {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  padding: 9px 10px 10px;
+}
+
+.compact-main-coinage-card .cbox2,
+.inventory-coinage-card .cbox2 {
+  flex: 0 0 auto;
+  width: 50px;
+  padding: 0;
+  text-align: center;
+}
+
+.compact-main-coinage-card .cbox2 label,
+.inventory-coinage-card .cbox2 label {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.compact-main-coinage-card .cbox2 input,
+.inventory-coinage-card .cbox2 input {
+  box-sizing: border-box;
+  width: 46px;
+  min-width: 46px;
+  max-width: 46px;
+  height: 46px;
+  min-height: 46px;
+  max-height: 46px;
+  padding: 0;
+  border: 1.5px solid var(--gold);
+  border-radius: 50%;
+  background: rgba(255,253,245,.4);
+  color: var(--navy-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.compact-main-coinage-card .coinsrow {
+  gap: 9px;
   padding: 7px 8px 8px;
 }
 
-.compact-coinsrow label,
-.inventory-coinsrow label {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 4px;
-  min-width: 0;
+.compact-main-coinage-card .cbox2 {
+  width: 42px;
 }
 
-.compact-coinsrow span,
-.inventory-coinsrow span {
-  color: var(--gold-deep);
-  font-family: 'Cinzel', serif;
-  font-size: 7px;
-  font-weight: 700;
-  letter-spacing: .6px;
-}
-
-.compact-coinsrow input,
-.inventory-coinsrow input {
-  width: 100%;
-  min-width: 0;
-  padding: 2px 1px;
-  border: none;
-  border-bottom: 1px dotted rgba(184,144,44,.56);
-  border-radius: 0;
-  background: transparent;
-  color: var(--navy-deep);
-  font-family: var(--small-italic-font);
+.compact-main-coinage-card .cbox2 input {
+  width: 38px;
+  min-width: 38px;
+  max-width: 38px;
+  height: 38px;
+  min-height: 38px;
+  max-height: 38px;
   font-size: 11px;
-  text-align: center;
-  outline: none;
 }
 
-.compact-gold-coin input,
-.inventory-gold-coin input {
+.compact-main-coinage-card .gold-coin input,
+.inventory-coinage-card .gold-coin input {
+  background: rgba(214,168,56,.35);
+  border-color: var(--navy-deep);
+}
+
+/* ─── GEMS ─────────────────────────────────────────────────── */
+
+.inventory-gems-details {
+  border-top: 1px dotted rgba(184,144,44,.5);
+}
+
+.inventory-gems-details > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 7px 8px;
+}
+
+.inventory-gems-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.inventory-gems-details > summary::after {
+  content: "▾";
+  margin-left: 8px;
   color: var(--gold-deep);
+}
+
+.inventory-gems-details[open] > summary::after {
+  content: "▴";
+}
+
+.inventory-gems-section {
+  padding: 0 7px 7px;
+}
+
+.inventory-subheading {
+  color: var(--navy);
+  font-family: 'Cinzel', serif;
+  font-size: 7.5px;
   font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 /* ─── EQUIPPED & CARRIED ───────────────────────────────────── */
@@ -114,7 +174,8 @@
   text-transform: uppercase;
 }
 
-.equipped-slot select {
+.equipped-slot select,
+.custom-equipped-slot select {
   width: 100%;
   min-width: 0;
   border: none;
@@ -124,6 +185,81 @@
   font-family: var(--small-italic-font);
   font-size: 11px;
   outline: none;
+}
+
+.custom-equipped-section {
+  padding: 0 8px 3px;
+  border-top: 1px dotted rgba(184,144,44,.5);
+}
+
+.custom-equipped-section .inventory-subheading {
+  padding-top: 7px;
+}
+
+.custom-equipped-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.custom-equipped-slot {
+  display: grid;
+  grid-template-columns: minmax(110px, .55fr) minmax(150px, 1fr) 16px;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 5px;
+  border: 1px solid rgba(184,144,44,.34);
+  background: rgba(255,253,245,.12);
+}
+
+.custom-equipped-slot-name {
+  min-width: 0;
+  border: none;
+  border-bottom: 1px dotted rgba(184,144,44,.55);
+  background: transparent;
+  color: var(--navy-deep);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  outline: none;
+}
+
+/* ─── FILTER ───────────────────────────────────────────────── */
+
+.inventory-filter-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border: 1px solid rgba(184,144,44,.55);
+}
+
+.inventory-filter-label {
+  color: var(--navy);
+  font-family: 'Cinzel', serif;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.inventory-filter-select {
+  min-width: 170px;
+  border: none;
+  border-bottom: 1px dotted rgba(184,144,44,.58);
+  background: transparent;
+  color: var(--navy-deep);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  outline: none;
+}
+
+/* ─── SUPPORTING SECTION ───────────────────────────────────── */
+
+.inventory-support-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 /* ─── TABLES ───────────────────────────────────────────────── */
@@ -360,15 +496,57 @@
 
   .inventory-coinage-card,
   .equipped-carried-card,
-  .storage-locations-card,
+  .inventory-filter-card,
   .inventory-equipment-card,
+  .inventory-support-grid,
   .other-inventory-card,
   .inventory-legacy-notes {
     grid-column: auto;
   }
 
+  .compact-main-coinage-card .coinsrow,
+  .inventory-coinage-card .coinsrow {
+    gap: 6px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .inventory-coinage-card .cbox2 {
+    width: 42px;
+  }
+
+  .inventory-coinage-card .cbox2 input {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    font-size: 11px;
+  }
+
   .equipped-slots {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .custom-equipped-slot {
+    grid-template-columns: minmax(92px, .65fr) minmax(0, 1fr) 16px;
+    gap: 5px;
+  }
+
+  .inventory-support-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-filter-card {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .inventory-filter-select {
+    width: 100%;
+    min-width: 0;
   }
 
   .inventory-notes-grid {
@@ -405,83 +583,5 @@
   .inventory-remove-col,
   .inventory-remove-cell {
     width: 16px;
-  }
-}
-
-
-/* ─── COINAGE & GEMS REFINEMENT ──────────────────────────────
-   Restore the original coin-circle layout while keeping the Main copy compact. */
-
-.compact-main-coinage-card .coinsrow,
-.inventory-coinage-card .coinsrow {
-  display: flex;
-  justify-content: space-around;
-  gap: 7px;
-  padding: 8px 8px 9px;
-}
-
-.compact-main-coinage-card .cbox2,
-.inventory-coinage-card .cbox2 {
-  flex: 0 1 62px;
-}
-
-.compact-main-coinage-card .cbox2 label,
-.inventory-coinage-card .cbox2 label {
-  display: block;
-}
-
-.compact-main-coinage-card .cbox2 input,
-.inventory-coinage-card .cbox2 input {
-  width: 100%;
-}
-
-.compact-main-coinage-card .coinsrow {
-  gap: 5px;
-  padding: 6px 8px 7px;
-}
-
-.compact-main-coinage-card .cbox2 {
-  flex-basis: 54px;
-}
-
-.inventory-gems-section {
-  padding: 0 7px 7px;
-}
-
-.inventory-subheading {
-  padding: 7px 0 5px;
-  border-top: 1px dotted rgba(184,144,44,.5);
-  color: var(--navy);
-  font-family: 'Cinzel', serif;
-  font-size: 7.5px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.inventory-gems-table th:nth-child(1) {
-  width: 25%;
-}
-
-.inventory-gems-table th:nth-child(5) {
-  width: auto;
-}
-
-@media (max-width: 768px) {
-  .compact-main-coinage-card .coinsrow,
-  .inventory-coinage-card .coinsrow {
-    gap: 4px;
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-
-  .compact-main-coinage-card .cbox2,
-  .inventory-coinage-card .cbox2 {
-    min-width: 0;
-    flex-basis: 48px;
-  }
-
-  .inventory-gems-table {
-    table-layout: auto;
   }
 }

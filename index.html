@@ -578,45 +578,44 @@
             <div class="cbox2"><label>PP</label><input type="text" placeholder="0" data-field="platinumPieces" data-coinage-key="platinumPieces"></div>
           </div>
 
-          <div class="inventory-gems-section">
-            <div class="inventory-subheading">Gems & Valuables</div>
-            <table class="inventory-table inventory-gems-table">
-              <thead>
-                <tr>
-                  <th>Gem / Valuable</th>
-                  <th class="inventory-qty-col">Qty</th>
-                  <th class="inventory-value-col">Value</th>
-                  <th class="inventory-location-col">Location</th>
-                  <th>Notes</th>
-                  <th class="inventory-remove-col"></th>
-                </tr>
-              </thead>
-              <tbody id="inventoryGemsBody"></tbody>
-            </table>
-            <button type="button" class="inventory-add" onclick="addInventoryGemRow()">+ Add Gem / Valuable</button>
-          </div>
+          <details class="inventory-gems-details">
+            <summary class="inventory-subheading">Gems & Valuables</summary>
+            <div class="inventory-gems-section">
+              <table class="inventory-table inventory-gems-table">
+                <thead>
+                  <tr>
+                    <th>Gem / Valuable</th>
+                    <th class="inventory-qty-col">Qty</th>
+                    <th class="inventory-value-col">Value</th>
+                    <th class="inventory-location-col">Location</th>
+                    <th>Notes</th>
+                    <th class="inventory-remove-col"></th>
+                  </tr>
+                </thead>
+                <tbody id="inventoryGemsBody"></tbody>
+              </table>
+              <button type="button" class="inventory-add" onclick="addInventoryGemRow()">+ Add Gem / Valuable</button>
+            </div>
+          </details>
         </div>
 
         <div class="sb-card equipped-carried-card">
           <div class="sb-hdr">Equipped & Carried</div>
-          <div class="equipped-intro">Choose equipped items from your inventory.</div>
+          <div class="equipped-intro">Choose items or carried containers from your inventory.</div>
           <div id="equippedSlots" class="equipped-slots"></div>
+
+          <div class="custom-equipped-section">
+            <div class="inventory-subheading">Custom Slots</div>
+            <div id="customEquippedSlots" class="custom-equipped-slots"></div>
+            <button type="button" class="inventory-add" onclick="addCustomEquippedSlot()">+ Add Custom Slot</button>
+          </div>
         </div>
 
-        <div class="sb-card storage-locations-card">
-          <div class="sb-hdr">Storage Locations</div>
-          <table class="inventory-table storage-table">
-            <thead>
-              <tr>
-                <th>Storage / Home</th>
-                <th>Type</th>
-                <th>Notes</th>
-                <th class="inventory-remove-col"></th>
-              </tr>
-            </thead>
-            <tbody id="storageLocationsBody"></tbody>
-          </table>
-          <button type="button" class="inventory-add" onclick="addStorageLocationRow()">+ Add Storage Location</button>
+        <div class="sb-card inventory-filter-card">
+          <label class="inventory-filter-label" for="inventoryLocationFilter">Show items in</label>
+          <select id="inventoryLocationFilter" class="inventory-filter-select">
+            <option value="all">All Locations</option>
+          </select>
         </div>
 
         <div class="sb-card inventory-card inventory-equipment-card">
@@ -637,20 +636,38 @@
           <button type="button" class="inventory-add" onclick="addInventoryEquipmentRow()">+ Add Item</button>
         </div>
 
-        <div class="sb-card inventory-card inventory-attunement-card">
-          <div class="sb-hdr">Attunement</div>
-          <table class="inventory-table" id="inventoryAttunementTable">
-            <thead>
-              <tr>
-                <th class="inventory-slot-col">Slot</th>
-                <th>Item</th>
-                <th>Notes</th>
-                <th class="inventory-remove-col"></th>
-              </tr>
-            </thead>
-            <tbody id="inventoryAttunementBody"></tbody>
-          </table>
-          <button type="button" class="inventory-add" onclick="addInventoryAttunementRow()">+ Add Slot</button>
+        <div class="inventory-support-grid">
+          <div class="sb-card containers-locations-card">
+            <div class="sb-hdr">Containers & Locations</div>
+            <table class="inventory-table storage-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Notes</th>
+                  <th class="inventory-remove-col"></th>
+                </tr>
+              </thead>
+              <tbody id="storageLocationsBody"></tbody>
+            </table>
+            <button type="button" class="inventory-add" onclick="addStorageLocationRow()">+ Add Container / Location</button>
+          </div>
+
+          <div class="sb-card inventory-card inventory-attunement-card">
+            <div class="sb-hdr">Attunement</div>
+            <table class="inventory-table" id="inventoryAttunementTable">
+              <thead>
+                <tr>
+                  <th class="inventory-slot-col">Slot</th>
+                  <th>Item</th>
+                  <th>Notes</th>
+                  <th class="inventory-remove-col"></th>
+                </tr>
+              </thead>
+              <tbody id="inventoryAttunementBody"></tbody>
+            </table>
+            <button type="button" class="inventory-add" onclick="addInventoryAttunementRow()">+ Add Slot</button>
+          </div>
         </div>
 
         <div class="sb-card inventory-card inventory-magic-card">

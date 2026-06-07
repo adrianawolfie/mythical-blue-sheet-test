@@ -392,6 +392,7 @@ customLists: {
   attunementSlots: collectInventoryAttunementRows(),
   storageLocations: collectStorageLocations(),
   equippedSlots: collectEquippedSlots(),
+  customEquippedSlots: collectCustomEquippedSlots(),
   speeds: collectExtraSpeedRows(),
   armorClass: collectArmorClassState()
 }
@@ -423,7 +424,8 @@ resetInventoryRows({
     character.customLists?.attunementSlots ||
     DEFAULT_INVENTORY_ATTUNEMENT_ROWS,
   storageLocations: character.customLists?.storageLocations || [],
-  equippedSlots: character.customLists?.equippedSlots || {}
+  equippedSlots: character.customLists?.equippedSlots || {},
+  customEquippedSlots: character.customLists?.customEquippedSlots || []
 });
 renderExtraSpeedRows(character.customLists?.speeds || []);
 renderArmorClassState(

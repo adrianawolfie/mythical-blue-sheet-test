@@ -155,3 +155,34 @@ structured Gems & Valuables table stored under:
 ```text
 customLists.gems
 ```
+
+
+## Inventory layout refinement
+
+The inventory page now has a clearer hierarchy:
+
+```text
+Coinage & Gems
+Equipped & Carried
+Location filter
+Equipment
+Containers & Locations | Attunement
+Magic Items | Potions & Consumables
+Other Inventory
+Imported / Freeform Notes
+```
+
+Equipped & Carried supports custom wearable slots stored under:
+
+```text
+customLists.customEquippedSlots
+```
+
+The shared inventory location filter applies to:
+
+```text
+Equipment
+Magic Items
+Potions & Consumables
+Gems & Valuables
+```
