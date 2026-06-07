@@ -373,3 +373,91 @@
     min-width: 38px;
   }
 }
+
+
+/* ─── ARMOR CLASS PANEL SHARED GRID FIX ──────────────────────
+   Base AC and modifier values use the same grid column.
+   Modifier-name input gets a genuinely wider text area. */
+.armor-class-panel {
+  width: 276px;
+  padding: 7px 8px;
+}
+
+.armor-class-base-row,
+.armor-class-modifier-row {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) 42px 13px;
+  column-gap: 8px;
+  align-items: center;
+}
+
+.armor-class-base-row {
+  margin-bottom: 6px;
+  padding-bottom: 5px;
+}
+
+.armor-class-base-row span {
+  grid-column: 1 / 3;
+  text-align: left;
+}
+
+.armor-class-base-row input {
+  grid-column: 3;
+}
+
+.armor-class-modifier-value {
+  grid-column: 3;
+}
+
+.armor-class-modifier-remove {
+  grid-column: 4;
+}
+
+.armor-class-panel input {
+  box-sizing: border-box;
+}
+
+.armor-class-modifier-name {
+  grid-column: 2;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  padding-right: 2px;
+}
+
+.armor-class-base-row input,
+.armor-class-modifier-value {
+  width: 42px;
+  min-width: 42px;
+  max-width: 42px;
+  padding: 0 2px 0 0;
+  text-align: right;
+  justify-self: end;
+}
+
+.armor-class-modifier-remove {
+  width: 13px;
+  min-width: 13px;
+  max-width: 13px;
+  height: 13px;
+  justify-self: end;
+}
+
+@media (max-width: 768px) {
+  .armor-class-panel {
+    width: min(276px, calc(100vw - 22px));
+  }
+
+  .armor-class-base-row,
+  .armor-class-modifier-row {
+    grid-template-columns: 18px minmax(0, 1fr) 42px 13px;
+    column-gap: 8px;
+  }
+
+  .armor-class-base-row input,
+  .armor-class-modifier-value {
+    width: 42px;
+    min-width: 42px;
+    max-width: 42px;
+  }
+}
