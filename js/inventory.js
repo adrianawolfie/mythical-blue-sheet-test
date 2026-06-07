@@ -23,7 +23,9 @@ const EQUIPPED_SLOT_DEFINITIONS = [
   { key: "ring1", label: "Ring 1" },
   { key: "ring2", label: "Ring 2" },
   { key: "belt", label: "Belt / Quick Access" },
+  { key: "glovesBracers", label: "Gloves / Bracers" },
   { key: "footwear", label: "Footwear" },
+  { key: "backStorage", label: "Backpack / Carried Storage" },
   { key: "otherWorn", label: "Other Worn Item" }
 ];
 
@@ -32,6 +34,95 @@ const STANDARD_ITEM_LOCATIONS = [
   { value: "carried", label: "Carried" },
   { value: "worn", label: "Worn / Equipped" }
 ];
+
+
+const SILHOUETTE_VIEW_DEFAULT = "silhouette";
+
+const CUSTOM_SLOT_OVERLAY_HINTS = [
+  { pattern: /glove|bracer|gauntlet/i, slot: "glovesBracers" },
+  { pattern: /boot|shoe|greave/i, slot: "footwear" },
+  { pattern: /backpack|satchel|bag|pouch|quiver|pack/i, slot: "backStorage" },
+  { pattern: /cloak|cape|mantle/i, slot: "cape" },
+  { pattern: /ring/i, slot: "ring2" },
+  { pattern: /helmet|hood|circlet|hat/i, slot: "head" },
+  { pattern: /amulet|necklace|pendant/i, slot: "neck" },
+  { pattern: /belt/i, slot: "belt" }
+];
+
+function getInventoryView() {
+  return document.getElementById("equippedLayout")?.dataset.view || SILHOUETTE_VIEW_DEFAULT;
+}
+
+function setInventoryView(view = SILHOUETTE_VIEW_DEFAULT) {
+  const layout = document.getElementById("equippedLayout");
+  if (!layout) return;
+
+  const selectedView = view === "list" ? "list" : SILHOUETTE_VIEW_DEFAULT;
+  layout.dataset.view = selectedView;
+  layout.classList.toggle("is-list-view", selectedView === "list");
+  layout.classList.toggle("is-silhouette-view", selectedView !== "list");
+
+  document.querySelectorAll(".inventory-view-btn").forEach(button => {
+    const active = button.dataset.inventoryView === selectedView;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-selected", active ? "true" : "false");
+  });
+}
+
+function bindInventoryViewToggle() {
+  document.querySelectorAll(".inventory-view-btn").forEach(button => {
+    button.addEventListener("click", () => {
+      setInventoryView(button.dataset.inventoryView || SILHOUETTE_VIEW_DEFAULT);
+    });
+  });
+}
+
+function getSelectedOptionLabel(select) {
+  return select?.selectedOptions?.[0]?.textContent?.trim() || "";
+}
+
+function renderEquippedSilhouette() {
+  const filledSlots = {};
+
+  document
+    .querySelectorAll("#equippedSlots .equipped-slot-select")
+    .forEach(select => {
+      const slotKey = select.dataset.equippedSlot;
+      if (!slotKey) return;
+
+      filledSlots[slotKey] = {
+        filled: Boolean(select.value),
+        label: getSelectedOptionLabel(select)
+      };
+    });
+
+  document
+    .querySelectorAll("#customEquippedSlots .custom-equipped-slot")
+    .forEach(row => {
+      const name = row.querySelector(".custom-equipped-slot-name")?.value.trim() || "";
+      const select = row.querySelector(".equipped-slot-select");
+      if (!name || !select?.value) return;
+
+      const hint = CUSTOM_SLOT_OVERLAY_HINTS.find(entry => entry.pattern.test(name));
+      if (!hint) return;
+
+      if (!filledSlots[hint.slot] || !filledSlots[hint.slot].filled) {
+        filledSlots[hint.slot] = {
+          filled: true,
+          label: getSelectedOptionLabel(select) || name
+        };
+      }
+    });
+
+  document.querySelectorAll(".silhouette-overlay").forEach(overlay => {
+    const slotKey = overlay.dataset.overlaySlot;
+    const state = filledSlots[slotKey];
+    const active = Boolean(state?.filled);
+    overlay.classList.toggle("is-active", active);
+    overlay.setAttribute("aria-hidden", active ? "false" : "true");
+    overlay.title = active ? state.label : "";
+  });
+}
 
 function inventoryId(prefix = "item") {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -273,6 +364,7 @@ function refreshEquippedSelect(select) {
 
 function refreshAllEquippedSelects() {
   document.querySelectorAll(".equipped-slot-select").forEach(refreshEquippedSelect);
+  renderEquippedSilhouette();
 }
 
 function refreshLocationFilter() {
@@ -563,18 +655,14 @@ function renderEquippedSlots(savedSlots = {}, customSlots = []) {
   const container = document.getElementById("equippedSlots");
   if (!container) return;
 
-  container.innerHTML = `
-    <div class="equipped-silhouette-wrap" aria-hidden="true">
-      <img class="equipped-silhouette" src="assets/equipment-silhouette.png" alt="">
-    </div>
-  ` + EQUIPPED_SLOT_DEFINITIONS
+  container.innerHTML = EQUIPPED_SLOT_DEFINITIONS
     .map(slot => `
       <label class="equipped-slot equipped-slot-${inventorySafeValue(slot.key)}">
         <span>${inventorySafeValue(slot.label)}</span>
         <select
           class="equipped-slot-select"
           data-equipped-slot="${inventorySafeValue(slot.key)}"
-          data-selected-item-id="${inventorySafeValue(savedSlots[slot.key] || "")}" 
+          data-selected-item-id="${inventorySafeValue(savedSlots[slot.key] || "")}"
         ></select>
       </label>
     `)
@@ -588,8 +676,11 @@ function renderEquippedSlots(savedSlots = {}, customSlots = []) {
     .forEach(select => {
       select.addEventListener("change", () => {
         select.dataset.selectedItemId = select.value;
+        renderEquippedSilhouette();
       });
     });
+
+  renderEquippedSilhouette();
 }
 
 function addCustomEquippedSlot(data = {}) {
@@ -631,10 +722,14 @@ function addCustomEquippedSlot(data = {}) {
 
   select?.addEventListener("change", () => {
     select.dataset.selectedItemId = select.value;
+    renderEquippedSilhouette();
   });
+
+  row.querySelector(".custom-equipped-slot-name")?.addEventListener("input", renderEquippedSilhouette);
 
   row.querySelector(".custom-equipped-remove")?.addEventListener("click", () => {
     row.remove();
+    renderEquippedSilhouette();
   });
 }
 
@@ -772,7 +867,8 @@ function resetInventoryRows({
   attunement = DEFAULT_INVENTORY_ATTUNEMENT_ROWS,
   storageLocations = DEFAULT_STORAGE_LOCATION_ROWS,
   equippedSlots = {},
-  customEquippedSlots = []
+  customEquippedSlots = [],
+  inventoryView = SILHOUETTE_VIEW_DEFAULT
 } = {}) {
   const equipmentBody = document.getElementById("inventoryEquipmentBody");
   const magicBody = document.getElementById("inventoryMagicItemsBody");
@@ -797,8 +893,10 @@ function resetInventoryRows({
 
   renumberInventoryAttunementRows();
   renderEquippedSlots(equippedSlots || {}, customEquippedSlots || []);
+  setInventoryView(inventoryView || SILHOUETTE_VIEW_DEFAULT);
   refreshInventoryDependentOptions();
   syncCoinageMirrorsFromCanonical();
+  renderEquippedSilhouette();
 }
 
 function syncCoinageMirrorsFromCanonical() {
@@ -835,10 +933,13 @@ function bindCoinageMirrors() {
 
 function bindInventoryControls() {
   bindCoinageMirrors();
+  bindInventoryViewToggle();
 
   document
     .getElementById("inventoryLocationFilter")
     ?.addEventListener("change", applyInventoryLocationFilter);
 
   refreshLocationFilter();
+  setInventoryView(SILHOUETTE_VIEW_DEFAULT);
+  renderEquippedSilhouette();
 }

@@ -140,6 +140,229 @@
 
 /* ─── EQUIPPED & CARRIED ───────────────────────────────────── */
 
+.equipped-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-right: 8px;
+}
+
+.inventory-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.inventory-view-btn {
+  padding: 2px 8px;
+  border: 1px solid rgba(184,144,44,.42);
+  background: rgba(255,253,245,.18);
+  color: rgba(28,39,80,.74);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+
+.inventory-view-btn:hover,
+.inventory-view-btn:focus-visible,
+.inventory-view-btn.active {
+  border-color: rgba(184,144,44,.72);
+  background: rgba(184,144,44,.14);
+  color: var(--navy-deep);
+  outline: none;
+}
+
+.equipped-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, .88fr) minmax(0, 1.12fr);
+  gap: 8px;
+  padding: 0 8px 8px;
+}
+
+.equipped-layout.is-list-view {
+  display: block;
+}
+
+.equipped-visual-panel {
+  display: block;
+}
+
+.equipped-layout.is-list-view .equipped-visual-panel {
+  display: none;
+}
+
+.equipped-silhouette-frame {
+  height: 100%;
+  min-height: 480px;
+  padding: 10px 10px 6px;
+  border: 1px solid rgba(184,144,44,.38);
+  background: rgba(255,253,245,.16);
+}
+
+.equipped-silhouette-stage {
+  position: relative;
+  width: min(100%, 300px);
+  margin: 0 auto;
+  aspect-ratio: 3 / 5;
+}
+
+.equipped-silhouette-base {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: .95;
+}
+
+.equipped-silhouette-note {
+  margin-top: 6px;
+  text-align: center;
+  color: rgba(28,39,80,.66);
+  font-family: var(--small-italic-font);
+  font-size: 10px;
+  font-style: italic;
+}
+
+.silhouette-overlay {
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+  filter: drop-shadow(0 1px 1px rgba(184,144,44,.16));
+}
+
+.silhouette-overlay.is-active {
+  opacity: .96;
+}
+
+.overlay-head {
+  top: 2%;
+  left: 29%;
+  width: 42%;
+  height: 21%;
+  z-index: 18;
+  background-image: url('../assets/equipment-icons/head-hood.png');
+}
+
+.overlay-neck {
+  top: 22%;
+  left: 41%;
+  width: 18%;
+  height: 10%;
+  z-index: 19;
+  background-image: url('../assets/equipment-icons/necklace.png');
+}
+
+.overlay-cape {
+  top: 8%;
+  left: 22%;
+  width: 56%;
+  height: 47%;
+  z-index: 6;
+  background-image: url('../assets/equipment-icons/cape.png');
+}
+
+.overlay-armor {
+  top: 24%;
+  left: 29%;
+  width: 42%;
+  height: 25%;
+  z-index: 16;
+  background-image: url('../assets/equipment-icons/armor.png');
+}
+
+.overlay-clothing {
+  top: 22%;
+  left: 27%;
+  width: 46%;
+  height: 36%;
+  z-index: 15;
+  background-image: url('../assets/equipment-icons/clothing.png');
+}
+
+.overlay-main-hand {
+  top: 31%;
+  left: 11%;
+  width: 19%;
+  height: 42%;
+  z-index: 17;
+  background-image: url('../assets/equipment-icons/main-hand.png');
+}
+
+.overlay-off-hand {
+  top: 31%;
+  right: 8%;
+  width: 23%;
+  height: 32%;
+  z-index: 17;
+  background-image: url('../assets/equipment-icons/off-hand.png');
+}
+
+.overlay-ring-1 {
+  top: 49%;
+  left: 20%;
+  width: 11%;
+  height: 11%;
+  z-index: 19;
+  background-image: url('../assets/equipment-icons/ring.png');
+}
+
+.overlay-ring-2 {
+  top: 49%;
+  right: 22%;
+  width: 11%;
+  height: 11%;
+  z-index: 19;
+  background-image: url('../assets/equipment-icons/ring.png');
+}
+
+.overlay-belt {
+  top: 45%;
+  left: 31%;
+  width: 37%;
+  height: 15%;
+  z-index: 17;
+  background-image: url('../assets/equipment-icons/belt.png');
+}
+
+.overlay-gloves-bracers {
+  top: 40%;
+  left: 24%;
+  width: 52%;
+  height: 20%;
+  z-index: 18;
+  background-image: url('../assets/equipment-icons/gloves-bracers.png');
+}
+
+.overlay-footwear {
+  bottom: 4%;
+  left: 28%;
+  width: 44%;
+  height: 20%;
+  z-index: 16;
+  background-image: url('../assets/equipment-icons/boots.png');
+}
+
+.overlay-back-storage {
+  top: 26%;
+  right: 6%;
+  width: 27%;
+  height: 25%;
+  z-index: 8;
+  background-image: url('../assets/equipment-icons/backpack.png');
+}
+
+.equipped-controls-panel {
+  min-width: 0;
+}
+
 .equipped-intro {
   padding: 7px 8px 0;
   color: rgba(28,39,80,.66);
@@ -150,35 +373,9 @@
 
 .equipped-slots {
   display: grid;
-  grid-template-columns: minmax(124px, 1fr) minmax(160px, 220px) minmax(124px, 1fr);
-  grid-template-areas:
-    "head silhouette neck"
-    "cape silhouette ring1"
-    "armor silhouette ring2"
-    "mainHand silhouette offHand"
-    "belt silhouette clothing"
-    "footwear silhouette otherWorn";
-  column-gap: 12px;
-  row-gap: 8px;
-  padding: 10px 12px 12px;
-  align-items: center;
-}
-
-.equipped-silhouette-wrap {
-  grid-area: silhouette;
-  align-self: stretch;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 6px 0;
-}
-
-.equipped-silhouette {
-  width: 100%;
-  max-width: 210px;
-  height: auto;
-  opacity: .92;
-  mix-blend-mode: multiply;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  padding: 8px;
 }
 
 .equipped-slot {
@@ -190,19 +387,6 @@
   border: 1px solid rgba(184,144,44,.42);
   background: rgba(255,253,245,.16);
 }
-
-.equipped-slot-head { grid-area: head; }
-.equipped-slot-neck { grid-area: neck; }
-.equipped-slot-cape { grid-area: cape; }
-.equipped-slot-armor { grid-area: armor; }
-.equipped-slot-clothing { grid-area: clothing; }
-.equipped-slot-mainHand { grid-area: mainHand; }
-.equipped-slot-offHand { grid-area: offHand; }
-.equipped-slot-ring1 { grid-area: ring1; }
-.equipped-slot-ring2 { grid-area: ring2; }
-.equipped-slot-belt { grid-area: belt; }
-.equipped-slot-footwear { grid-area: footwear; }
-.equipped-slot-otherWorn { grid-area: otherWorn; }
 
 .equipped-slot span {
   color: var(--navy);
@@ -564,27 +748,29 @@
     font-size: 11px;
   }
 
+  .equipped-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .inventory-view-toggle {
+    margin-top: -2px;
+  }
+
+  .equipped-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .equipped-silhouette-frame {
+    min-height: 0;
+  }
+
+  .equipped-silhouette-stage {
+    width: min(100%, 240px);
+  }
+
   .equipped-slots {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-      "head neck"
-      "cape ring1"
-      "armor ring2"
-      "mainHand offHand"
-      "belt clothing"
-      "footwear otherWorn"
-      "silhouette silhouette";
-    column-gap: 8px;
-    row-gap: 7px;
-  }
-
-  .equipped-silhouette-wrap {
-    min-height: 220px;
-    padding-top: 4px;
-  }
-
-  .equipped-silhouette {
-    max-width: 160px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .custom-equipped-slot {
