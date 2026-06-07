@@ -527,3 +527,49 @@
     max-width: 44px;
   }
 }
+
+
+/* ─── ARMOR CLASS PANEL COMPACT SIZE REFINEMENT ───────────────
+   Slightly narrower and tighter without shrinking the modifier-name field. */
+.armor-class-panel {
+  width: 282px;
+  padding: 6px 7px;
+}
+
+.armor-class-panel .armor-class-base-row,
+.armor-class-panel .armor-class-modifier-row {
+  grid-template-columns: 18px minmax(0, 1fr) 42px 13px;
+  column-gap: 7px;
+}
+
+.armor-class-panel .armor-class-base-row input,
+.armor-class-panel .armor-class-modifier-value {
+  width: 42px;
+  min-width: 42px;
+  max-width: 42px;
+}
+
+.armor-class-add-select {
+  margin-top: 6px;
+  padding: 2px 5px;
+}
+
+@media (max-width: 768px) {
+  .armor-class-panel {
+    width: min(282px, calc(100vw - 18px));
+    padding: 6px 7px;
+  }
+
+  .armor-class-panel .armor-class-base-row,
+  .armor-class-panel .armor-class-modifier-row {
+    grid-template-columns: 18px minmax(0, 1fr) 42px 13px;
+    column-gap: 7px;
+  }
+
+  .armor-class-panel .armor-class-base-row input,
+  .armor-class-panel .armor-class-modifier-value {
+    width: 42px;
+    min-width: 42px;
+    max-width: 42px;
+  }
+}
