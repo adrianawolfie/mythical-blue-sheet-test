@@ -1497,3 +1497,191 @@
     line-height: 1.28;
   }
 }
+
+/* Mobile phase: stable three-column combat controls and roomier inline statblocks.
+   This intentionally overrides the earlier narrow-screen experiments while
+   leaving the desktop tracker unchanged. */
+@media (max-width: 600px) {
+  .combatant-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 58px;
+    grid-template-areas:
+      "identity identity action"
+      "initiative ac concentration"
+      "hp hp hp"
+      "conditions conditions conditions"
+      "statblock statblock statblock";
+    column-gap: 12px;
+    row-gap: 12px;
+    align-items: start;
+    padding: 14px 12px 15px 64px;
+  }
+
+  .combatant-order-medallion {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .combatant-name-wrap {
+    grid-area: identity;
+    min-width: 0;
+    padding: 0;
+    align-self: start;
+  }
+
+  .combatant-remove,
+  .player-lock-icon {
+    position: static;
+    grid-area: action;
+    align-self: start;
+    justify-self: end;
+    margin: 0;
+  }
+
+  .combatant-initiative { grid-area: initiative; }
+  .combatant-ac { grid-area: ac; }
+  .combatant-concentration { grid-area: concentration; }
+  .combatant-hp { grid-area: hp; }
+  .combatant-conditions { grid-area: conditions; }
+  .inline-statblock { grid-area: statblock; }
+
+  .combatant-initiative,
+  .combatant-ac,
+  .combatant-concentration,
+  .combatant-hp,
+  .combatant-conditions {
+    min-width: 0;
+    padding-top: 16px;
+  }
+
+  .combatant-initiative::before,
+  .combatant-ac::before,
+  .combatant-concentration::before,
+  .combatant-hp::before,
+  .combatant-conditions::before {
+    top: 0;
+  }
+
+  .combatant-initiative input,
+  .combatant-ac input {
+    min-height: 30px;
+    padding-block: 5px;
+  }
+
+  .combatant-concentration {
+    justify-self: center;
+  }
+
+  .concentration-toggle {
+    min-height: 31px;
+  }
+
+  .combatant-hp-bwrap {
+    width: 100%;
+    margin: 0 0 5px;
+  }
+
+  .combatant-hp-fields {
+    width: 100%;
+  }
+
+  .combatant-condition-picker {
+    width: 100%;
+    min-height: 36px;
+    font-size: 16px;
+  }
+
+  .combatant-condition-info {
+    padding: 7px 8px;
+    font-size: 9.5px;
+    line-height: 1.28;
+  }
+
+  /* The statblock belongs to the whole card, not only to the indented text
+     column. Pull it back over the medallion gutter to regain useful width. */
+  .inline-statblock {
+    min-width: 0;
+    margin: 2px 0 0 -52px;
+    padding: 13px 10px 15px;
+  }
+
+  .inline-statblock-header {
+    padding-inline: 8px;
+  }
+
+  .inline-statblock h3 {
+    font-size: 17px;
+    line-height: 1.14;
+  }
+
+  .inline-statblock-header p {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .inline-statblock-vitals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .inline-statblock-vitals > div {
+    min-height: 72px;
+    padding: 9px 8px;
+  }
+
+  .inline-statblock-vitals span {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+
+  .inline-statblock-vitals strong {
+    font-size: 16px;
+  }
+
+  .inline-statblock-abilities {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .inline-statblock-ability {
+    padding: 8px 7px;
+  }
+
+  .inline-statblock-ability-heading strong,
+  .inline-statblock-ability-heading span {
+    font-size: 11px;
+  }
+
+  .inline-statblock-ability-values small,
+  .inline-statblock-ability-values em,
+  .inline-statblock-ability-values b {
+    font-size: 9px;
+  }
+
+  .inline-statblock-metadata {
+    padding: 8px;
+  }
+
+  .inline-statblock-metadata dt,
+  .inline-statblock-metadata dd {
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .inline-statblock-section h4 {
+    font-size: 14px;
+  }
+
+  .inline-statblock-entry {
+    padding: 7px 7px;
+  }
+
+  .inline-statblock-entry h5,
+  .inline-statblock-entry p {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+}
