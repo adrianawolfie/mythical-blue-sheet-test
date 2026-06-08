@@ -340,10 +340,14 @@
         "name": "Calligrapher's Supplies",
         "type": "tool",
         "qty": "",
-        "value": "",
+        "value": "10 GP",
         "location": "",
-        "details": "",
-        "open": false
+        "details": "Tool\n\nAbility: Dexterity Weight: 5 lb. Utilize: Write text with impressive flourishes that guard against forgery (DC 15) Craft: Ink, Spell Scroll\n\nSource: SRD 5.2.1",
+        "open": false,
+        "sourceId": "srd-item-calligraphers-supplies",
+        "source": "SRD 5.2.1",
+        "category": "Tool",
+        "attunement": false
       }
     ],
     "inventoryEquipment": [
@@ -352,10 +356,14 @@
         "name": "Calligrapher's Supplies",
         "type": "tool",
         "qty": "",
-        "value": "",
+        "value": "10 GP",
         "location": "",
-        "details": "",
-        "open": false
+        "details": "Tool\n\nAbility: Dexterity Weight: 5 lb. Utilize: Write text with impressive flourishes that guard against forgery (DC 15) Craft: Ink, Spell Scroll\n\nSource: SRD 5.2.1",
+        "open": false,
+        "sourceId": "srd-item-calligraphers-supplies",
+        "source": "SRD 5.2.1",
+        "category": "Tool",
+        "attunement": false
       }
     ],
     "magicItems": [],
