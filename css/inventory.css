@@ -2131,3 +2131,15 @@
   font-size: 8px;
   line-height: 1;
 }
+
+/* ─── EQUIPMENT HEADER · CONTINUOUS RULE ───────────────────────────────
+   Draw one shared underline across the unified equipment header so the
+   blank Details / remove columns remain perfectly aligned with the named
+   columns. */
+.inventory-unified-table thead tr {
+  border-bottom: 1px solid rgba(184,144,44,.52);
+}
+
+.inventory-unified-table thead th {
+  border-bottom: 0;
+}
