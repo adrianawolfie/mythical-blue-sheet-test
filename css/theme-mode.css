@@ -1,0 +1,411 @@
+/* Mythical Blue · Daylight / Moonlight theme system */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border: 1px solid var(--gold-deep);
+  background: linear-gradient(180deg, rgba(255,253,245,.92), rgba(245,231,198,.92));
+  color: var(--navy-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .75px;
+  text-transform: uppercase;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 2px 6px rgba(43,56,102,.10);
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  transform: translateY(-1px);
+  outline: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 4px 10px rgba(43,56,102,.14);
+}
+
+.theme-toggle-icon {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.overview-header-actions {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.theme-toggle-compact {
+  padding-inline: 10px;
+}
+
+@media (max-width: 700px) {
+  .overview-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .theme-toggle,
+  .theme-toggle-compact {
+    font-size: 10px;
+    padding: 8px 10px;
+  }
+
+  .theme-toggle .theme-toggle-label {
+    white-space: nowrap;
+  }
+}
+
+html[data-theme="moonlight"] {
+  --moon-page-bg: linear-gradient(180deg, #041126 0%, #0a1f45 40%, #163362 100%);
+  --moon-surface: #122342;
+  --moon-surface-soft: rgba(17, 34, 67, .92);
+  --moon-surface-raised: rgba(13, 28, 58, .78);
+  --moon-surface-glass: rgba(17, 34, 67, .58);
+  --moon-line: rgba(146, 203, 255, .42);
+  --moon-line-strong: rgba(176, 220, 255, .65);
+  --moon-text: #eef6ff;
+  --moon-text-soft: #d8e8ff;
+  --moon-muted: rgba(224, 239, 255, .76);
+  --moon-heading: #f3f8ff;
+  --moon-accent: #95ccff;
+  --moon-accent-2: #5fb2ff;
+  --moon-button-from: #274b98;
+  --moon-button-to: #10285e;
+  --moon-button-hover-from: #315bb3;
+  --moon-button-hover-to: #17326f;
+  --moon-chip-bg: rgba(84, 144, 212, .18);
+  --moon-chip-active: rgba(118, 186, 255, .22);
+}
+
+html[data-theme="moonlight"] body {
+  background: var(--moon-page-bg);
+  color: var(--moon-text);
+}
+
+html[data-theme="moonlight"] .start-page,
+html[data-theme="moonlight"] .sheet-toolbar,
+html[data-theme="moonlight"] .sheet,
+html[data-theme="moonlight"] .dm-screen-header,
+html[data-theme="moonlight"] .initiative-panel,
+html[data-theme="moonlight"] .spell-picker-modal,
+html[data-theme="moonlight"] .spell-editor-modal,
+html[data-theme="moonlight"] .library-picker-modal,
+html[data-theme="moonlight"] .npc-picker-modal {
+  background-color: var(--moon-surface);
+  color: var(--moon-text);
+  border-color: var(--moon-line-strong);
+  box-shadow: 0 10px 42px rgba(0,0,0,.46), inset 0 0 0 1px rgba(197, 229, 255, .08);
+}
+
+html[data-theme="moonlight"] .start-page,
+html[data-theme="moonlight"] .sheet,
+html[data-theme="moonlight"] .dm-screen-header,
+html[data-theme="moonlight"] .initiative-panel,
+html[data-theme="moonlight"] .spell-picker-modal,
+html[data-theme="moonlight"] .spell-editor-modal,
+html[data-theme="moonlight"] .library-picker-modal,
+html[data-theme="moonlight"] .npc-picker-modal {
+  background-image: url('../assets/parchment-seamless-moonlight.png');
+}
+
+html[data-theme="moonlight"] .start-page::before,
+html[data-theme="moonlight"] .dm-screen-header::before,
+html[data-theme="moonlight"] .initiative-panel::before {
+  border-color: rgba(196, 229, 255, .20);
+}
+
+html[data-theme="moonlight"] .corner {
+  background-image: url('../assets/corner-moonlight.png');
+}
+
+html[data-theme="moonlight"] .compass-watermark {
+  background-image: url('../assets/compass-moonlight.png');
+  opacity: .42;
+  mix-blend-mode: screen;
+}
+
+html[data-theme="moonlight"] .ship-art {
+  background-image: url('../assets/ship-moonlight.png');
+  opacity: .68;
+  mix-blend-mode: screen;
+}
+
+html[data-theme="moonlight"] .title-banner {
+  filter: drop-shadow(0 0 10px rgba(121, 194, 255, .15));
+}
+
+html[data-theme="moonlight"] .start-page h1,
+html[data-theme="moonlight"] .dm-screen-header h1,
+html[data-theme="moonlight"] .initiative-panel h2,
+html[data-theme="moonlight"] .ftr-t,
+html[data-theme="moonlight"] .inline-statblock h3,
+html[data-theme="moonlight"] .npc-picker-header h2,
+html[data-theme="moonlight"] .statblock-result-card h3 {
+  color: var(--moon-heading);
+}
+
+html[data-theme="moonlight"] .dm-screen-kicker,
+html[data-theme="moonlight"] .dm-section-label,
+html[data-theme="moonlight"] .round-display span,
+html[data-theme="moonlight"] .tracker-legend,
+html[data-theme="moonlight"] .cal-season,
+html[data-theme="moonlight"] .card-condition-label,
+html[data-theme="moonlight"] .inline-statblock-vitals span,
+html[data-theme="moonlight"] .inline-statblock-metadata dt,
+html[data-theme="moonlight"] .npc-picker-filters span,
+html[data-theme="moonlight"] .round-display strong,
+html[data-theme="moonlight"] .cal-day-num {
+  color: var(--moon-accent);
+}
+
+html[data-theme="moonlight"] .start-page,
+html[data-theme="moonlight"] .sheet,
+html[data-theme="moonlight"] .sheet-toolbar,
+html[data-theme="moonlight"] .calendar-widget,
+html[data-theme="moonlight"] .calendar-sheet-bar,
+html[data-theme="moonlight"] .character-card,
+html[data-theme="moonlight"] .card-condition-chip,
+html[data-theme="moonlight"] .overview-action-link,
+html[data-theme="moonlight"] .combatant-row,
+html[data-theme="moonlight"] .inline-statblock,
+html[data-theme="moonlight"] .inline-statblock-entry,
+html[data-theme="moonlight"] .inline-statblock-vitals > div,
+html[data-theme="moonlight"] .inline-statblock-metadata,
+html[data-theme="moonlight"] .statblock-result-card,
+html[data-theme="moonlight"] .round-display,
+html[data-theme="moonlight"] .calendar-widget,
+html[data-theme="moonlight"] .spell-card,
+html[data-theme="moonlight"] .sb-card,
+html[data-theme="moonlight"] .spell-preview-card,
+html[data-theme="moonlight"] .library-picker-preview,
+html[data-theme="moonlight"] .spell-picker-results > *,
+html[data-theme="moonlight"] details.sb-card > summary {
+  border-color: var(--moon-line);
+}
+
+html[data-theme="moonlight"] .character-card,
+html[data-theme="moonlight"] .combatant-row,
+html[data-theme="moonlight"] .statblock-result-card,
+html[data-theme="moonlight"] .inline-statblock,
+html[data-theme="moonlight"] .inline-statblock-entry,
+html[data-theme="moonlight"] .inline-statblock-vitals > div,
+html[data-theme="moonlight"] .inline-statblock-metadata,
+html[data-theme="moonlight"] .sb-card,
+html[data-theme="moonlight"] .spell-card,
+html[data-theme="moonlight"] .spell-preview-card,
+html[data-theme="moonlight"] .library-picker-preview,
+html[data-theme="moonlight"] .calendar-widget,
+html[data-theme="moonlight"] .calendar-sheet-bar {
+  background: var(--moon-surface-glass);
+  color: var(--moon-text);
+}
+
+html[data-theme="moonlight"] .character-card:hover,
+html[data-theme="moonlight"] .combatant-row:hover,
+html[data-theme="moonlight"] .statblock-result-card:hover,
+html[data-theme="moonlight"] .sb-card:hover {
+  background: rgba(24, 49, 94, .76);
+}
+
+html[data-theme="moonlight"] .combatant-row.active-turn {
+  background: rgba(57, 100, 168, .28);
+  box-shadow: inset 4px 0 0 var(--moon-accent), inset 0 0 0 1px rgba(223, 241, 255, .12), 0 5px 14px rgba(0,0,0,.18);
+}
+
+html[data-theme="moonlight"] .cal-header,
+html[data-theme="moonlight"] .round-display,
+html[data-theme="moonlight"] .card-hp-adj,
+html[data-theme="moonlight"] .sheet-toolbar button,
+html[data-theme="moonlight"] .start-page button,
+html[data-theme="moonlight"] .overview-action-link,
+html[data-theme="moonlight"] .dm-nav-button,
+html[data-theme="moonlight"] .dm-primary-button,
+html[data-theme="moonlight"] .dm-secondary-button,
+html[data-theme="moonlight"] .add-btn,
+html[data-theme="moonlight"] .theme-toggle {
+  background: linear-gradient(180deg, var(--moon-button-from), var(--moon-button-to));
+  color: var(--moon-text);
+  border-color: rgba(169, 213, 255, .58);
+  box-shadow: 0 3px 10px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+html[data-theme="moonlight"] .sheet-toolbar button:hover,
+html[data-theme="moonlight"] .start-page button:hover,
+html[data-theme="moonlight"] .overview-action-link:hover,
+html[data-theme="moonlight"] .overview-action-link:focus-visible,
+html[data-theme="moonlight"] .dm-nav-button:hover,
+html[data-theme="moonlight"] .dm-primary-button:hover,
+html[data-theme="moonlight"] .dm-secondary-button:hover,
+html[data-theme="moonlight"] .theme-toggle:hover,
+html[data-theme="moonlight"] .theme-toggle:focus-visible,
+html[data-theme="moonlight"] .add-btn:hover {
+  background: linear-gradient(180deg, var(--moon-button-hover-from), var(--moon-button-hover-to));
+}
+
+html[data-theme="moonlight"] .dm-subtle-button,
+html[data-theme="moonlight"] .cal-btn,
+html[data-theme="moonlight"] .cal-btn-save {
+  background: rgba(12, 30, 60, .35);
+  color: var(--moon-text-soft);
+  border-color: var(--moon-line);
+}
+
+html[data-theme="moonlight"] .cal-btn:hover,
+html[data-theme="moonlight"] .dm-subtle-button:hover,
+html[data-theme="moonlight"] .cal-btn-save:hover {
+  background: rgba(95, 178, 255, .15);
+}
+
+html[data-theme="moonlight"] .tab,
+html[data-theme="moonlight"] .cal-month-num,
+html[data-theme="moonlight"] .cal-month-of,
+html[data-theme="moonlight"] .cal-week,
+html[data-theme="moonlight"] .cal-weekday,
+html[data-theme="moonlight"] .card-hp-text,
+html[data-theme="moonlight"] .combatant-name,
+html[data-theme="moonlight"] .combatant-name-input,
+html[data-theme="moonlight"] .combatant-type,
+html[data-theme="moonlight"] .active-turn-text,
+html[data-theme="moonlight"] .combatant-condition-empty,
+html[data-theme="moonlight"] .inline-statblock-entry h5,
+html[data-theme="moonlight"] .inline-statblock-entry p,
+html[data-theme="moonlight"] .inline-statblock-header p,
+html[data-theme="moonlight"] .inline-statblock-metadata dd,
+html[data-theme="moonlight"] .inline-statblock-ability-heading strong,
+html[data-theme="moonlight"] .inline-statblock-ability-heading span,
+html[data-theme="moonlight"] .inline-statblock-ability-values span,
+html[data-theme="moonlight"] .npc-picker-actions span,
+html[data-theme="moonlight"] .npc-picker-results-header strong,
+html[data-theme="moonlight"] .statblock-result-card small,
+html[data-theme="moonlight"] .spell-picker-header p,
+html[data-theme="moonlight"] .library-picker-placeholder,
+html[data-theme="moonlight"] .sheet label,
+html[data-theme="moonlight"] .sheet summary,
+html[data-theme="moonlight"] .sheet p,
+html[data-theme="moonlight"] .sheet li,
+html[data-theme="moonlight"] .sheet div,
+html[data-theme="moonlight"] .calendar-sheet-bar,
+html[data-theme="moonlight"] .cal-sign,
+html[data-theme="moonlight"] .cal-sheet-date {
+  color: var(--moon-text-soft);
+}
+
+html[data-theme="moonlight"] .tab.on,
+html[data-theme="moonlight"] .combatant-condition-open,
+html[data-theme="moonlight"] .statblock-toggle,
+html[data-theme="moonlight"] .card-condition-chip,
+html[data-theme="moonlight"] .inline-statblock-section h4,
+html[data-theme="moonlight"] .spell-preview-title,
+html[data-theme="moonlight"] .spell-card-title,
+html[data-theme="moonlight"] .character-card strong,
+html[data-theme="moonlight"] .cal-year {
+  color: var(--moon-heading);
+}
+
+html[data-theme="moonlight"] .tab.on,
+html[data-theme="moonlight"] .tabs,
+html[data-theme="moonlight"] .start-page-heading-row,
+html[data-theme="moonlight"] .initiative-panel-header,
+html[data-theme="moonlight"] .tracker-legend,
+html[data-theme="moonlight"] .inline-statblock-header,
+html[data-theme="moonlight"] .inline-statblock-section h4,
+html[data-theme="moonlight"] .cal-controls,
+html[data-theme="moonlight"] .calendar-sheet-bar,
+html[data-theme="moonlight"] .card-condition-editor,
+html[data-theme="moonlight"] .npc-picker-header,
+html[data-theme="moonlight"] .npc-picker-actions,
+html[data-theme="moonlight"] .npc-picker-filters,
+html[data-theme="moonlight"] .npc-picker-results-header {
+  border-color: var(--moon-line);
+}
+
+html[data-theme="moonlight"] .cal-sign,
+html[data-theme="moonlight"] .calendar-sheet-bar,
+html[data-theme="moonlight"] .inline-statblock-ability-values,
+html[data-theme="moonlight"] .inline-statblock-ability {
+  background: rgba(15, 31, 61, .34);
+}
+
+html[data-theme="moonlight"] input,
+html[data-theme="moonlight"] textarea,
+html[data-theme="moonlight"] select {
+  color: var(--moon-text);
+  caret-color: var(--moon-accent);
+}
+
+html[data-theme="moonlight"] input::placeholder,
+html[data-theme="moonlight"] textarea::placeholder {
+  color: rgba(221, 235, 255, .46);
+}
+
+html[data-theme="moonlight"] .sheet input,
+html[data-theme="moonlight"] .sheet textarea,
+html[data-theme="moonlight"] .sheet select,
+html[data-theme="moonlight"] .card-hp-cur,
+html[data-theme="moonlight"] .card-hp-max,
+html[data-theme="moonlight"] .combatant-row input[type="text"],
+html[data-theme="moonlight"] .combatant-row input[type="number"],
+html[data-theme="moonlight"] .combatant-condition-picker,
+html[data-theme="moonlight"] .spell-picker-toolbar input,
+html[data-theme="moonlight"] .spell-picker-toolbar select,
+html[data-theme="moonlight"] .library-picker-toolbar input,
+html[data-theme="moonlight"] .library-picker-toolbar select,
+html[data-theme="moonlight"] .npc-picker-filters input,
+html[data-theme="moonlight"] .npc-picker-filters select {
+  background: rgba(10, 22, 46, .26);
+  color: var(--moon-text);
+  border-color: var(--moon-line) !important;
+}
+
+html[data-theme="moonlight"] .combatant-condition-picker,
+html[data-theme="moonlight"] .card-condition-chip,
+html[data-theme="moonlight"] .combatant-condition-chip,
+html[data-theme="moonlight"] .statblock-toggle,
+html[data-theme="moonlight"] .round-display,
+html[data-theme="moonlight"] .concentration-rune,
+html[data-theme="moonlight"] .combatant-order-medallion,
+html[data-theme="moonlight"] .combatant-remove,
+html[data-theme="moonlight"] .player-lock-icon {
+  background: var(--moon-chip-bg);
+  border-color: var(--moon-line);
+  color: var(--moon-text-soft);
+}
+
+html[data-theme="moonlight"] .combatant-condition-chip.active {
+  background: var(--moon-chip-active);
+  border-color: var(--moon-line-strong);
+}
+
+html[data-theme="moonlight"] .combatant-condition-info,
+html[data-theme="moonlight"] .library-picker-preview,
+html[data-theme="moonlight"] .spell-preview-card {
+  background: rgba(10, 23, 46, .45);
+  color: var(--moon-text-soft);
+}
+
+html[data-theme="moonlight"] .concentration-toggle input:checked + .concentration-rune {
+  background: linear-gradient(180deg, #3870d8, #17326d);
+  color: #ffffff;
+  border-color: rgba(184, 226, 255, .8);
+}
+
+html[data-theme="moonlight"] .combatant-hp-bwrap,
+html[data-theme="moonlight"] .card-hp-bwrap {
+  background: rgba(222, 236, 255, .12);
+}
+
+html[data-theme="moonlight"] .hp-divider,
+html[data-theme="moonlight"] .card-hp-slash,
+html[data-theme="moonlight"] .cal-month-sep,
+html[data-theme="moonlight"] .cal-ornament {
+  color: var(--moon-accent);
+}
+
+html[data-theme="moonlight"] svg path[stroke="#b8902c"] {
+  stroke: rgba(148, 204, 255, .75);
+}

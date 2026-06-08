@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="color-scheme" content="only light" />
+<meta name="color-scheme" content="light dark" />
+<script>(function(){try{document.documentElement.dataset.theme=localStorage.getItem("mythicalBlueThemeMode")||"daylight";}catch(e){document.documentElement.dataset.theme="daylight";}})();</script>
 <title>Mythical Blue · The Great Depth — Character Sheet</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/accessibility.css" />
@@ -13,27 +14,34 @@
 <link rel="stylesheet" href="css/srd-library.css" />
 <link rel="stylesheet" href="css/spells.css" />
 <link rel="stylesheet" href="css/armor-class.css" />
+<link rel="stylesheet" href="css/theme-mode.css" />
 </head>
 <body>
 
 <div id="startPage" class="start-page">
   <div class="start-page-heading-row">
     <h1>Mythical Blue · Character Overview</h1>
-    <div class="accessibility-row index-accessibility-row">
-      <div class="accessibility-controls" role="group" aria-label="Text size controls">
-      <button
-        type="button"
-        class="accessibility-toggle"
-        aria-label="Adjust text size"
-        title="Adjust text size"
-        aria-expanded="false"
-      >Aa</button>
-      <span class="accessibility-extra">
-        <button type="button" class="accessibility-size-btn accessibility-decrease" data-size-action="decrease" aria-label="Decrease text size" title="Decrease text size">A−</button>
-        <button type="button" class="accessibility-size-btn accessibility-reset" data-size-action="reset" aria-label="Reset text size" title="Reset text size">A</button>
-        <button type="button" class="accessibility-size-btn accessibility-increase" data-size-action="increase" aria-label="Increase text size" title="Increase text size">A+</button>
-      </span>
-    </div>
+    <div class="overview-header-actions">
+      <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch visual theme">
+        <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+        <span class="theme-toggle-label">Moonlight Mode</span>
+      </button>
+      <div class="accessibility-row index-accessibility-row">
+        <div class="accessibility-controls" role="group" aria-label="Text size controls">
+        <button
+          type="button"
+          class="accessibility-toggle"
+          aria-label="Adjust text size"
+          title="Adjust text size"
+          aria-expanded="false"
+        >Aa</button>
+        <span class="accessibility-extra">
+          <button type="button" class="accessibility-size-btn accessibility-decrease" data-size-action="decrease" aria-label="Decrease text size" title="Decrease text size">A−</button>
+          <button type="button" class="accessibility-size-btn accessibility-reset" data-size-action="reset" aria-label="Reset text size" title="Reset text size">A</button>
+          <button type="button" class="accessibility-size-btn accessibility-increase" data-size-action="increase" aria-label="Increase text size" title="Increase text size">A+</button>
+        </span>
+      </div>
+      </div>
     </div>
   </div>
 
@@ -157,6 +165,11 @@
   <button id="saveCharacterBtn">Save Character</button>
   <button id="deleteCharacterBtn">Delete Character</button>
 
+  <button type="button" class="theme-toggle theme-toggle-compact" data-theme-toggle aria-label="Switch visual theme">
+    <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+    <span class="theme-toggle-label">Moonlight</span>
+  </button>
+
   <div class="accessibility-row sheet-accessibility-row">
     <div class="accessibility-controls" role="group" aria-label="Text size controls">
       <button
@@ -177,7 +190,7 @@
 
 <div class="sheet">
 
-  <img src="assets/title-banner.png" alt="Mythical Blue · The Great Depth" class="title-banner" />
+  <img src="assets/title-banner.png" alt="Mythical Blue · The Great Depth" class="title-banner" data-daylight-src="assets/title-banner.png" data-moonlight-src="assets/title-banner-moonlight.png" />
 
   <div class="corner tl"></div>
   <div class="corner tr"></div>
@@ -850,5 +863,6 @@
 <script src="js/campaign-state.js"></script>
 <script src="js/calendar.js"></script>
 <script src="js/accessibility.js"></script>
+<script src="js/theme-mode.js"></script>
 </body>
 </html>
