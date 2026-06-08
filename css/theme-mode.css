@@ -1744,3 +1744,93 @@ html[data-theme="moonlight"] svg path[stroke="#d6a838"] {
   stroke: #b9e7ff !important;
   filter: drop-shadow(0 0 3px rgba(135, 210, 255, .26));
 }
+
+/* ─── Moonlight phase 6: overview frame cleanup + truly compact mobile switch ─── */
+
+/* Make the overview frame unmistakably spectral blue instead of champagne. */
+html[data-theme="moonlight"] .start-page {
+  border-color: rgba(142, 215, 255, .92) !important;
+  box-shadow:
+    0 10px 38px rgba(0, 0, 0, .48),
+    0 0 16px rgba(96, 184, 255, .14),
+    inset 0 0 0 1px rgba(205, 238, 255, .08) !important;
+}
+
+html[data-theme="moonlight"] .start-page::before {
+  border-color: rgba(164, 224, 255, .58) !important;
+}
+
+html[data-theme="moonlight"] .start-page-heading-row {
+  border-color: rgba(164, 224, 255, .70) !important;
+}
+
+/* Neutralize the generic mobile .start-page button flex rule for the theme switch. */
+.start-page button.theme-toggle,
+.start-page button.theme-toggle-compact,
+.sheet-toolbar button.theme-toggle,
+.dm-header-actions button.theme-toggle,
+.dm-header-actions button.theme-toggle-compact {
+  flex: 0 0 58px !important;
+  width: 58px !important;
+  min-width: 58px !important;
+  max-width: 58px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 700px) {
+  .overview-header-actions {
+    display: inline-flex !important;
+    width: auto !important;
+    min-width: 0 !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 8px !important;
+  }
+
+  .start-page button.theme-toggle,
+  .start-page button.theme-toggle-compact,
+  .sheet-toolbar button.theme-toggle,
+  .dm-header-actions button.theme-toggle,
+  .dm-header-actions button.theme-toggle-compact {
+    flex: 0 0 46px !important;
+    width: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    max-height: 24px !important;
+    padding: 0 !important;
+  }
+
+  .theme-toggle-track {
+    padding: 3px !important;
+  }
+
+  .theme-toggle-track::before,
+  .theme-toggle-track::after {
+    font-size: 10px !important;
+  }
+
+  .theme-toggle-track::before { left: 5px !important; }
+  .theme-toggle-track::after { right: 5px !important; }
+
+  .theme-toggle-orb {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  html[data-theme="moonlight"] .theme-toggle-orb {
+    transform: translateX(22px) !important;
+  }
+
+  .index-accessibility-row,
+  .overview-header-actions .accessibility-row {
+    flex: 0 0 auto !important;
+    width: auto !important;
+  }
+}
