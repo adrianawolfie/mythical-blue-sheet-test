@@ -1267,3 +1267,82 @@
     margin-top: 4px;
   }
 }
+
+/* Mobile refinement: explicit card regions keep controls aligned even when
+   a condition explanation expands beneath the picker. */
+@media (max-width: 1040px) {
+  .combatant-row {
+    grid-template-columns: 34px minmax(0, 1fr) 78px 42px;
+    grid-template-areas:
+      "order name initiative action"
+      "hp hp ac ac"
+      "conditions conditions conditions concentration"
+      "statblock statblock statblock statblock";
+    align-items: start;
+    row-gap: 10px;
+  }
+
+  .combatant-order-medallion { grid-area: order; align-self: center; }
+  .combatant-name-wrap { grid-area: name; align-self: center; }
+  .combatant-initiative { grid-area: initiative; }
+  .combatant-remove,
+  .player-lock-icon { grid-area: action; align-self: center; justify-self: end; }
+  .combatant-hp { grid-area: hp; }
+  .combatant-ac { grid-area: ac; }
+  .combatant-conditions { grid-area: conditions; }
+  .combatant-concentration {
+    grid-area: concentration;
+    align-self: start;
+    justify-self: center;
+  }
+  .inline-statblock { grid-area: statblock; }
+
+  .combatant-hp,
+  .combatant-ac,
+  .combatant-conditions,
+  .combatant-concentration,
+  .combatant-initiative {
+    grid-column: auto;
+  }
+
+  /* The HP fields sit below their status bar. Offset AC by the same amount so
+     both editable underlines share a visual baseline. */
+  .combatant-ac {
+    padding-top: 25px;
+  }
+
+  .combatant-condition-info {
+    font-size: 9.5px;
+    line-height: 1.28;
+  }
+
+  .combatant-condition-info-header {
+    font-size: 10px;
+  }
+
+  .combatant-condition-open {
+    font-size: 10px;
+  }
+
+  .combatant-condition-remove {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 600px) {
+  .combatant-row {
+    grid-template-columns: 30px minmax(0, 1fr) 72px 38px;
+    gap: 8px;
+    row-gap: 10px;
+  }
+
+  .combatant-condition-info {
+    padding: 6px 7px;
+    font-size: 9px;
+    line-height: 1.24;
+  }
+
+  .combatant-condition-info ul {
+    margin-left: 14px;
+  }
+}
