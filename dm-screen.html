@@ -54,6 +54,7 @@
       </div>
 
       <div class="tracker-legend" aria-hidden="true">
+        <span></span>
         <span class="legend-name">Combatant</span>
         <span>Init.</span>
         <span>HP</span>
@@ -67,6 +68,53 @@
       <p id="initiativeEmptyState" class="initiative-empty-state" hidden>No combatants available.</p>
     </section>
   </main>
+
+  <div id="npcPickerBackdrop" class="npc-picker-backdrop is-hidden" aria-hidden="true">
+    <section class="npc-picker-modal" role="dialog" aria-modal="true" aria-labelledby="npcPickerTitle">
+      <header class="npc-picker-header">
+        <div>
+          <div class="dm-section-label">Creature Library</div>
+          <h2 id="npcPickerTitle">Add NPC</h2>
+          <p>Choose a custom combatant or add an SRD statblock with its hit points and Armor Class already filled in.</p>
+        </div>
+        <button id="closeNpcPickerBtn" class="npc-picker-close" type="button" aria-label="Close NPC picker">×</button>
+      </header>
+
+      <div class="npc-picker-actions">
+        <button id="addCustomNpcBtn" type="button" class="dm-primary-button">+ Custom NPC</button>
+        <span>or select a statblock below</span>
+      </div>
+
+      <div class="npc-picker-filters">
+        <label class="npc-filter-search">
+          <span>Search</span>
+          <input id="statblockSearchInput" type="search" placeholder="Search by name, trait, or action…" autocomplete="off" />
+        </label>
+        <label>
+          <span>Library</span>
+          <select id="statblockSectionFilter"><option value="">All entries</option></select>
+        </label>
+        <label>
+          <span>Type</span>
+          <select id="statblockTypeFilter"><option value="">All types</option></select>
+        </label>
+        <label>
+          <span>Size</span>
+          <select id="statblockSizeFilter"><option value="">All sizes</option></select>
+        </label>
+        <label>
+          <span>CR</span>
+          <select id="statblockCrFilter"><option value="">All CRs</option></select>
+        </label>
+      </div>
+
+      <div class="npc-picker-results-header">
+        <strong id="statblockResultCount">Loading statblocks…</strong>
+        <button id="clearStatblockFiltersBtn" type="button" class="dm-subtle-button">Clear filters</button>
+      </div>
+      <div id="statblockResults" class="statblock-results" aria-live="polite"></div>
+    </section>
+  </div>
 
 <script src="js/conditions.js"></script>
 <script src="js/storage-config.js"></script>
