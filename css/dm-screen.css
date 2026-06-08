@@ -1092,39 +1092,73 @@
 }
 
 .inline-statblock-ability {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 1px 5px;
-  padding: 7px 8px;
-  border-top: 2px solid rgba(43,56,102,.50);
+  overflow: hidden;
+  border-top: 2px solid rgba(43,56,102,.54);
   background: rgba(43,56,102,.065);
 }
 
-.inline-statblock-ability strong {
-  grid-row: 1 / 3;
+.inline-statblock-ability-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 7px 5px;
+}
+
+.inline-statblock-ability-heading strong,
+.inline-statblock-ability-heading span {
   color: var(--navy-deep);
+}
+
+.inline-statblock-ability-heading strong {
   font-family: 'Cinzel', serif;
   font-size: 12px;
+  letter-spacing: .35px;
 }
 
-.inline-statblock-ability span {
-  color: var(--navy-deep);
+.inline-statblock-ability-heading span {
   font-family: 'Lora', serif;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
 }
 
-.inline-statblock-ability small,
-.inline-statblock-ability em {
-  color: rgba(28,39,80,.65);
+.inline-statblock-ability-values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid rgba(43,56,102,.15);
+  background: rgba(255,253,245,.24);
+}
+
+.inline-statblock-ability-values small,
+.inline-statblock-ability-values em {
+  display: grid;
+  gap: 1px;
+  justify-items: center;
+  padding: 4px 3px 5px;
+  color: rgba(28,39,80,.76);
   font-family: 'Lora', serif;
   font-size: 10px;
+  font-style: normal;
+  line-height: 1.15;
 }
 
-.inline-statblock-ability em {
-  grid-column: 1 / -1;
-  margin-top: 3px;
-  font-style: normal;
+.inline-statblock-ability-values em {
+  border-left: 1px solid rgba(43,56,102,.15);
+}
+
+.inline-statblock-ability-values b {
+  color: rgba(138,105,24,.90);
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+}
+
+.inline-statblock-ability-values span {
+  color: var(--navy-deep);
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .inline-statblock-metadata {

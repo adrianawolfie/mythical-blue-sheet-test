@@ -240,7 +240,7 @@
 
   function statblockAbilityMarkup(abilities) {
     if (!abilities.length) return "";
-    return `<div class="inline-statblock-abilities">${abilities.map(ability => `<div class="inline-statblock-ability"><strong>${escapeHtml(ability.name)}</strong><span>${escapeHtml(ability.score)}</span><small>${escapeHtml(ability.modifier)}</small><em>save ${escapeHtml(ability.save)}</em></div>`).join("")}</div>`;
+    return `<div class="inline-statblock-abilities">${abilities.map(ability => `<div class="inline-statblock-ability"><div class="inline-statblock-ability-heading"><strong>${escapeHtml(ability.name)}</strong><span>${escapeHtml(ability.score)}</span></div><div class="inline-statblock-ability-values"><small><b>Mod</b><span>${escapeHtml(ability.modifier)}</span></small><em><b>Save</b><span>${escapeHtml(ability.save)}</span></em></div></div>`).join("")}</div>`;
   }
 
   function statblockMetadataMarkup(metadata) {
