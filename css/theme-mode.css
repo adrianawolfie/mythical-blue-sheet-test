@@ -1317,3 +1317,430 @@ html[data-theme="moonlight"] .journal-notes-card {
     0 0 12px rgba(118,197,249,.08),
     inset 0 0 0 1px rgba(190,231,255,.05);
 }
+
+/* ─── Moonlight phase 5: final ghost-blue cleanup and compact theme switch ─── */
+
+/* Fixed-width symbol switch. The control no longer shifts when the active theme changes. */
+.theme-toggle,
+.theme-toggle-compact {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 58px;
+  min-width: 58px;
+  height: 30px;
+  padding: 0 !important;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.theme-toggle-label {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.theme-toggle-track {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 3px;
+  border: 0;
+  border-radius: inherit;
+  background: rgba(31, 51, 92, .18);
+  box-shadow: inset 0 1px 5px rgba(0,0,0,.22);
+}
+
+.theme-toggle-track::before,
+.theme-toggle-track::after {
+  position: absolute;
+  top: 50%;
+  z-index: 0;
+  transform: translateY(-50%);
+  font-family: Georgia, serif;
+  font-size: 13px;
+  line-height: 1;
+  opacity: .78;
+  pointer-events: none;
+}
+
+.theme-toggle-track::before {
+  content: '☼';
+  left: 7px;
+  color: #d7a84c;
+}
+
+.theme-toggle-track::after {
+  content: '☾';
+  right: 7px;
+  color: #6d8bb5;
+}
+
+.theme-toggle-orb {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(142, 104, 35, .40);
+  border-radius: 50%;
+  background: #f4d37a;
+  box-shadow: 0 0 8px rgba(226, 181, 81, .40);
+  transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.theme-toggle-orb::before,
+.theme-toggle-orb::after {
+  content: none;
+}
+
+html[data-theme="moonlight"] .theme-toggle,
+html[data-theme="moonlight"] .theme-toggle-compact {
+  border-color: rgba(170, 222, 255, .62) !important;
+  background: rgba(2, 16, 42, .92) !important;
+  box-shadow: 0 0 8px rgba(115, 199, 255, .18), inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+
+html[data-theme="moonlight"] .theme-toggle-track {
+  background: rgba(1, 15, 40, .94) !important;
+}
+
+html[data-theme="moonlight"] .theme-toggle-track::before {
+  color: rgba(131, 174, 215, .58);
+}
+
+html[data-theme="moonlight"] .theme-toggle-track::after {
+  color: #e0f5ff;
+  text-shadow: 0 0 6px rgba(149, 216, 255, .60);
+}
+
+html[data-theme="moonlight"] .theme-toggle-orb {
+  transform: translateX(28px);
+  border-color: rgba(186, 232, 255, .78);
+  background: #d8f2ff;
+  box-shadow: 0 0 10px rgba(148, 215, 255, .64);
+}
+
+@media (max-width: 700px) {
+  .theme-toggle,
+  .theme-toggle-compact {
+    width: 48px;
+    min-width: 48px;
+    height: 26px;
+  }
+
+  .theme-toggle-track {
+    padding: 3px;
+  }
+
+  .theme-toggle-track::before,
+  .theme-toggle-track::after {
+    font-size: 11px;
+  }
+
+  .theme-toggle-track::before { left: 6px; }
+  .theme-toggle-track::after { right: 6px; }
+
+  .theme-toggle-orb {
+    width: 18px;
+    height: 18px;
+  }
+
+  html[data-theme="moonlight"] .theme-toggle-orb {
+    transform: translateX(24px);
+  }
+
+  .overview-header-actions,
+  .dm-header-actions,
+  .sheet-toolbar {
+    align-items: center;
+  }
+}
+
+html[data-theme="moonlight"] {
+  /* One accent language only: spectral blue-white. */
+  --gold: #a9ddff;
+  --gold-deep: #8dcdf8;
+  --gold-light: #e4f7ff;
+  --moon-ghost: #c0e9ff;
+  --moon-ghost-bright: #eefbff;
+  --moon-ghost-line: rgba(190, 232, 255, .92);
+  --moon-ghost-soft-line: rgba(145, 204, 244, .66);
+  --moon-ghost-faint: rgba(111, 183, 234, .22);
+  --moon-line: rgba(145, 204, 244, .66);
+  --moon-line-strong: rgba(190, 232, 255, .92);
+  --moon-accent: #c0e9ff;
+  --moon-accent-2: #79cfff;
+}
+
+/* Override the daylight page background itself, not only the parchment sheet. */
+html[data-theme="moonlight"],
+html[data-theme="moonlight"] body,
+html[data-theme="moonlight"] body.dm-body {
+  background-color: #020d22 !important;
+  background-image:
+    radial-gradient(circle at 50% -10%, rgba(36, 102, 174, .28), transparent 42%),
+    linear-gradient(180deg, #020d22 0%, #041632 48%, #08264e 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* Eliminate inherited daylight gilding from cards, lines and dotted separators. */
+html[data-theme="moonlight"] :where(
+  .start-page,
+  .sheet,
+  .sheet-toolbar,
+  .dm-screen-shell,
+  .spell-picker-modal,
+  .spell-editor-modal,
+  .library-picker-modal,
+  .npc-picker-modal
+) * {
+  border-color: var(--moon-ghost-soft-line) !important;
+}
+
+html[data-theme="moonlight"] :where(
+  .sb-hdr,
+  .tracker-legend,
+  .initiative-panel-header,
+  .start-page-heading-row,
+  .tabs,
+  .tab.on,
+  .spell-toolbar,
+  .spell-picker-toolbar,
+  .spell-card-topline,
+  .spell-card-meta-grid,
+  .spell-card-details,
+  .inventory-mobile-sortbar,
+  .inventory-subheading,
+  .journal-imported-notes > summary,
+  .inventory-legacy-notes > summary
+) {
+  border-color: var(--moon-ghost-line) !important;
+}
+
+/* DM screen: remove remaining amber borders, chips and glows. */
+html[data-theme="moonlight"] .dm-screen-shell :where(
+  .dm-screen-header,
+  .initiative-panel,
+  .round-display,
+  .combatant-row,
+  .combatant-order-medallion,
+  .combatant-condition-chip,
+  .combatant-condition-picker,
+  .combatant-condition-info,
+  .concentration-rune,
+  .combatant-remove,
+  .statblock-toggle,
+  .inline-statblock,
+  .inline-statblock-vitals > div,
+  .inline-statblock-metadata,
+  .inline-statblock-entry,
+  .npc-picker-modal,
+  .npc-picker-filters input,
+  .npc-picker-filters select,
+  .statblock-result-card
+) {
+  border-color: var(--moon-ghost-soft-line) !important;
+}
+
+html[data-theme="moonlight"] .dm-screen-shell :where(
+  .dm-screen-kicker,
+  .dm-section-label,
+  .round-display span,
+  .tracker-legend,
+  .active-turn-text,
+  .inline-statblock-vitals span,
+  .inline-statblock-metadata dt,
+  .inline-statblock-section h4,
+  .statblock-toggle,
+  .combatant-condition-open,
+  .combatant-condition-remove,
+  .npc-picker-close,
+  .inline-statblock-close
+) {
+  color: var(--moon-ghost-bright) !important;
+}
+
+html[data-theme="moonlight"] .combatant-row.active-turn {
+  border-color: var(--moon-ghost-line) !important;
+  box-shadow: inset 4px 0 0 #92d6ff, inset 0 0 0 1px rgba(220,244,255,.14), 0 5px 14px rgba(0,0,0,.20) !important;
+}
+
+/* Character sheet: spectral lines and icons throughout. */
+html[data-theme="moonlight"] .sheet :where(
+  .ab,
+  .bonbox,
+  .sb-card,
+  .cbox,
+  .dsbox,
+  .slotbox,
+  .condition-control,
+  .condition-explanation,
+  .spell-card,
+  .inventory-card,
+  .inventory-equipment-card,
+  .inventory-unified-card,
+  .equipped-carried-card,
+  .equipped-slot-card,
+  .equipped-slot-icon-wrap,
+  .inventory-unified-row,
+  .inventory-item-details-panel,
+  .inventory-item-details,
+  .journal-note-entry,
+  .journal-imported-notes,
+  .inventory-legacy-notes,
+  .wtbl th,
+  .wtbl td,
+  .inventory-unified-table th,
+  .inventory-unified-table td
+) {
+  border-color: var(--moon-ghost-soft-line) !important;
+}
+
+html[data-theme="moonlight"] .sheet :where(
+  .sb-hdr,
+  .tab.on,
+  .slotbox span,
+  .inventory-mobile-sortbar label,
+  .inventory-subheading,
+  .equipped-slot-label,
+  .inventory-item-details-title,
+  .journal-note-toolbar span,
+  .journal-note-meta span
+) {
+  color: var(--moon-ghost-bright) !important;
+}
+
+/* Spell cards: convert V/S/M and prepared-state accents from amber to spectral blue. */
+html[data-theme="moonlight"] .spell-card,
+html[data-theme="moonlight"] .spell-picker-result,
+html[data-theme="moonlight"] .spell-preview-card {
+  border-color: var(--moon-ghost-soft-line) !important;
+}
+
+html[data-theme="moonlight"] .spell-school-icon,
+html[data-theme="moonlight"] .spell-picker-result img {
+  border-color: var(--moon-ghost-soft-line) !important;
+  background: rgba(20, 68, 119, .34) !important;
+  box-shadow: 0 0 7px rgba(119, 204, 255, .14);
+}
+
+html[data-theme="moonlight"] .spell-level-badge,
+html[data-theme="moonlight"] .spell-property-chip,
+html[data-theme="moonlight"] .spell-prepared-filter,
+html[data-theme="moonlight"] .spell-prepared-toggle {
+  border-color: var(--moon-ghost-soft-line) !important;
+  color: rgba(218, 243, 255, .82) !important;
+  background: rgba(19, 70, 124, .28) !important;
+}
+
+html[data-theme="moonlight"] .spell-property-chip.active,
+html[data-theme="moonlight"] .spell-prepared-filter:has(input:checked),
+html[data-theme="moonlight"] .spell-prepared-toggle.is-prepared {
+  border-color: var(--moon-ghost-line) !important;
+  color: var(--moon-ghost-bright) !important;
+  background: rgba(77, 154, 215, .30) !important;
+  text-shadow: 0 0 6px rgba(138, 215, 255, .30) !important;
+}
+
+html[data-theme="moonlight"] .spell-prepared-filter span,
+html[data-theme="moonlight"] .spell-prepared-toggle span:first-child,
+html[data-theme="moonlight"] .spell-card-expand,
+html[data-theme="moonlight"] .spell-card-edit-inline,
+html[data-theme="moonlight"] .spell-card-btn,
+html[data-theme="moonlight"] .spell-picker-add,
+html[data-theme="moonlight"] .spell-picker-close {
+  color: var(--moon-ghost-bright) !important;
+  border-color: var(--moon-ghost-soft-line) !important;
+  text-shadow: 0 0 6px rgba(138, 215, 255, .24) !important;
+}
+
+/* Equipped / carried: remove amber selected-state highlight and grey icon tiles. */
+html[data-theme="moonlight"] .equipped-layout.equipped-list-only .equipped-slot-card,
+html[data-theme="moonlight"] .equipped-slot-card {
+  border-color: var(--moon-ghost-soft-line) !important;
+  background: linear-gradient(135deg, rgba(4, 27, 66, .78), rgba(7, 39, 83, .52)) !important;
+}
+
+html[data-theme="moonlight"] .equipped-layout.equipped-list-only .equipped-slot-card.is-active,
+html[data-theme="moonlight"] .equipped-slot-card.is-active {
+  border-color: var(--moon-ghost-line) !important;
+  background: linear-gradient(135deg, rgba(11, 62, 119, .76), rgba(5, 34, 76, .68)) !important;
+  box-shadow: inset 3px 0 0 #8ed7ff, 0 0 9px rgba(106, 196, 255, .12) !important;
+}
+
+html[data-theme="moonlight"] .equipped-layout.equipped-list-only .equipped-slot-icon-wrap,
+html[data-theme="moonlight"] .equipped-layout.equipped-list-only .equipped-slot-card.is-active .equipped-slot-icon-wrap,
+html[data-theme="moonlight"] .equipped-slot-icon-wrap {
+  border-color: var(--moon-ghost-soft-line) !important;
+  background: rgba(21, 76, 133, .34) !important;
+  box-shadow: inset 0 0 0 1px rgba(221, 245, 255, .06), 0 0 6px rgba(114, 201, 255, .10);
+}
+
+html[data-theme="moonlight"] .equipped-slot-icon {
+  filter: drop-shadow(0 0 4px rgba(151, 222, 255, .34));
+}
+
+/* Mobile inventory cards: explicitly override every daylight ink color. */
+@media (max-width: 768px) {
+  html[data-theme="moonlight"] .inventory-mobile-sortbar,
+  html[data-theme="moonlight"] .inventory-unified-row,
+  html[data-theme="moonlight"] .inventory-mobile-summary,
+  html[data-theme="moonlight"] .inventory-mobile-row-toggle,
+  html[data-theme="moonlight"] .inventory-unified-row.mobile-expanded,
+  html[data-theme="moonlight"] .inventory-unified-row.mobile-expanded .inventory-mobile-row-toggle,
+  html[data-theme="moonlight"] .inventory-unified-row + .inventory-item-details-row .inventory-item-details-panel,
+  html[data-theme="moonlight"] .inventory-item-details {
+    border-color: var(--moon-ghost-soft-line) !important;
+    background: rgba(2, 22, 57, .82) !important;
+    color: #eefaff !important;
+  }
+
+  html[data-theme="moonlight"] :where(
+    .inventory-mobile-summary-name,
+    .inventory-mobile-summary-location,
+    .inventory-mobile-summary-meta,
+    .inventory-mobile-summary-value,
+    .inventory-mobile-summary-qty,
+    .inventory-mobile-summary-type,
+    .inventory-mobile-chevron,
+    .inventory-mobile-group-toggle,
+    .inventory-mobile-group-count,
+    .inventory-mobile-group-chevron,
+    .inventory-item-details-title,
+    .inventory-item-details,
+    .inventory-item-details-panel,
+    .inventory-item-details-row td,
+    .inventory-unified-row.mobile-expanded > td:not(.inventory-mobile-summary),
+    .inventory-unified-row.mobile-expanded > td:not(.inventory-mobile-summary)::before
+  ) {
+    color: #eefaff !important;
+    border-color: var(--moon-ghost-soft-line) !important;
+  }
+
+  html[data-theme="moonlight"] .inventory-mobile-summary-location,
+  html[data-theme="moonlight"] .inventory-mobile-summary-meta,
+  html[data-theme="moonlight"] .inventory-item-details::placeholder {
+    color: rgba(213, 240, 255, .72) !important;
+  }
+
+  html[data-theme="moonlight"] .inventory-mobile-summary-value:not(:empty)::before,
+  html[data-theme="moonlight"] .inventory-mobile-summary-qty:not(:empty)::before {
+    color: rgba(170, 222, 255, .72) !important;
+  }
+}
+
+/* Inline footer waves and other decorative SVG strokes should follow the spectral palette too. */
+html[data-theme="moonlight"] svg path[stroke="#b8902c"],
+html[data-theme="moonlight"] svg path[stroke="#8a6918"],
+html[data-theme="moonlight"] svg path[stroke="#d6a838"] {
+  stroke: #b9e7ff !important;
+  filter: drop-shadow(0 0 3px rgba(135, 210, 255, .26));
+}
