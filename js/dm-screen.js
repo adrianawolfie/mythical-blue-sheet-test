@@ -175,11 +175,96 @@
     return `<div class="statblock-summary-chips"><span>AC ${escapeHtml(statblock.armorClass)}</span><span>HP ${escapeHtml(statblock.hp)}${statblock.hpFormula ? ` (${escapeHtml(statblock.hpFormula)})` : ""}</span><span>CR ${escapeHtml(statblock.challengeRating)}</span><span>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}</span></div>`;
   }
 
+  const STATBLOCK_SECTION_HEADINGS = ["Traits", "Actions", "Bonus Actions", "Reactions", "Legendary Actions"];
+  const STATBLOCK_META_PREFIXES = ["Skills", "Gear", "Senses", "Languages", "CR", "Resistances", "Immunities", "Vulnerabilities"];
+
+  function normalizeStatblockLine(value) {
+    return String(value || "").replace(/\s+/g, " ").trim();
+  }
+
+  function splitStatblockEntries(text) {
+    const clean = normalizeStatblockLine(text);
+    if (!clean) return [];
+    const matcher = /(?:^|\s)([A-Z][A-Za-z0-9’'()\/,+ -]{1,84}\.)\s/g;
+    const markers = [];
+    let match;
+    while ((match = matcher.exec(clean))) markers.push({ start: match.index + (match[0].startsWith(" ") ? 1 : 0), label: match[1] });
+    if (!markers.length) return [{ title: "", text: clean }];
+    const entries = [];
+    if (markers[0].start > 0) entries.push({ title: "", text: clean.slice(0, markers[0].start).trim() });
+    markers.forEach((marker, index) => {
+      const end = markers[index + 1]?.start ?? clean.length;
+      const chunk = clean.slice(marker.start, end).trim();
+      const title = marker.label.slice(0, -1);
+      entries.push({ title, text: chunk.slice(marker.label.length).trim() });
+    });
+    return entries.filter(entry => entry.title || entry.text);
+  }
+
+  function parseStructuredStatblock(statblock) {
+    const lines = String(statblock.text || "").split(/\r?\n/).map(normalizeStatblockLine).filter(Boolean);
+    const firstSectionIndex = lines.findIndex(line => STATBLOCK_SECTION_HEADINGS.includes(line));
+    const preamble = lines.slice(0, firstSectionIndex < 0 ? lines.length : firstSectionIndex);
+    const abilityText = preamble.join(" ").replace(/MOD SAVE/g, " ");
+    const abilityRegex = /(Str|Dex|Con|Int|Wis|Cha)\s+(\d+)\s*([+−-]\d+)(?:\s+([+−-]\d+))?/g;
+    const abilities = [];
+    let abilityMatch;
+    while ((abilityMatch = abilityRegex.exec(abilityText))) {
+      abilities.push({ name: abilityMatch[1].toUpperCase(), score: abilityMatch[2], modifier: abilityMatch[3].replace("−", "-"), save: (abilityMatch[4] || abilityMatch[3]).replace("−", "-") });
+    }
+
+    const metadata = [];
+    let currentMeta = null;
+    const firstMeta = preamble.findIndex(line => STATBLOCK_META_PREFIXES.some(prefix => line.startsWith(prefix + " ") || line === prefix));
+    if (firstMeta >= 0) {
+      preamble.slice(firstMeta).forEach(line => {
+        const prefix = STATBLOCK_META_PREFIXES.find(item => line.startsWith(item + " ") || line === item);
+        if (prefix) {
+          currentMeta = { label: prefix, value: line.slice(prefix.length).trim() };
+          metadata.push(currentMeta);
+        } else if (currentMeta) currentMeta.value = `${currentMeta.value} ${line}`.trim();
+      });
+    }
+
+    const sections = [];
+    let activeSection = null;
+    lines.slice(firstSectionIndex < 0 ? lines.length : firstSectionIndex).forEach(line => {
+      if (STATBLOCK_SECTION_HEADINGS.includes(line)) {
+        activeSection = { title: line, lines: [] };
+        sections.push(activeSection);
+      } else if (activeSection) activeSection.lines.push(line);
+    });
+
+    return { abilities, metadata, sections: sections.map(section => ({ title: section.title, entries: splitStatblockEntries(section.lines.join(" ")) })) };
+  }
+
+  function statblockAbilityMarkup(abilities) {
+    if (!abilities.length) return "";
+    return `<div class="inline-statblock-abilities">${abilities.map(ability => `<div class="inline-statblock-ability"><strong>${escapeHtml(ability.name)}</strong><span>${escapeHtml(ability.score)}</span><small>${escapeHtml(ability.modifier)}</small><em>save ${escapeHtml(ability.save)}</em></div>`).join("")}</div>`;
+  }
+
+  function statblockMetadataMarkup(metadata) {
+    if (!metadata.length) return "";
+    return `<dl class="inline-statblock-metadata">${metadata.map(item => `<div><dt>${escapeHtml(item.label)}</dt><dd>${escapeHtml(item.value || "—")}</dd></div>`).join("")}</dl>`;
+  }
+
+  function statblockSectionsMarkup(sections) {
+    if (!sections.length) return "";
+    return `<div class="inline-statblock-sections">${sections.map(section => `<section class="inline-statblock-section"><h4>${escapeHtml(section.title)}</h4>${section.entries.map(entry => `<article class="inline-statblock-entry">${entry.title ? `<h5>${escapeHtml(entry.title)}</h5>` : ""}<p>${escapeHtml(entry.text)}</p></article>`).join("")}</section>`).join("")}</div>`;
+  }
+
   function expandedStatblockMarkup(combatant) {
     if (!combatant.statblockId || !expandedStatblocks.has(combatant.id)) return "";
     const statblock = getStatblockById(combatant.statblockId);
     if (!statblock) return "";
-    return `<section class="inline-statblock" aria-label="${escapeHtml(statblock.name)} statblock"><header><div><div class="dm-section-label">SRD Statblock</div><h3>${escapeHtml(statblock.name)}</h3><p>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}, ${escapeHtml(statblock.alignment)}</p></div><button type="button" class="inline-statblock-close" data-action="toggle-statblock" aria-label="Close ${escapeHtml(statblock.name)} statblock">×</button></header>${statblockSummaryMarkup(statblock)}<pre>${escapeHtml(statblock.text)}</pre></section>`;
+    const structured = parseStructuredStatblock(statblock);
+    return `<section class="inline-statblock" aria-label="${escapeHtml(statblock.name)} statblock">
+      <header class="inline-statblock-header"><div><div class="dm-section-label">SRD Statblock</div><h3>${escapeHtml(statblock.name)}</h3><p>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}, ${escapeHtml(statblock.alignment)}</p></div><button type="button" class="inline-statblock-close" data-action="toggle-statblock" aria-label="Close ${escapeHtml(statblock.name)} statblock">×</button></header>
+      <div class="inline-statblock-vitals"><div><span>Armor Class</span><strong>${escapeHtml(statblock.armorClass)}</strong></div><div><span>Hit Points</span><strong>${escapeHtml(statblock.hp)}</strong><small>${statblock.hpFormula ? `(${escapeHtml(statblock.hpFormula)})` : ""}</small></div><div><span>Initiative</span><strong>${escapeHtml(statblock.initiative || "—")}</strong></div><div><span>Speed</span><strong>${escapeHtml(statblock.speed || "—")}</strong></div><div><span>Challenge</span><strong>CR ${escapeHtml(statblock.challengeRating)}</strong></div></div>
+      ${statblockAbilityMarkup(structured.abilities)}
+      ${statblockMetadataMarkup(structured.metadata)}
+      ${statblockSectionsMarkup(structured.sections)}
+    </section>`;
   }
 
   function renderCombatantRow(combatant, displayIndex) {
@@ -286,7 +371,12 @@
     else if (field === "concentrating") { state.playerConcentration[id] = Boolean(value); persistTrackerState(); }
     else { updatePlayerSummaryLocally(id, { [field]: String(value) }); schedulePlayerStatusSave(id); }
     if (field === "hpCurrent" || field === "hpMax") refreshHpBar(row);
-    if (field === "initiative" || field === "name") { const selectionStart = input.selectionStart; renderTracker(); restoreFocus(id, field, selectionStart); }
+  }
+
+  function commitTrackerField(event) {
+    const input = event.target.closest("[data-field]");
+    if (!input) return;
+    if (input.dataset.field === "initiative" || input.dataset.field === "name") renderTracker();
   }
 
   function addCondition(row, rawCondition) {
@@ -456,6 +546,7 @@
       const picker = event.target.closest('[data-action="add-condition"]');
       if (picker) { addCondition(picker.closest(".combatant-row"), picker.value); return; }
       handleTrackerInput(event);
+      commitTrackerField(event);
     });
     list?.addEventListener("click", event => {
       const row = event.target.closest(".combatant-row");
