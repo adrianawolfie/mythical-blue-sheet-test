@@ -337,6 +337,18 @@ function bindMobileInventorySummary(row) {
       row
         .querySelector(".inventory-mobile-row-toggle")
         ?.setAttribute("aria-expanded", expanded ? "true" : "false");
+
+      // On mobile, collapsing the item card should also collapse its
+      // separately expandable description panel. Otherwise the details row
+      // remains visible below an item whose editable fields have been hidden.
+      if (!expanded) {
+        const detailsRow = row.nextElementSibling;
+        if (detailsRow?.classList.contains("inventory-item-details-row")) {
+          detailsRow.style.display = "none";
+        }
+
+        row.querySelector(".inventory-details-toggle")?.classList.remove("open");
+      }
     });
 }
 
