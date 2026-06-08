@@ -50,7 +50,7 @@
   }
   function render(kind) {
     const cfg=config(kind), id=ids(kind), q=(document.getElementById(id.search)?.value||'').toLowerCase(), category=document.getElementById(id.category)?.value||'all';
-    const results=libraries[kind].filter(entry=>(category==='all'||entry[cfg.category]===category)&&(!q||[entry.name,entry.category,entry.rarity,entry.summary,entry.details].join(' ').toLowerCase().includes(q))).slice(0,260);
+    const results=libraries[kind].filter(entry=>(category==='all'||entry[cfg.category]===category)&&(!q||[entry.name,entry.source,entry.category,entry.rarity,entry.summary,entry.details].join(' ').toLowerCase().includes(q))).slice(0,260);
     const box=document.getElementById(id.results);
     if (box) box.innerHTML=results.map(entry=>`<div class="library-picker-result" role="button" tabindex="0" onclick="previewSrdLibraryEntry('${kind}','${esc(entry.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();previewSrdLibraryEntry('${kind}','${esc(entry.id)}')}"><span><strong>${esc(entry.name)}</strong><em>${esc(meta(kind,entry)||entry.source||'SRD 5.2.1')}</em><small>${esc(entry.source||'SRD 5.2.1')}</small></span><span class="library-picker-result-actions"><button type="button" onclick="event.stopPropagation(); previewSrdLibraryEntry('${kind}','${esc(entry.id)}')">Preview</button><button type="button" onclick="event.stopPropagation(); addSrdLibraryEntry('${kind}','${esc(entry.id)}')">Add</button></span></div>`).join('')||'<p class="spell-picker-empty">No matching entries found.</p>';
     const count=document.getElementById(id.count); if(count) count.textContent=`Showing ${results.length} of ${libraries[kind].length} entries`;

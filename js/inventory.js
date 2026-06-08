@@ -51,6 +51,11 @@ const mobileInventoryGroupState = Object.fromEntries(
   MOBILE_INVENTORY_GROUP_ORDER.map(type => [type, true])
 );
 
+const inventorySortState = {
+  key: "",
+  direction: "asc"
+};
+
 function isMobileInventoryLayout() {
   return window.matchMedia("(max-width: 768px)").matches;
 }
@@ -105,17 +110,10 @@ function createMobileInventoryGroupHeader(type = "gear") {
   return row;
 }
 
-function rebuildMobileInventoryGroups() {
-  const body = document.getElementById("inventoryItemsBody");
-  if (!body) return;
+function inventoryItemRowPairs(body = document.getElementById("inventoryItemsBody")) {
+  if (!body) return [];
 
-  body
-    .querySelectorAll(".inventory-mobile-group-header")
-    .forEach(header => header.remove());
-
-  const pairs = Array.from(
-    body.querySelectorAll(".inventory-unified-row")
-  ).map(row => ({
+  return Array.from(body.querySelectorAll(".inventory-unified-row")).map(row => ({
     row,
     details: row.nextElementSibling?.classList.contains("inventory-item-details-row")
       ? row.nextElementSibling
@@ -124,6 +122,25 @@ function rebuildMobileInventoryGroups() {
       row.querySelector(".inventory-item-type")?.value || "gear"
     )
   }));
+}
+
+function rebuildMobileInventoryGroups() {
+  const body = document.getElementById("inventoryItemsBody");
+  if (!body) return;
+
+  body
+    .querySelectorAll(".inventory-mobile-group-header")
+    .forEach(header => header.remove());
+
+  const pairs = inventoryItemRowPairs(body);
+
+  if (!isMobileInventoryLayout()) {
+    pairs.forEach(pair => {
+      body.appendChild(pair.row);
+      if (pair.details) body.appendChild(pair.details);
+    });
+    return;
+  }
 
   MOBILE_INVENTORY_GROUP_ORDER.forEach(type => {
     const groupPairs = pairs.filter(pair => pair.type === type);
@@ -137,6 +154,98 @@ function rebuildMobileInventoryGroups() {
     });
   });
 }
+
+function inventorySortValue(row, key = "name") {
+  if (!row) return "";
+
+  if (key === "type") {
+    return inventoryTypeLabel(
+      row.querySelector(".inventory-item-type")?.value || "gear"
+    ).toLocaleLowerCase();
+  }
+
+  if (key === "location") {
+    return (
+      row.querySelector(".inventory-location")?.selectedOptions?.[0]?.textContent ||
+      "Unassigned"
+    ).trim().toLocaleLowerCase();
+  }
+
+  return (row.querySelector(".inventory-item-name")?.value || "")
+    .trim()
+    .toLocaleLowerCase();
+}
+
+function updateInventorySortHeaders() {
+  document.querySelectorAll("[data-inventory-sort-key]").forEach(button => {
+    const key = button.dataset.inventorySortKey || "";
+    const active = inventorySortState.key === key;
+    const indicator = button.querySelector(".inventory-sort-indicator");
+    const th = button.closest("th");
+
+    button.classList.toggle("is-active", active);
+    if (indicator) {
+      indicator.textContent = active
+        ? (inventorySortState.direction === "asc" ? "▲" : "▼")
+        : "↕";
+    }
+    th?.setAttribute(
+      "aria-sort",
+      active
+        ? (inventorySortState.direction === "asc" ? "ascending" : "descending")
+        : "none"
+    );
+  });
+}
+
+function applyInventorySort() {
+  const body = document.getElementById("inventoryItemsBody");
+  if (!body) return;
+
+  body
+    .querySelectorAll(".inventory-mobile-group-header")
+    .forEach(header => header.remove());
+
+  const pairs = inventoryItemRowPairs(body);
+  const { key, direction } = inventorySortState;
+
+  if (key) {
+    pairs.sort((a, b) => {
+      const comparison = inventorySortValue(a.row, key).localeCompare(
+        inventorySortValue(b.row, key),
+        undefined,
+        { sensitivity: "base", numeric: true }
+      );
+
+      return direction === "desc" ? -comparison : comparison;
+    });
+  }
+
+  pairs.forEach(pair => {
+    body.appendChild(pair.row);
+    if (pair.details) body.appendChild(pair.details);
+  });
+
+  rebuildMobileInventoryGroups();
+  updateInventorySortHeaders();
+  applyInventoryFilters();
+}
+
+function sortInventoryItems(key = "name") {
+  if (!['name', 'type', 'location'].includes(key)) return;
+
+  if (inventorySortState.key === key) {
+    inventorySortState.direction = inventorySortState.direction === "asc"
+      ? "desc"
+      : "asc";
+  } else {
+    inventorySortState.key = key;
+    inventorySortState.direction = "asc";
+  }
+
+  applyInventorySort();
+}
+
 
 function updateMobileInventorySummary(row) {
   if (!row) return;
@@ -465,6 +574,7 @@ function renderEquippedActiveView() {
   if (listView) listView.hidden = false;
   renderEquippedListView(currentEquippedSlotsState);
   renderEquippedNodeMap();
+  updateInventorySortHeaders();
 }
 
 function inventoryId(prefix = "item") {
@@ -890,7 +1000,7 @@ function attachItemRowBehavior(mainRow, detailsRow) {
   nameInput?.addEventListener("input", () => {
     refreshAllEquippedSelects();
     updateMobileInventorySummary(mainRow);
-    applyInventoryFilters();
+    inventorySortState.key === "name" ? applyInventorySort() : applyInventoryFilters();
   });
 
   mainRow
@@ -902,13 +1012,13 @@ function attachItemRowBehavior(mainRow, detailsRow) {
   locationSelect?.addEventListener("change", () => {
     locationSelect.dataset.selectedLocation = locationSelect.value;
     updateMobileInventorySummary(mainRow);
-    applyInventoryFilters();
+    inventorySortState.key === "location" ? applyInventorySort() : applyInventoryFilters();
   });
 
   typeSelect?.addEventListener("change", () => {
     refreshAllEquippedSelects();
-    rebuildMobileInventoryGroups();
     updateMobileInventorySummary(mainRow);
+    inventorySortState.key ? applyInventorySort() : rebuildMobileInventoryGroups();
     applyInventoryFilters();
   });
 }
@@ -940,8 +1050,8 @@ function addUnifiedInventoryRow(data = {}) {
 
   attachItemRowBehavior(row, detailsRow);
   bindMobileInventorySummary(row);
-  rebuildMobileInventoryGroups();
   updateMobileInventorySummary(row);
+  inventorySortState.key ? applyInventorySort() : rebuildMobileInventoryGroups();
   refreshInventoryDependentOptions();
 }
 
@@ -1316,7 +1426,18 @@ function bindInventoryControls() {
   bindCoinageMirrors();
   bindInventoryViewToggle();
 
-  window.addEventListener("resize", applyInventoryFilters);
+  window.addEventListener("resize", () => {
+    inventorySortState.key ? applyInventorySort() : rebuildMobileInventoryGroups();
+    applyInventoryFilters();
+  });
+
+  document
+    .querySelectorAll("[data-inventory-sort-key]")
+    .forEach(button => {
+      button.addEventListener("click", () => {
+        sortInventoryItems(button.dataset.inventorySortKey || "name");
+      });
+    });
 
   document
     .getElementById("inventoryLocationFilter")

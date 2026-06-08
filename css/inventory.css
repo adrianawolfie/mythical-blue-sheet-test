@@ -2102,3 +2102,32 @@
       16px;
   }
 }
+
+/* ─── EQUIPMENT TABLE SORTING ──────────────────────────────── */
+.inventory-sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.inventory-sort-button:hover,
+.inventory-sort-button:focus-visible,
+.inventory-sort-button.is-active {
+  color: var(--gold-deep);
+  outline: none;
+}
+
+.inventory-sort-indicator {
+  min-width: 8px;
+  color: var(--gold-deep);
+  font-size: 8px;
+  line-height: 1;
+}

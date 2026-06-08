@@ -607,19 +607,6 @@
     <div id="pg-inventory" class="pg">
       <div class="inventory-page-grid">
 
-        <div class="sb-card inventory-primary-actions">
-          <div class="section-heading-actions">
-            <div>
-              <div class="sb-hdr">Inventory</div>
-              <div class="section-action-subtitle">Add equipment from the SRD library or create a custom inventory entry.</div>
-            </div>
-            <div class="section-action-buttons">
-              <button type="button" class="inventory-add" onclick="openItemPicker()">+ Add Item</button>
-              <button type="button" class="inventory-add" onclick="addUnifiedInventoryRow()">+ Custom Item</button>
-            </div>
-          </div>
-        </div>
-
         <div class="sb-card inventory-coinage-card">
           <div class="sb-hdr">Coinage & Gems</div>
 
@@ -671,6 +658,19 @@
           </div>
         </div>
 
+        <div class="sb-card inventory-primary-actions">
+          <div class="section-heading-actions">
+            <div>
+              <div class="sb-hdr">Inventory</div>
+              <div class="section-action-subtitle">Add equipment from the SRD library or create a custom inventory entry.</div>
+            </div>
+            <div class="section-action-buttons">
+              <button type="button" class="inventory-add" onclick="openItemPicker()">+ Add Item</button>
+              <button type="button" class="inventory-add" onclick="addUnifiedInventoryRow()">+ Custom Item</button>
+            </div>
+          </div>
+        </div>
+
         <div class="sb-card inventory-filter-card inventory-filter-toolbar">
           <label>
             <span>Location</span>
@@ -703,11 +703,11 @@
             <table class="inventory-table inventory-detail-table inventory-unified-table" id="inventoryItemsTable">
               <thead>
                 <tr>
-                  <th>Item</th>
-                  <th class="inventory-type-col">Type</th>
+                  <th aria-sort="none"><button type="button" class="inventory-sort-button" data-inventory-sort-key="name">Item <span class="inventory-sort-indicator" aria-hidden="true">↕</span></button></th>
+                  <th class="inventory-type-col" aria-sort="none"><button type="button" class="inventory-sort-button" data-inventory-sort-key="type">Type <span class="inventory-sort-indicator" aria-hidden="true">↕</span></button></th>
                   <th class="inventory-qty-col">Qty</th>
                   <th class="inventory-value-col">Value</th>
-                  <th class="inventory-location-col">Location</th>
+                  <th class="inventory-location-col" aria-sort="none"><button type="button" class="inventory-sort-button" data-inventory-sort-key="location">Location <span class="inventory-sort-indicator" aria-hidden="true">↕</span></button></th>
                   <th class="inventory-details-col"></th>
                   <th class="inventory-remove-col"></th>
                 </tr>
