@@ -2322,3 +2322,57 @@
     margin: -5px 8px 9px;
   }
 }
+
+
+/* ─── EQUIPMENT · MOBILE DETAILS ATTACHMENT FIX ──────────────────────────
+   Details are subordinate to an expanded mobile item card. The CSS guard
+   prevents a detached description panel even if an older saved row or a
+   script timing edge case leaves its inline display state open. */
+.inventory-item-details-title {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .inventory-unified-row:not(.mobile-expanded) + .inventory-item-details-row {
+    display: none !important;
+  }
+
+  .inventory-unified-row + .inventory-item-details-row {
+    width: auto !important;
+    max-width: calc(100% - 16px) !important;
+    margin: -6px 8px 10px !important;
+  }
+
+  .inventory-unified-row + .inventory-item-details-row td {
+    padding: 0 !important;
+  }
+
+  .inventory-unified-row + .inventory-item-details-row .inventory-item-details-panel {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid rgba(184,144,44,.48);
+    border-top: 0;
+    background: rgba(255,253,245,.19);
+  }
+
+  .inventory-item-details-title {
+    display: block;
+    margin: -1px 0 6px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted rgba(184,144,44,.46);
+    color: var(--navy);
+    font-family: 'Cinzel', serif;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: .75px;
+    text-transform: uppercase;
+  }
+
+  .inventory-item-details {
+    min-height: 94px;
+    padding: 7px 8px;
+    border: 1px solid rgba(184,144,44,.42);
+    background: rgba(255,255,255,.14);
+  }
+}

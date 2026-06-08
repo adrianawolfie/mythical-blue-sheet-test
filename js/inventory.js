@@ -280,12 +280,14 @@ function updateMobileInventorySummary(row) {
   const qtyTarget = row.querySelector(".inventory-mobile-summary-qty");
   const valueTarget = row.querySelector(".inventory-mobile-summary-value");
   const locationTarget = row.querySelector(".inventory-mobile-summary-location");
+  const detailsTitleTarget = row.nextElementSibling?.querySelector(".inventory-item-details-title");
 
   if (nameTarget) nameTarget.textContent = name;
   if (typeTarget) typeTarget.textContent = type;
   if (qtyTarget) qtyTarget.textContent = qty ? `Qty ${qty}` : "";
   if (valueTarget) valueTarget.textContent = value;
   if (locationTarget) locationTarget.textContent = location;
+  if (detailsTitleTarget) detailsTitleTarget.textContent = `${name} · Details`;
 }
 
 function updateAllMobileInventorySummaries() {
@@ -345,6 +347,7 @@ function bindMobileInventorySummary(row) {
         const detailsRow = row.nextElementSibling;
         if (detailsRow?.classList.contains("inventory-item-details-row")) {
           detailsRow.style.display = "none";
+          detailsRow.classList.remove("is-mobile-open");
         }
 
         row.querySelector(".inventory-details-toggle")?.classList.remove("open");
@@ -728,6 +731,7 @@ function inventoryDetailsCell(open = false) {
       <button
         type="button"
         class="inventory-details-toggle ${open ? "open" : ""}"
+        aria-expanded="${open ? "true" : "false"}"
       >Details</button>
     </td>
   `;
@@ -740,6 +744,7 @@ function inventoryDetailsRow(details = "", open = false, colspan = 6) {
   row.innerHTML = `
     <td colspan="${colspan}">
       <div class="inventory-item-details-panel">
+        <div class="inventory-item-details-title">Item Details</div>
         <textarea
           class="inventory-item-details"
           placeholder="Full item description, properties, charges, weight, attunement requirements, lore, reminders..."
@@ -1001,7 +1006,9 @@ function attachItemRowBehavior(mainRow, detailsRow) {
     const opening = detailsRow.style.display === "none";
 
     detailsRow.style.display = opening ? "" : "none";
+    detailsRow.classList.toggle("is-mobile-open", opening);
     toggle.classList.toggle("open", opening);
+    toggle.setAttribute("aria-expanded", opening ? "true" : "false");
 
     requestAnimationFrame(() => {
       if (tableWrap) {
