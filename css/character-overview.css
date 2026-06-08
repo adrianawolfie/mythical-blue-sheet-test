@@ -293,3 +293,41 @@
   opacity: .9;
   outline: none !important;
 }
+
+/* ─── CHARACTER OVERVIEW — TOP ACTIONS ─────────────────────── */
+.overview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 14px;
+}
+
+.overview-action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--gold-deep);
+  background: var(--navy);
+  color: #fff;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: .4px;
+  text-decoration: none;
+  transition: background .16s ease, transform .16s ease;
+}
+
+.overview-action-link:hover,
+.overview-action-link:focus-visible {
+  background: var(--navy-soft);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+@media (max-width: 768px) {
+  .overview-action-link {
+    width: 100%;
+    justify-content: center;
+  }
+}
