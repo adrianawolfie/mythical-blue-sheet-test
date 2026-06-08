@@ -409,3 +409,339 @@ html[data-theme="moonlight"] .cal-ornament {
 html[data-theme="moonlight"] svg path[stroke="#b8902c"] {
   stroke: rgba(148, 204, 255, .75);
 }
+
+/* ─── Moonlight phase 2: deeper ocean palette, brighter gilding and readable spellbook ─── */
+html[data-theme="moonlight"] {
+  --gold: #f0d27d;
+  --gold-deep: #e9bd5d;
+  --gold-light: #ffe8a4;
+  --navy: #8fd4ff;
+  --navy-deep: #eef8ff;
+  --navy-soft: #b6e3ff;
+  --ink: #edf7ff;
+  --ink-soft: #cae7ff;
+  --moon-page-bg: radial-gradient(circle at 50% -10%, #123b73 0%, #071a3b 38%, #030b1b 100%);
+  --moon-surface: #071a38;
+  --moon-surface-soft: rgba(7, 25, 57, .95);
+  --moon-surface-raised: rgba(11, 35, 74, .90);
+  --moon-surface-glass: rgba(8, 30, 66, .69);
+  --moon-line: rgba(122, 202, 255, .52);
+  --moon-line-strong: rgba(255, 220, 130, .78);
+  --moon-text: #f2f9ff;
+  --moon-text-soft: #d5ebff;
+  --moon-muted: rgba(205, 229, 255, .78);
+  --moon-heading: #f5fbff;
+  --moon-accent: #9ddcff;
+  --moon-accent-2: #62bfff;
+  --moon-gold: #f5d884;
+  --moon-gold-soft: rgba(245, 216, 132, .70);
+  --moon-button-from: #2459a9;
+  --moon-button-to: #0a2459;
+  --moon-button-hover-from: #3476d7;
+  --moon-button-hover-to: #103476;
+  --moon-chip-bg: rgba(76, 148, 218, .18);
+  --moon-chip-active: rgba(108, 187, 255, .28);
+}
+
+html[data-theme="moonlight"] body {
+  background: var(--moon-page-bg);
+  background-attachment: fixed;
+}
+
+html[data-theme="moonlight"] .start-page,
+html[data-theme="moonlight"] .sheet,
+html[data-theme="moonlight"] .dm-screen-header,
+html[data-theme="moonlight"] .initiative-panel,
+html[data-theme="moonlight"] .spell-picker-modal,
+html[data-theme="moonlight"] .spell-editor-modal,
+html[data-theme="moonlight"] .library-picker-modal,
+html[data-theme="moonlight"] .npc-picker-modal {
+  background-color: #071a38;
+  box-shadow:
+    0 14px 48px rgba(0, 0, 0, .56),
+    0 0 28px rgba(70, 157, 255, .12),
+    inset 0 0 0 1px rgba(186, 229, 255, .09);
+}
+
+html[data-theme="moonlight"] .sheet,
+html[data-theme="moonlight"] .start-page,
+html[data-theme="moonlight"] .dm-screen-header,
+html[data-theme="moonlight"] .initiative-panel {
+  border-color: rgba(245, 216, 132, .74);
+}
+
+html[data-theme="moonlight"] .start-page::before,
+html[data-theme="moonlight"] .dm-screen-header::before,
+html[data-theme="moonlight"] .initiative-panel::before {
+  border-color: rgba(145, 215, 255, .34);
+  box-shadow: 0 0 14px rgba(84, 174, 255, .12);
+}
+
+html[data-theme="moonlight"] .title-banner,
+html[data-theme="moonlight"] .corner,
+html[data-theme="moonlight"] .compass-watermark,
+html[data-theme="moonlight"] .ship-art,
+html[data-theme="moonlight"] .spell-school-icon,
+html[data-theme="moonlight"] .spell-area-inline img,
+html[data-theme="moonlight"] .equipped-slot-icon {
+  filter: drop-shadow(0 0 5px rgba(92, 190, 255, .44));
+}
+
+html[data-theme="moonlight"] .corner {
+  opacity: .94;
+}
+
+html[data-theme="moonlight"] .compass-watermark {
+  opacity: .52;
+}
+
+html[data-theme="moonlight"] .ship-art {
+  opacity: .78;
+}
+
+/* Switch-style daylight / moonlight control */
+.theme-toggle {
+  position: relative;
+  min-width: 174px;
+  min-height: 38px;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding: 7px 15px 7px 49px;
+  border-radius: 999px;
+  letter-spacing: .65px;
+}
+
+.theme-toggle::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(184, 144, 44, .30);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.theme-toggle-icon {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(138, 105, 24, .62);
+  border-radius: 50%;
+  background: rgba(255, 248, 222, .82);
+  color: #294575;
+  font-size: 15px;
+  line-height: 1;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .18), inset 0 1px 0 rgba(255, 255, 255, .62);
+  transition: transform .24s ease, background .24s ease, color .24s ease, box-shadow .24s ease;
+}
+
+.theme-toggle-label {
+  position: relative;
+  z-index: 1;
+}
+
+.theme-toggle-compact {
+  min-width: 134px;
+  min-height: 36px;
+  padding-right: 12px;
+  padding-left: 44px;
+}
+
+html[data-theme="moonlight"] .theme-toggle {
+  justify-content: flex-start;
+  padding-right: 49px;
+  padding-left: 15px;
+  border-color: rgba(245, 216, 132, .74);
+  background: linear-gradient(180deg, rgba(28, 93, 171, .96), rgba(5, 28, 72, .98));
+  box-shadow: 0 0 15px rgba(82, 176, 255, .22), inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+html[data-theme="moonlight"] .theme-toggle::before {
+  border-color: rgba(147, 213, 255, .30);
+}
+
+html[data-theme="moonlight"] .theme-toggle-icon {
+  left: auto;
+  right: 4px;
+  background: radial-gradient(circle at 35% 35%, #fff8ce 0%, #f5d77d 58%, #d3a949 100%);
+  color: #12366b;
+  border-color: rgba(255, 231, 153, .92);
+  box-shadow: 0 0 13px rgba(245, 216, 132, .62), inset 0 1px 0 rgba(255,255,255,.62);
+}
+
+@media (max-width: 700px) {
+  .theme-toggle { min-width: 148px; min-height: 36px; }
+  .theme-toggle-compact { min-width: 126px; }
+}
+
+/* Brighten gold and blue accent lines throughout moonlight mode. */
+html[data-theme="moonlight"] .tabs,
+html[data-theme="moonlight"] .tab.on,
+html[data-theme="moonlight"] .start-page-heading-row,
+html[data-theme="moonlight"] .initiative-panel-header,
+html[data-theme="moonlight"] .tracker-legend,
+html[data-theme="moonlight"] .inline-statblock-header,
+html[data-theme="moonlight"] .inline-statblock-section h4,
+html[data-theme="moonlight"] .card-condition-editor,
+html[data-theme="moonlight"] .calendar-widget,
+html[data-theme="moonlight"] .calendar-sheet-bar,
+html[data-theme="moonlight"] .spell-toolbar,
+html[data-theme="moonlight"] .spell-card,
+html[data-theme="moonlight"] .spell-card-topline,
+html[data-theme="moonlight"] .spell-card-meta-grid,
+html[data-theme="moonlight"] .spell-card-details,
+html[data-theme="moonlight"] .spell-card-detail-grid {
+  border-color: rgba(245, 216, 132, .52);
+}
+
+html[data-theme="moonlight"] .overview-action-link,
+html[data-theme="moonlight"] .dm-nav-button,
+html[data-theme="moonlight"] .dm-primary-button,
+html[data-theme="moonlight"] .dm-secondary-button,
+html[data-theme="moonlight"] .add-btn,
+html[data-theme="moonlight"] .sheet-toolbar button,
+html[data-theme="moonlight"] .start-page button {
+  border-color: rgba(245, 216, 132, .88);
+  box-shadow: 0 0 12px rgba(69, 160, 255, .16), inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+html[data-theme="moonlight"] .overview-action-link::before,
+html[data-theme="moonlight"] .overview-action-link::after,
+html[data-theme="moonlight"] .spell-prepared-toggle.is-prepared,
+html[data-theme="moonlight"] .spell-prepared-filter:has(input:checked) span,
+html[data-theme="moonlight"] .cal-year,
+html[data-theme="moonlight"] .cal-day-num,
+html[data-theme="moonlight"] .round-display strong,
+html[data-theme="moonlight"] .hp-divider,
+html[data-theme="moonlight"] .card-hp-slash,
+html[data-theme="moonlight"] .cal-month-sep,
+html[data-theme="moonlight"] .cal-ornament {
+  color: var(--moon-gold);
+  text-shadow: 0 0 7px rgba(245, 216, 132, .22);
+}
+
+/* Spellbook readability: override the daylight low-opacity navy text. */
+html[data-theme="moonlight"] .spellbook-subtitle,
+html[data-theme="moonlight"] .spell-toolbar span,
+html[data-theme="moonlight"] .spell-picker-toolbar span,
+html[data-theme="moonlight"] .spell-card-school,
+html[data-theme="moonlight"] .spell-card-quick strong,
+html[data-theme="moonlight"] .spell-card-detail-grid strong,
+html[data-theme="moonlight"] .spell-card-quick span,
+html[data-theme="moonlight"] .spell-card-detail-grid span,
+html[data-theme="moonlight"] .spell-area-inline,
+html[data-theme="moonlight"] .spell-card-teaser,
+html[data-theme="moonlight"] .spell-card-rule-text,
+html[data-theme="moonlight"] .spell-property-chip,
+html[data-theme="moonlight"] .spell-prepared-toggle,
+html[data-theme="moonlight"] .spell-prepared-filter,
+html[data-theme="moonlight"] .spell-prepared-filter em,
+html[data-theme="moonlight"] .srd-license-note,
+html[data-theme="moonlight"] .spell-picker-header p,
+html[data-theme="moonlight"] .spell-editor-header p,
+html[data-theme="moonlight"] .spell-editor-checks,
+html[data-theme="moonlight"] .library-picker-preview,
+html[data-theme="moonlight"] .library-picker-placeholder,
+html[data-theme="moonlight"] .library-picker-preview .library-preview-meta,
+html[data-theme="moonlight"] .library-picker-preview .library-preview-body,
+html[data-theme="moonlight"] .library-picker-result,
+html[data-theme="moonlight"] .library-picker-result em,
+html[data-theme="moonlight"] .library-picker-result small,
+html[data-theme="moonlight"] .library-picker-footer,
+html[data-theme="moonlight"] .spell-picker-result,
+html[data-theme="moonlight"] .spell-picker-result em,
+html[data-theme="moonlight"] .spell-picker-result small {
+  color: var(--moon-text-soft);
+}
+
+html[data-theme="moonlight"] .spell-card-title,
+html[data-theme="moonlight"] .library-picker-preview h3,
+html[data-theme="moonlight"] .library-picker-result strong,
+html[data-theme="moonlight"] .spell-picker-result strong {
+  color: var(--moon-heading);
+  text-shadow: 0 0 8px rgba(106, 190, 255, .16);
+}
+
+html[data-theme="moonlight"] .spell-card {
+  background: linear-gradient(145deg, rgba(10, 39, 82, .92), rgba(5, 22, 53, .82));
+  border-color: rgba(245, 216, 132, .58);
+  box-shadow: 0 3px 11px rgba(0, 0, 0, .19), inset 0 1px 0 rgba(202, 232, 255, .07);
+}
+
+html[data-theme="moonlight"] .spell-card:hover {
+  border-color: rgba(255, 231, 160, .88);
+  box-shadow: 0 0 16px rgba(92, 184, 255, .18), inset 0 1px 0 rgba(219, 240, 255, .10);
+}
+
+html[data-theme="moonlight"] .spell-card-topline,
+html[data-theme="moonlight"] .spell-card-meta-grid,
+html[data-theme="moonlight"] .spell-card-subrow {
+  background: rgba(12, 42, 85, .22);
+}
+
+html[data-theme="moonlight"] .spell-school-icon {
+  border-color: rgba(148, 214, 255, .62);
+  background: rgba(12, 43, 88, .72);
+}
+
+html[data-theme="moonlight"] .spell-level-badge {
+  border-color: rgba(245, 216, 132, .90);
+  background: rgba(245, 216, 132, .10);
+  color: var(--moon-gold);
+}
+
+html[data-theme="moonlight"] .spell-property-chip {
+  border-color: rgba(145, 209, 255, .36);
+  background: rgba(11, 38, 78, .48);
+}
+
+html[data-theme="moonlight"] .spell-property-chip.active {
+  border-color: rgba(245, 216, 132, .72);
+  background: rgba(245, 216, 132, .12);
+  color: var(--moon-gold);
+}
+
+html[data-theme="moonlight"] .spell-card-expand,
+html[data-theme="moonlight"] .spell-card-edit-inline,
+html[data-theme="moonlight"] .spell-card-btn,
+html[data-theme="moonlight"] .spell-picker-close {
+  color: var(--moon-gold);
+  border-color: rgba(245, 216, 132, .66);
+}
+
+html[data-theme="moonlight"] .spell-card-expand:hover,
+html[data-theme="moonlight"] .spell-card-edit-inline:hover,
+html[data-theme="moonlight"] .spell-card-btn:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(122, 202, 255, .45);
+}
+
+html[data-theme="moonlight"] .spell-picker-result-actions button,
+html[data-theme="moonlight"] .library-picker-result-actions button {
+  border-color: rgba(245, 216, 132, .58);
+  background: rgba(12, 43, 88, .62);
+  color: var(--moon-text);
+}
+
+html[data-theme="moonlight"] .spell-picker-result-actions button:hover,
+html[data-theme="moonlight"] .library-picker-result-actions button:hover {
+  background: rgba(40, 99, 177, .72);
+}
+
+/* Extra moonlight glow for equipment nodes and active statblock controls. */
+html[data-theme="moonlight"] .equipped-slot-icon-wrap,
+html[data-theme="moonlight"] .statblock-toggle,
+html[data-theme="moonlight"] .concentration-rune,
+html[data-theme="moonlight"] .combatant-order-medallion {
+  box-shadow: 0 0 10px rgba(94, 184, 255, .12);
+}
+
+html[data-theme="moonlight"] .equipped-slot-card.is-active .equipped-slot-icon-wrap,
+html[data-theme="moonlight"] .concentration-toggle input:checked + .concentration-rune,
+html[data-theme="moonlight"] .active-turn .combatant-order-medallion {
+  box-shadow: 0 0 13px rgba(99, 191, 255, .34);
+}
