@@ -11,6 +11,9 @@ function addFeatureEntry(listId, data = {}) {
 
   const entry = document.createElement("div");
   entry.className = "feature-entry";
+  entry.dataset.sourceId = String(data.sourceId || "");
+  entry.dataset.source = String(data.source || "");
+  entry.dataset.category = String(data.category || "");
 
   entry.innerHTML = `
     <div class="feature-entry-top">
@@ -112,7 +115,10 @@ return Array.from(list.querySelectorAll(".feature-entry")).map(entry => {
       ? entry.querySelector(".feature-resource")?.value || ""
       : "",
     details: entry.querySelector(".feature-details")?.value || "",
-    open: entry.querySelector("details")?.open || false
+    open: entry.querySelector("details")?.open || false,
+    sourceId: entry.dataset.sourceId || "",
+    source: entry.dataset.source || "",
+    category: entry.dataset.category || ""
   };
 });
 }

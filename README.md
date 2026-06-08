@@ -186,3 +186,25 @@ Magic Items
 Potions & Consumables
 Gems & Valuables
 ```
+
+## SRD libraries and picker flows
+
+The character sheet includes editable snapshot import flows for SRD 5.2.1 content:
+
+```text
+data/srd-spells.json   351 spells
+data/srd-feats.json     17 feats
+data/srd-items.json    435 equipment and magic-item entries
+```
+
+Visible actions are placed near the top of their relevant sections:
+
+```text
+Spells      + Add Spell | + Create Homebrew Spell
+Features    + Add Feat | + Custom Feature / Trait
+Inventory   + Add Item | + Custom Item
+```
+
+SRD picker entries can be previewed before adding them. Imported entries remain
+editable character snapshots, and custom spells, feats, traits, and items remain
+supported.

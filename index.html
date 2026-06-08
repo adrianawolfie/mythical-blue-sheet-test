@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="css/styles.css" />
 <link rel="stylesheet" href="css/calendar.css" />
 <link rel="stylesheet" href="css/inventory.css" />
+<link rel="stylesheet" href="css/srd-library.css" />
 <link rel="stylesheet" href="css/spells.css" />
 <link rel="stylesheet" href="css/armor-class.css" />
 </head>
@@ -474,19 +475,19 @@
 </div>
 
 <div class="sb-card features-traits-main">
-  <div class="sb-hdr">Features & Traits</div>
+  <div class="section-heading-actions">
+    <div>
+      <div class="sb-hdr">Features & Traits</div>
+      <div class="section-action-subtitle">Choose an SRD feat or add a custom feature, trait, or feat.</div>
+    </div>
+    <div class="section-action-buttons">
+      <button type="button" class="feature-add" onclick="openFeatPicker()">+ Add Feat</button>
+      <button type="button" class="feature-add" onclick="addFeatureEntry('featList')">+ Custom Feature / Trait</button>
+      <button type="button" class="feature-add" onclick="toggleFeatureEditMode('featList', this)">Edit</button>
+    </div>
+  </div>
 
   <div id="featList" class="feature-list"></div>
-
-<div class="feature-actions">
-  <button type="button" class="feature-add" onclick="addFeatureEntry('featList')">
-    + Add Feature / Trait
-  </button>
-
-  <button type="button" class="feature-add" onclick="toggleFeatureEditMode('featList', this)">
-    Edit Features / Traits
-  </button>
-</div>
 </div>
         </div>
 
@@ -519,10 +520,14 @@
         </div>
       </div>
 <div class="sb-card spellbook-card" style="margin-top:12px;">
-  <div class="spellbook-heading-row">
+  <div class="spellbook-heading-row section-heading-actions">
     <div>
       <div class="sb-hdr">Cantrips & Prepared Spells</div>
       <div class="spellbook-subtitle">Build a spellbook from the SRD library or add your own homebrew magic.</div>
+    </div>
+    <div class="section-action-buttons">
+      <button type="button" class="add-btn" onclick="openSpellPicker()">+ Add Spell</button>
+      <button type="button" class="add-btn" onclick="addCustomSpell()">+ Create Homebrew Spell</button>
     </div>
   </div>
 
@@ -544,11 +549,6 @@
         <tbody id="sbody"></tbody>
       </table>
     </div>
-  </div>
-
-  <div class="table-actions spellbook-actions">
-    <button type="button" class="add-btn" onclick="openSpellPicker()">+ Add Spell</button>
-    <button type="button" class="add-btn" onclick="addCustomSpell()">+ Create Homebrew Spell</button>
   </div>
 
   <details class="srd-license-note">
@@ -606,6 +606,19 @@
 
     <div id="pg-inventory" class="pg">
       <div class="inventory-page-grid">
+
+        <div class="sb-card inventory-primary-actions">
+          <div class="section-heading-actions">
+            <div>
+              <div class="sb-hdr">Inventory</div>
+              <div class="section-action-subtitle">Add equipment from the SRD library or create a custom inventory entry.</div>
+            </div>
+            <div class="section-action-buttons">
+              <button type="button" class="inventory-add" onclick="openItemPicker()">+ Add Item</button>
+              <button type="button" class="inventory-add" onclick="addUnifiedInventoryRow()">+ Custom Item</button>
+            </div>
+          </div>
+        </div>
 
         <div class="sb-card inventory-coinage-card">
           <div class="sb-hdr">Coinage & Gems</div>
@@ -702,7 +715,6 @@
               <tbody id="inventoryItemsBody"></tbody>
             </table>
           </div>
-          <button type="button" class="inventory-add" onclick="addUnifiedInventoryRow()">+ Add Item</button>
         </div>
 
         <div class="inventory-support-grid">
@@ -790,7 +802,12 @@
       <label><span>School</span><select id="spellPickerSchool"><option value="all">All Schools</option><option>Abjuration</option><option>Conjuration</option><option>Divination</option><option>Enchantment</option><option>Evocation</option><option>Illusion</option><option>Necromancy</option><option>Transmutation</option></select></label>
       <label><span>Class</span><select id="spellPickerClass"><option value="all">All Classes</option><option>Bard</option><option>Cleric</option><option>Druid</option><option>Paladin</option><option>Ranger</option><option>Sorcerer</option><option>Warlock</option><option>Wizard</option></select></label>
     </div>
-    <div id="spellPickerResults" class="spell-picker-results"></div>
+    <div class="spell-picker-layout">
+      <div id="spellPickerResults" class="spell-picker-results"></div>
+      <aside id="spellPickerPreview" class="library-picker-preview" aria-live="polite">
+        <p class="library-picker-placeholder">Select a spell to preview its full rules text before adding it.</p>
+      </aside>
+    </div>
     <div class="spell-picker-footer"><span id="spellPickerCount"></span><button type="button" class="add-btn" onclick="addCustomSpell(); closeSpellPicker();">+ Create Homebrew Spell</button></div>
   </section>
 </div>
@@ -806,6 +823,7 @@
 <script src="js/features.js"></script>
 <script src="js/proficiencies.js"></script>
 <script src="js/inventory.js"></script>
+<script src="js/srd-library-ui.js"></script>
 <script src="js/journal-notes.js"></script>
 <script src="js/speeds.js"></script>
 <script src="js/armor-class.js"></script>
