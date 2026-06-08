@@ -52,7 +52,7 @@ const mobileInventoryGroupState = Object.fromEntries(
 );
 
 const inventorySortState = {
-  key: "",
+  key: "name",
   direction: "asc"
 };
 
@@ -62,16 +62,20 @@ function isMobileInventoryLayout() {
 
 function mobileInventorySummaryCell(item = {}) {
   return `
-    <td class="inventory-mobile-summary" colspan="7">
+    <td class="inventory-mobile-summary" colspan="8">
       <button type="button" class="inventory-mobile-row-toggle" aria-expanded="false">
-        <span class="inventory-mobile-summary-main">
-          <span class="inventory-mobile-summary-name">${inventorySafeValue(item.name || "New Item")}</span>
-          <span class="inventory-mobile-summary-qty">${item.qty ? `×${inventorySafeValue(item.qty)}` : ""}</span>
+        <span class="inventory-mobile-summary-content">
+          <span class="inventory-mobile-summary-titleline">
+            <span class="inventory-mobile-summary-name">${inventorySafeValue(item.name || "New Item")}</span>
+            <span class="inventory-mobile-summary-type">${inventorySafeValue(inventoryTypeLabel(item.type || "gear"))}</span>
+          </span>
+          <span class="inventory-mobile-summary-meta">
+            <span class="inventory-mobile-summary-location">Unassigned</span>
+            <span class="inventory-mobile-summary-value">${inventorySafeValue(item.value || "—")}</span>
+            <span class="inventory-mobile-summary-qty">${item.qty ? `Qty ${inventorySafeValue(item.qty)}` : ""}</span>
+          </span>
         </span>
-        <span class="inventory-mobile-summary-side">
-          <span class="inventory-mobile-summary-location">Unassigned</span>
-          <span class="inventory-mobile-chevron">⌄</span>
-        </span>
+        <span class="inventory-mobile-chevron">⌄</span>
       </button>
     </td>
   `;
@@ -134,24 +138,12 @@ function rebuildMobileInventoryGroups() {
 
   const pairs = inventoryItemRowPairs(body);
 
-  if (!isMobileInventoryLayout()) {
-    pairs.forEach(pair => {
-      body.appendChild(pair.row);
-      if (pair.details) body.appendChild(pair.details);
-    });
-    return;
-  }
-
-  MOBILE_INVENTORY_GROUP_ORDER.forEach(type => {
-    const groupPairs = pairs.filter(pair => pair.type === type);
-    if (!groupPairs.length) return;
-
-    body.appendChild(createMobileInventoryGroupHeader(type));
-
-    groupPairs.forEach(pair => {
-      body.appendChild(pair.row);
-      if (pair.details) body.appendChild(pair.details);
-    });
+  // Mobile uses compact, individually expandable cards rather than a
+  // squeezed table or nested category accordions. Sorting remains available
+  // through the dedicated mobile sort bar.
+  pairs.forEach(pair => {
+    body.appendChild(pair.row);
+    if (pair.details) body.appendChild(pair.details);
   });
 }
 
@@ -196,6 +188,28 @@ function updateInventorySortHeaders() {
         : "none"
     );
   });
+
+  updateInventoryMobileSortControls();
+}
+
+function updateInventoryMobileSortControls() {
+  const select = document.getElementById("inventoryMobileSortSelect");
+  const directionButton = document.getElementById("inventoryMobileSortDirection");
+  const key = inventorySortState.key || "name";
+  const direction = inventorySortState.direction === "desc" ? "desc" : "asc";
+
+  if (select && ["name", "type", "location"].includes(key)) {
+    select.value = key;
+  }
+
+  if (directionButton) {
+    const ascending = direction === "asc";
+    directionButton.textContent = ascending ? "A–Z ↑" : "Z–A ↓";
+    directionButton.setAttribute(
+      "aria-label",
+      ascending ? "Reverse equipment sort order to descending" : "Reverse equipment sort order to ascending"
+    );
+  }
 }
 
 function applyInventorySort() {
@@ -252,17 +266,25 @@ function updateMobileInventorySummary(row) {
 
   const name = row.querySelector(".inventory-item-name")?.value.trim() || "New Item";
   const qty = row.querySelector(".inventory-item-qty")?.value.trim() || "";
+  const value = row.querySelector(".inventory-item-value")?.value.trim() || "—";
+  const type = inventoryTypeLabel(
+    row.querySelector(".inventory-item-type")?.value || "gear"
+  );
   const locationSelect = row.querySelector(".inventory-location");
   const location =
     locationSelect?.selectedOptions?.[0]?.textContent?.trim() ||
     "Unassigned";
 
   const nameTarget = row.querySelector(".inventory-mobile-summary-name");
+  const typeTarget = row.querySelector(".inventory-mobile-summary-type");
   const qtyTarget = row.querySelector(".inventory-mobile-summary-qty");
+  const valueTarget = row.querySelector(".inventory-mobile-summary-value");
   const locationTarget = row.querySelector(".inventory-mobile-summary-location");
 
   if (nameTarget) nameTarget.textContent = name;
-  if (qtyTarget) qtyTarget.textContent = qty ? `×${qty}` : "";
+  if (typeTarget) typeTarget.textContent = type;
+  if (qtyTarget) qtyTarget.textContent = qty ? `Qty ${qty}` : "";
+  if (valueTarget) valueTarget.textContent = value;
   if (locationTarget) locationTarget.textContent = location;
 }
 
@@ -912,12 +934,8 @@ function applyInventoryFilters() {
         (typeFilter === "all" || type === typeFilter) &&
         (!searchText || searchable.includes(searchText));
 
-      const categoryOpen =
-        !isMobileInventoryLayout() ||
-        mobileInventoryGroupState[type] !== false;
-
       row.dataset.inventoryFilterMatch = filterMatch ? "true" : "false";
-      setFilteredRowVisibility(row, filterMatch && categoryOpen);
+      setFilteredRowVisibility(row, filterMatch);
     });
 
   updateMobileInventoryGroupHeaders();
@@ -1005,6 +1023,10 @@ function attachItemRowBehavior(mainRow, detailsRow) {
 
   mainRow
     .querySelector(".inventory-item-qty")
+    ?.addEventListener("input", () => updateMobileInventorySummary(mainRow));
+
+  mainRow
+    .querySelector(".inventory-item-value")
     ?.addEventListener("input", () => updateMobileInventorySummary(mainRow));
 
   detailsTextarea?.addEventListener("input", applyInventoryFilters);
@@ -1451,6 +1473,24 @@ function bindInventoryControls() {
     .getElementById("inventorySearchInput")
     ?.addEventListener("input", applyInventoryFilters);
 
+  document
+    .getElementById("inventoryMobileSortSelect")
+    ?.addEventListener("change", event => {
+      inventorySortState.key = event.target.value || "name";
+      inventorySortState.direction = "asc";
+      applyInventorySort();
+    });
+
+  document
+    .getElementById("inventoryMobileSortDirection")
+    ?.addEventListener("click", () => {
+      inventorySortState.direction = inventorySortState.direction === "asc"
+        ? "desc"
+        : "asc";
+      applyInventorySort();
+    });
+
+  updateInventoryMobileSortControls();
   refreshLocationFilter();
   setInventoryView(SILHOUETTE_VIEW_DEFAULT);
   renderEquippedNodeMap();

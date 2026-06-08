@@ -2143,3 +2143,182 @@
 .inventory-unified-table thead th {
   border-bottom: 0;
 }
+
+
+/* ─── EQUIPMENT · MOBILE COMPACT ITEM CARDS ────────────────────────────
+   Mobile intentionally uses expandable cards rather than a compressed
+   desktop table. The summary remains useful without opening the editor. */
+.inventory-mobile-sortbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .inventory-mobile-sortbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 7px;
+    padding-top: 3px;
+  }
+
+  .inventory-mobile-sortbar label {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .inventory-mobile-sort-direction {
+    min-height: 29px;
+    padding: 3px 8px;
+    border: 1px solid rgba(184,144,44,.42);
+    border-radius: 2px;
+    background: rgba(255,253,245,.18);
+    color: var(--navy-deep);
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: .45px;
+    white-space: nowrap;
+  }
+
+  .inventory-unified-table tbody {
+    padding: 7px;
+  }
+
+  .inventory-mobile-group-header {
+    display: none !important;
+  }
+
+  .inventory-unified-row {
+    display: block !important;
+    margin: 0 0 8px !important;
+    overflow: hidden;
+    border: 1px solid rgba(184,144,44,.40) !important;
+    border-radius: 4px;
+    background: linear-gradient(135deg, rgba(255,253,245,.30), rgba(255,248,226,.12)) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,.18);
+  }
+
+  .inventory-mobile-row-toggle {
+    align-items: center;
+    gap: 8px;
+    padding: 9px 8px;
+  }
+
+  .inventory-mobile-summary-content {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .inventory-mobile-summary-titleline,
+  .inventory-mobile-summary-meta {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .inventory-mobile-summary-name {
+    flex: 0 1 auto;
+    font-size: 12px;
+  }
+
+  .inventory-mobile-summary-type {
+    flex: 0 0 auto;
+    max-width: 48%;
+    overflow: hidden;
+    padding: 1px 5px;
+    border: 1px solid rgba(184,144,44,.34);
+    border-radius: 999px;
+    color: rgba(28,39,80,.68);
+    font-family: 'Cinzel', serif;
+    font-size: 6.5px;
+    font-weight: 700;
+    letter-spacing: .45px;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .inventory-mobile-summary-meta {
+    color: rgba(28,39,80,.64);
+    font-size: 9.5px;
+    font-style: italic;
+  }
+
+  .inventory-mobile-summary-location {
+    flex: 1 1 auto;
+    max-width: none;
+  }
+
+  .inventory-mobile-summary-value,
+  .inventory-mobile-summary-qty {
+    flex: 0 0 auto;
+    color: var(--gold-deep);
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  .inventory-mobile-summary-value:not(:empty)::before {
+    content: '· ';
+    color: rgba(184,144,44,.56);
+  }
+
+  .inventory-mobile-summary-qty:not(:empty)::before {
+    content: '· ';
+    color: rgba(184,144,44,.56);
+  }
+
+  .inventory-unified-row.mobile-expanded {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 8px;
+    padding: 0 7px 8px !important;
+    border-left: 2px solid rgba(184,144,44,.62) !important;
+  }
+
+  .inventory-unified-row.mobile-expanded .inventory-mobile-summary {
+    grid-column: 1 / -1;
+    margin: 0 -7px;
+    width: calc(100% + 14px) !important;
+  }
+
+  .inventory-unified-row.mobile-expanded .inventory-mobile-row-toggle {
+    width: 100%;
+    margin: 0;
+    padding: 9px 8px;
+    background: rgba(184,144,44,.065);
+  }
+
+  .inventory-unified-row.mobile-expanded > td:not(.inventory-mobile-summary) {
+    display: flex !important;
+    padding: 6px 0 0 !important;
+  }
+
+  .inventory-unified-row.mobile-expanded td:nth-child(2),
+  .inventory-unified-row.mobile-expanded td:nth-child(3),
+  .inventory-unified-row.mobile-expanded td:nth-child(6) {
+    grid-column: 1 / -1;
+  }
+
+  .inventory-unified-row.mobile-expanded td:nth-child(7) {
+    grid-column: 1;
+    align-items: flex-start;
+  }
+
+  .inventory-unified-row.mobile-expanded td:nth-child(8) {
+    grid-column: 2;
+    align-items: flex-end;
+  }
+
+  .inventory-unified-row + .inventory-item-details-row {
+    margin: -5px 8px 9px;
+  }
+}

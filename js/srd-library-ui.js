@@ -66,7 +66,7 @@
   async function open(kind) {
     ensureModal(kind); await load(kind); refreshCategories(kind); selected[kind]=''; renderPreview(kind); render(kind);
     const id=ids(kind), modal=document.getElementById(id.modal); if(modal) modal.hidden=false;
-    document.getElementById(id.search)?.focus();
+    if (!window.matchMedia('(max-width: 768px)').matches) document.getElementById(id.search)?.focus();
   }
   window.openFeatPicker=()=>open('feat');
   window.openItemPicker=()=>open('item');

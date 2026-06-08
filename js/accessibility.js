@@ -11,6 +11,7 @@
   const MOBILE_QUERY = "(max-width: 768px)";
 
   const scalableRules = [];
+  const baselineFontSizes = new WeakMap();
   let currentIndex = getStoredScaleIndex();
 
   function getStoredScaleIndex() {
@@ -33,14 +34,15 @@
     Array.from(document.styleSheets).forEach(styleSheet => {
       const href = styleSheet.href || "";
 
-      // Scale the main character-sheet stylesheet and the calendar stylesheet.
-      // styles.css is now an import-only entry point, so imported CSS files
-      // must also be traversed recursively.
-      const isScalableStylesheet =
-        href.includes("/css/styles.css") ||
-        href.includes("/css/calendar.css");
+      // Scale every local app stylesheet automatically. This deliberately
+      // avoids a hand-maintained allowlist so future UI additions inherit the
+      // Aa controls as soon as their CSS is included. The accessibility pill
+      // itself remains a fixed-size control.
+      const isLocalAppStylesheet =
+        href.includes("/css/") &&
+        !href.includes("/css/accessibility.css");
 
-      if (!isScalableStylesheet) return;
+      if (!isLocalAppStylesheet) return;
 
       collectFromStyleSheet(styleSheet);
     });
@@ -75,11 +77,20 @@
 
       if (!match) return;
 
+      if (!baselineFontSizes.has(rule)) {
+        baselineFontSizes.set(rule, Number(match[1]));
+      }
+
       scalableRules.push({
         rule,
-        originalPixels: Number(match[1])
+        originalPixels: baselineFontSizes.get(rule)
       });
     });
+  }
+
+  function refreshScalableRules() {
+    collectScalableRules();
+    applyFontScale();
   }
 
   function applyFontScale() {
@@ -160,5 +171,21 @@
     window.matchMedia(MOBILE_QUERY).addEventListener?.("change", syncPopoutState);
 
     applyFontScale();
+
+    // Future dynamically inserted stylesheets can opt into the same scaling
+    // behavior without changing this file.
+    window.refreshAccessibilityFontScaling = refreshScalableRules;
+
+    new MutationObserver(mutations => {
+      if (mutations.some(mutation =>
+        Array.from(mutation.addedNodes || []).some(node =>
+          node.nodeType === 1 &&
+          (node.matches?.('link[rel="stylesheet"], style') ||
+            node.querySelector?.('link[rel="stylesheet"], style'))
+        )
+      )) {
+        refreshScalableRules();
+      }
+    }).observe(document.head, { childList: true, subtree: true });
   });
 })();

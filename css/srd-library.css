@@ -61,11 +61,8 @@
   position:fixed; inset:0; z-index:1400; display:flex; align-items:center; justify-content:center;
   padding:18px; background:rgba(7,15,36,.66);
 }
-.library-picker-modal {
-  width:min(980px,96vw); max-height:90vh; overflow:hidden;
-  border:1px solid rgba(184,144,44,.78); border-radius:6px;
-  background:var(--paper,#f7efd5); box-shadow:0 18px 60px rgba(0,0,0,.35);
-}
+.library-picker-backdrop[hidden] { display:none !important; }
+.library-picker-modal { width:min(900px,100%); }
 .library-picker-header { display:flex; justify-content:space-between; gap:10px; padding:12px 14px 7px; }
 .library-picker-header p { margin:3px 0 0; color:rgba(28,39,80,.68); font-size:11px; }
 .library-picker-toolbar { display:grid; grid-template-columns:minmax(0,1fr) 180px; gap:8px; padding:0 14px 10px; }
@@ -89,3 +86,19 @@
 .spell-picker-result-actions { align-items:center; }
 .inventory-primary-actions { grid-column:1 / -1; }
 .inventory-primary-actions .section-heading-actions { padding-bottom:5px; }
+
+
+/* Prevent iOS Safari from zooming the viewport when a picker search field is
+   tapped. Picker modals also open without autofocus on mobile. */
+@media (max-width: 768px) {
+  .spell-picker-modal input,
+  .spell-picker-modal select,
+  .spell-picker-modal textarea,
+  .library-picker-modal input,
+  .library-picker-modal select,
+  .library-picker-modal textarea {
+    /* Safari zooms form fields below 16px. rem still allows the Aa controls
+       to enlarge the field text while keeping the mobile minimum safe. */
+    font-size: max(16px, 1rem) !important;
+  }
+}

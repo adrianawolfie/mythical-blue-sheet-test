@@ -695,6 +695,18 @@
             <span>Search</span>
             <input id="inventorySearchInput" class="inventory-search-input" placeholder="Search items…">
           </label>
+
+          <div class="inventory-mobile-sortbar" aria-label="Equipment sorting controls">
+            <label>
+              <span>Sort</span>
+              <select id="inventoryMobileSortSelect" class="inventory-filter-select">
+                <option value="name">Name</option>
+                <option value="type">Type</option>
+                <option value="location">Location</option>
+              </select>
+            </label>
+            <button type="button" id="inventoryMobileSortDirection" class="inventory-mobile-sort-direction" aria-label="Reverse equipment sort order">A–Z ↑</button>
+          </div>
         </div>
 
         <div class="sb-card inventory-card inventory-unified-card">

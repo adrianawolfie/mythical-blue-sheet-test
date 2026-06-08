@@ -361,3 +361,22 @@
     grid-template-columns:1fr;
   }
 }
+
+
+/* Keep the two primary spellbook actions together on narrow screens. */
+@media (max-width: 760px) {
+  .spellbook-heading-row .section-action-buttons {
+    width: 100%;
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+
+  .spellbook-heading-row .add-btn {
+    flex: 0 1 auto;
+    min-width: 0;
+    padding: 3px 5px;
+    font-size: 7px;
+    letter-spacing: .25px;
+    white-space: nowrap;
+  }
+}
