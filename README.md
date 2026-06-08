@@ -1,90 +1,101 @@
 # Mythical Blue · The Great Depth
 
-## Architecture
+A plain HTML, CSS, and JavaScript character-sheet web app with a character overview, campaign calendar, structured inventory, SRD libraries, and a DM initiative screen.
 
-This app intentionally uses plain HTML, CSS, and JavaScript. It does not require
-a framework or build process.
+## Environments
 
-## Environment behavior
-
-The same `js/storage-config.js` file works in both environments:
+The same frontend is used in test and production. `js/storage-config.js` selects the correct storage behavior automatically:
 
 ```text
 GitHub Pages / localhost
 → browser localStorage test data
+→ seeded from characters/test-character-index.json
 
 Netlify production
 → shared Netlify Functions
-→ GitHub character JSON files
+→ GitHub-backed character JSON files
 ```
 
-This prevents an accidental repository copy from silently switching production
-into localStorage mode.
-
-## Frontend structure
+## Pages
 
 ```text
-index.html
+index.html        Character Overview and Character Sheet
+dm-screen.html    DM Screen with initiative tracker and inline SRD statblocks
+```
 
+## Stylesheets
+
+`css/styles.css` is the main character-sheet entry point. Its import order is intentional.
+
+```text
+css/
+  accessibility.css       Aa text-size controls
+  styles.css              character-sheet import entry point
+  base.css                global layout and core variables
+  character-sheet.css     main sheet layout and mobile behavior
+  components.css          shared sheet components
+  inventory.css           structured inventory and equipment UI
+  spells.css              spellbook, spell cards, and spell picker
+  armor-class.css         AC editor
+  character-overview.css  overview cards and live controls
+  speeds.css              optional movement speeds
+  calendar.css            Materra calendar
+  srd-library.css         feat and item picker UI
+  dm-screen.css           DM screen and statblock UI
+  theme-mode.css          Daylight / Moonlight theme overrides
+```
+
+Avoid linking `inventory.css`, `spells.css`, or `armor-class.css` separately from `index.html`; they are already imported by `styles.css`.
+
+## Assets
+
+Daylight assets remain in their original stable paths. Theme-specific moonlight assets are grouped under `assets/themes/moonlight/`.
+
+```text
 assets/
+  parchment-seamless.png
   compass.png
   corner.png
-  parchment-seamless.png
-  parchment.jpg
   ship.png
   title-banner.png
 
-css/
-  styles.css                 import-only entry point
-  base.css                   global layout and base styles
-  character-sheet.css        sheet sections and mobile layout
-  components.css             shared sheet components such as HP tracker
-  inventory.css              inventory-page layout and tables
-  character-overview.css     Saved Characters cards and live controls
-  speeds.css                 optional movement speeds
-  calendar.css               Materra calendar
-  accessibility.css          Aa text-size controls
+  equipment-icons/        daylight equipment-slot icons
+  spell-icons/            daylight spell-school and area icons
+  icons/navigation/       daylight navigation icons
 
-js/
-  conditions.js              condition reference data
-  storage-config.js          automatic environment detection
-  storage-adapter.js         localStorage / Netlify abstraction
-
-  core.js                    schema, migrations, load/save, navigation
-  tables.js                  weapons and spells
-  conditions-ui.js           sheet condition controls
-  features.js                features and traits
-  proficiencies.js           proficiency rows
-  inventory.js               structured inventory tables
-  speeds.js                  optional movement speeds
-  character-overview.js      Saved Characters cards
-  live-sync.js               HP / AC / conditions autosave and polling
-  app.js                     startup and event binding
-
-  calendar.js                Materra calendar behavior
-  accessibility.js           font-size controls
-
-netlify/
-  functions/
-    get-character-index.js
-    get-character.js
-    save-character.js
-    save-character-status.js
-    delete-character.js
+  themes/moonlight/
+    backgrounds/          moonlight parchment texture
+    branding/             moonlight title banner
+    ornaments/            moonlight compass, corner, and ship art
+    equipment-icons/      moonlight equipment-slot icons
+    spell-icons/          moonlight spell-school and area icons
+    navigation/           moonlight navigation icons
 ```
 
-## Save structure
+`js/theme-mode.js` swaps supported assets automatically when Daylight / Moonlight mode changes, including dynamically rendered spell and equipment icons.
 
-Character JSON remains backwards compatible. No character migration is required
-for this cleanup.
+## SRD libraries
 
-Frequently changing values are saved through:
+Editable snapshot import flows are available for SRD 5.2.1 content:
+
+```text
+data/srd-spells.json      351 spells
+data/srd-feats.json        22 feats, including Mythical Blue origin feats
+data/srd-items.json       435 equipment and magic-item entries
+data/srd-statblocks.json  330 monster and animal statblocks
+```
+
+Imported entries remain editable. Custom spells, feats, traits, items, and NPCs remain supported.
+
+## Character data
+
+Character JSON stays backwards compatible. Frequently changing values are saved through:
 
 ```text
 netlify/functions/save-character-status.js
 ```
 
-This handles:
+This includes:
 
 ```text
 HP
@@ -93,118 +104,19 @@ Armor Class
 Conditions
 ```
 
+## Inventory model
 
-## Inventory page
-
-The fourth sheet tab contains structured inventory lists:
-
-```text
-Equipment
-Attunement
-Magic Items
-Potions & Consumables
-Coinage
-```
-
-Older freeform character text remains available under:
+The inventory page stores owned items, their locations, and equipped or carried slots separately:
 
 ```text
-Imported / Freeform Notes
-```
-
-This means existing saves remain readable while players gradually move items
-into the structured lists.
-
-
-## Inventory phase 2
-
-Inventory now has three layers:
-
-```text
-What do I own?
-Where is it stored?
-What am I currently wearing or carrying?
-```
-
-New structured data:
-
-```text
+customLists.inventoryItems
 customLists.storageLocations
 customLists.equippedSlots
-```
-
-Coinage is mirrored between Main and Inventory, while only one canonical copy is
-stored in the character fields.
-
-
-## Inventory phase 3
-
-Equipped & Carried now supports:
-
-```text
-Equipment items
-Magic items
-Storage / bags
-```
-
-Armor and Clothing are separate equipped slots.
-
-Coinage uses the original coin-box layout again. The Inventory page also has a
-structured Gems & Valuables table stored under:
-
-```text
-customLists.gems
-```
-
-
-## Inventory layout refinement
-
-The inventory page now has a clearer hierarchy:
-
-```text
-Coinage & Gems
-Equipped & Carried
-Location filter
-Equipment
-Containers & Locations | Attunement
-Magic Items | Potions & Consumables
-Other Inventory
-Imported / Freeform Notes
-```
-
-Equipped & Carried supports custom wearable slots stored under:
-
-```text
 customLists.customEquippedSlots
 ```
 
-The shared inventory location filter applies to:
+Legacy freeform inventory notes remain visible under **Imported / Freeform Notes**.
 
-```text
-Equipment
-Magic Items
-Potions & Consumables
-Gems & Valuables
-```
+## Accessibility
 
-## SRD libraries and picker flows
-
-The character sheet includes editable snapshot import flows for SRD 5.2.1 content:
-
-```text
-data/srd-spells.json   351 spells
-data/srd-feats.json     17 feats
-data/srd-items.json    435 equipment and magic-item entries
-```
-
-Visible actions are placed near the top of their relevant sections:
-
-```text
-Spells      + Add Spell | + Create Homebrew Spell
-Features    + Add Feat | + Custom Feature / Trait
-Inventory   + Add Item | + Custom Item
-```
-
-SRD picker entries can be previewed before adding them. Imported entries remain
-editable character snapshots, and custom spells, feats, traits, and items remain
-supported.
+The Aa controls scale local app stylesheets automatically. New UI additions should continue to use local CSS files and remain compatible with both desktop and mobile font scaling.
