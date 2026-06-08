@@ -1215,3 +1215,21 @@
   .inline-statblock-metadata > div { display: block; }
   .inline-statblock-metadata dd { margin-top: 2px; }
 }
+
+/* Phase 5: one shared desktop underline baseline for tracker fields */
+@media (min-width: 1041px) {
+  .combatant-initiative,
+  .combatant-ac {
+    /* Match: HP top padding (6px) + health bar (5px) + bar gap (5px). */
+    padding-top: 16px;
+  }
+
+  .combatant-name-wrap:has(.combatant-name-input) {
+    /* NPC name inputs should land on the same underline baseline as Init., HP and AC. */
+    padding-top: 16px;
+  }
+
+  .combatant-name-wrap:has(.combatant-name-input) .combatant-type {
+    margin-top: 4px;
+  }
+}
