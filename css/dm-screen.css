@@ -1346,3 +1346,154 @@
     margin-left: 14px;
   }
 }
+
+/* Mobile repair: use a small, deterministic card grid. Earlier responsive
+   rules are intentionally overridden here so HP, AC and conditions cannot
+   collapse into one another on narrow screens. */
+@media (max-width: 1040px) {
+  .combatant-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 82px;
+    grid-template-areas:
+      "identity initiative"
+      "hp ac"
+      "conditions concentration"
+      "statblock statblock";
+    column-gap: 14px;
+    row-gap: 13px;
+    align-items: start;
+    padding: 14px 13px 15px 72px;
+  }
+
+  .combatant-order-medallion {
+    position: absolute;
+    top: 16px;
+    left: 18px;
+    grid-area: auto;
+  }
+
+  .combatant-name-wrap {
+    grid-area: identity;
+    min-width: 0;
+    padding: 0;
+    align-self: start;
+  }
+
+  .combatant-initiative {
+    grid-area: initiative;
+    min-width: 0;
+  }
+
+  .combatant-hp {
+    grid-area: hp;
+    min-width: 0;
+  }
+
+  .combatant-ac {
+    grid-area: ac;
+    min-width: 0;
+  }
+
+  .combatant-conditions {
+    grid-area: conditions;
+    min-width: 0;
+  }
+
+  .combatant-concentration {
+    grid-area: concentration;
+    min-width: 0;
+    justify-self: center;
+    align-self: start;
+  }
+
+  .inline-statblock {
+    grid-area: statblock;
+    min-width: 0;
+  }
+
+  .combatant-remove,
+  .player-lock-icon {
+    position: absolute;
+    top: 18px;
+    right: 14px;
+    grid-area: auto;
+    margin: 0;
+  }
+
+  .combatant-hp,
+  .combatant-ac,
+  .combatant-conditions,
+  .combatant-concentration,
+  .combatant-initiative {
+    grid-column: auto;
+    grid-row: auto;
+    padding-top: 16px;
+  }
+
+  .combatant-hp::before,
+  .combatant-ac::before,
+  .combatant-conditions::before,
+  .combatant-concentration::before,
+  .combatant-initiative::before {
+    top: 0;
+  }
+
+  .combatant-hp-bwrap {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .combatant-ac input,
+  .combatant-initiative input {
+    min-height: 28px;
+  }
+
+  .combatant-condition-info {
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  .combatant-condition-info-header {
+    font-size: 10px;
+  }
+
+  .combatant-condition-open {
+    font-size: 10px;
+  }
+
+  .combatant-condition-empty {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .combatant-row {
+    grid-template-columns: minmax(0, 1fr) 72px;
+    column-gap: 11px;
+    row-gap: 12px;
+    padding: 13px 11px 14px 61px;
+  }
+
+  .combatant-order-medallion {
+    top: 15px;
+    left: 15px;
+  }
+
+  .combatant-remove,
+  .player-lock-icon {
+    top: 17px;
+    right: 12px;
+  }
+
+  .combatant-condition-picker {
+    width: 100%;
+    min-height: 34px;
+    font-size: 16px;
+  }
+
+  .combatant-condition-info {
+    padding: 7px 8px;
+    font-size: 9.5px;
+    line-height: 1.28;
+  }
+}

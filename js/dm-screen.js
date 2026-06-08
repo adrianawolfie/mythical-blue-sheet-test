@@ -182,22 +182,48 @@
     return String(value || "").replace(/\s+/g, " ").trim();
   }
 
-  function splitStatblockEntries(text) {
-    const clean = normalizeStatblockLine(text);
-    if (!clean) return [];
-    const matcher = /(?:^|\s)([A-Z][A-Za-z0-9’'()\/,+ -]{1,84}\.)\s/g;
-    const markers = [];
-    let match;
-    while ((match = matcher.exec(clean))) markers.push({ start: match.index + (match[0].startsWith(" ") ? 1 : 0), label: match[1] });
-    if (!markers.length) return [{ title: "", text: clean }];
-    const entries = [];
-    if (markers[0].start > 0) entries.push({ title: "", text: clean.slice(0, markers[0].start).trim() });
-    markers.forEach((marker, index) => {
-      const end = markers[index + 1]?.start ?? clean.length;
-      const chunk = clean.slice(marker.start, end).trim();
-      const title = marker.label.slice(0, -1);
-      entries.push({ title, text: chunk.slice(marker.label.length).trim() });
+  function looksLikeStatblockEntryTitle(value) {
+    const title = normalizeStatblockLine(value);
+    if (!title || title.length > 92 || /[:;!?]/.test(title)) return false;
+
+    const words = title
+      .replace(/[()]/g, " ")
+      .split(/\s+/)
+      .map(word => word.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9’'-]+$/g, ""))
+      .filter(Boolean);
+
+    if (!words.length || words.length > 10) return false;
+
+    const connectors = new Set(["a", "an", "and", "at", "by", "for", "from", "if", "in", "of", "on", "only", "or", "the", "to", "with", "while"]);
+    return words.every((word, index) => {
+      const lower = word.toLowerCase();
+      if (index > 0 && connectors.has(lower)) return true;
+      return /^[A-Z0-9]/.test(word);
     });
+  }
+
+  function splitStatblockEntries(lines) {
+    const sourceLines = Array.isArray(lines) ? lines : String(lines || "").split(/\r?\n/);
+    const entries = [];
+    let current = null;
+
+    sourceLines.map(normalizeStatblockLine).filter(Boolean).forEach(line => {
+      const titleMatch = line.match(/^([^.!?]{1,92})\.\s*(.*)$/);
+      if (titleMatch && looksLikeStatblockEntryTitle(titleMatch[1])) {
+        current = { title: titleMatch[1].trim(), text: titleMatch[2].trim() };
+        entries.push(current);
+        return;
+      }
+
+      if (!current) {
+        current = { title: "", text: line };
+        entries.push(current);
+        return;
+      }
+
+      current.text = `${current.text} ${line}`.trim();
+    });
+
     return entries.filter(entry => entry.title || entry.text);
   }
 
@@ -235,7 +261,7 @@
       } else if (activeSection) activeSection.lines.push(line);
     });
 
-    return { abilities, metadata, sections: sections.map(section => ({ title: section.title, entries: splitStatblockEntries(section.lines.join(" ")) })) };
+    return { abilities, metadata, sections: sections.map(section => ({ title: section.title, entries: splitStatblockEntries(section.lines) })) };
   }
 
   function statblockAbilityMarkup(abilities) {
