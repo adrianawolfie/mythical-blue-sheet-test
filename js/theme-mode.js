@@ -77,12 +77,8 @@
     const nextMode = isMoonlight ? DAYLIGHT : MOONLIGHT;
     const label = nextMode === MOONLIGHT ? 'Moonlight Mode' : 'Daylight Mode';
     const shortLabel = nextMode === MOONLIGHT ? 'Moonlight' : 'Daylight';
-    const icon = isMoonlight ? '☀' : '☾';
-
     document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
-      const iconNode = button.querySelector('.theme-toggle-icon');
       const labelNode = button.querySelector('.theme-toggle-label');
-      if (iconNode) iconNode.textContent = icon;
       if (labelNode) labelNode.textContent = button.classList.contains('theme-toggle-compact') ? shortLabel : label;
       button.setAttribute('aria-label', `Switch to ${label.toLowerCase()}`);
       button.setAttribute('title', `Switch to ${label.toLowerCase()}`);

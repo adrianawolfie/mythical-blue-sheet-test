@@ -23,7 +23,7 @@
     <h1>Mythical Blue · Character Overview</h1>
     <div class="overview-header-actions">
       <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch visual theme">
-        <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+        <span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-orb"></span></span>
         <span class="theme-toggle-label">Moonlight Mode</span>
       </button>
       <div class="accessibility-row index-accessibility-row">
@@ -152,7 +152,7 @@
   <!-- ════════════════════════════════════════════════════════════════ -->
 
   <div class="overview-actions">
-    <a class="overview-action-link" href="dm-screen.html">⚔ Open DM Screen</a>
+    <a class="overview-action-link" href="dm-screen.html"><img class="nav-icon" src="assets/icons/navigation/dm-screen.png" data-daylight-src="assets/icons/navigation/dm-screen.png" data-moonlight-src="assets/themes/moonlight/navigation/dm-screen.png" alt="" aria-hidden="true">Open DM Screen</a>
   </div>
 
   <div id="characterList"></div>
@@ -166,7 +166,7 @@
   <button id="deleteCharacterBtn">Delete Character</button>
 
   <button type="button" class="theme-toggle theme-toggle-compact" data-theme-toggle aria-label="Switch visual theme">
-    <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+    <span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-orb"></span></span>
     <span class="theme-toggle-label">Moonlight</span>
   </button>
 
@@ -350,10 +350,10 @@
     <!-- ═════════════════════════════════════════════════════════════ -->
 
     <div class="tabs">
-      <button class="tab on" onclick="sw('main',this)">⚓ Main</button>
-      <button class="tab" onclick="sw('spells',this)">✦ Spells</button>
-      <button class="tab" onclick="sw('inventory',this)">🎒 Inventory</button>
-      <button class="tab" onclick="sw('journal',this)">📜 Journal</button>
+      <button class="tab on" onclick="sw('main',this)"><img class="tab-icon" src="assets/icons/navigation/main.png" data-daylight-src="assets/icons/navigation/main.png" data-moonlight-src="assets/themes/moonlight/navigation/main.png" alt="" aria-hidden="true"><span>Main</span></button>
+      <button class="tab" onclick="sw('spells',this)"><img class="tab-icon" src="assets/icons/navigation/spells.png" data-daylight-src="assets/icons/navigation/spells.png" data-moonlight-src="assets/themes/moonlight/navigation/spells.png" alt="" aria-hidden="true"><span>Spells</span></button>
+      <button class="tab" onclick="sw('inventory',this)"><img class="tab-icon" src="assets/icons/navigation/inventory.png" data-daylight-src="assets/icons/navigation/inventory.png" data-moonlight-src="assets/themes/moonlight/navigation/inventory.png" alt="" aria-hidden="true"><span>Inventory</span></button>
+      <button class="tab" onclick="sw('journal',this)"><img class="tab-icon" src="assets/icons/navigation/journal.png" data-daylight-src="assets/icons/navigation/journal.png" data-moonlight-src="assets/themes/moonlight/navigation/journal.png" alt="" aria-hidden="true"><span>Journal</span></button>
     </div>
 
     <div id="pg-main" class="pg on">
