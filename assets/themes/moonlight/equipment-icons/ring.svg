@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><filter id="moonGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.35" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+  <g filter="url(#moonGlow)" fill="none" stroke="#A9DCFF" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="58" r="19" stroke-width="4"/>
+    <path d="M37 58c0 8 6 14 13 14s13-6 13-14" stroke="#F6D77A" stroke-width="2.4" opacity=".65"/>
+    <path d="M50 22l6 6-6 6-6-6z" fill="#F6D77A" stroke-width="3"/>
+    <path d="M50 26V18M50 34v8M42 26h-8M58 26h8" stroke-width="2.4" opacity=".95"/>
+  </g>
+</svg>

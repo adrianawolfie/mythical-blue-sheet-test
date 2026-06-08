@@ -2,7 +2,10 @@
   const STORAGE_KEY = 'mythicalBlueThemeMode';
   const DAYLIGHT = 'daylight';
   const MOONLIGHT = 'moonlight';
-  const THEME_ASSET_ROOTS = ['assets/equipment-icons/', 'assets/spell-icons/'];
+  const THEME_ICON_MAP = [
+    { daylight: 'assets/equipment-icons/', moonlight: 'assets/themes/moonlight/equipment-icons/' },
+    { daylight: 'assets/spell-icons/', moonlight: 'assets/themes/moonlight/spell-icons/' }
+  ];
 
   function getStoredTheme() {
     try {
@@ -24,16 +27,20 @@
   }
 
   function moonlightAssetPath(src = '') {
-    if (!src || src.includes('-moonlight.')) return src;
-    return src.replace(/(\.[a-z0-9]+)(?:[?#].*)?$/i, '-moonlight$1');
+    if (!src) return src;
+    const normalized = daylightAssetPath(src);
+    const mapping = THEME_ICON_MAP.find(item => normalized.includes(item.daylight));
+    return mapping ? normalized.replace(mapping.daylight, mapping.moonlight) : normalized;
   }
 
   function daylightAssetPath(src = '') {
-    return src.replace(/-moonlight(\.[a-z0-9]+)(?:[?#].*)?$/i, '$1');
+    if (!src) return src;
+    const mapping = THEME_ICON_MAP.find(item => src.includes(item.moonlight));
+    return mapping ? src.replace(mapping.moonlight, mapping.daylight) : src;
   }
 
   function isThemeIconAsset(src = '') {
-    return THEME_ASSET_ROOTS.some(root => src.includes(root));
+    return THEME_ICON_MAP.some(item => src.includes(item.daylight) || src.includes(item.moonlight));
   }
 
   function updateImageAsset(img, mode) {

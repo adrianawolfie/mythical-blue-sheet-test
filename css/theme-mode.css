@@ -110,7 +110,7 @@ html[data-theme="moonlight"] .spell-picker-modal,
 html[data-theme="moonlight"] .spell-editor-modal,
 html[data-theme="moonlight"] .library-picker-modal,
 html[data-theme="moonlight"] .npc-picker-modal {
-  background-image: url('../assets/parchment-seamless-moonlight.png');
+  background-image: url('../assets/themes/moonlight/backgrounds/parchment-seamless.png');
 }
 
 html[data-theme="moonlight"] .start-page::before,
@@ -120,17 +120,17 @@ html[data-theme="moonlight"] .initiative-panel::before {
 }
 
 html[data-theme="moonlight"] .corner {
-  background-image: url('../assets/corner-moonlight.png');
+  background-image: url('../assets/themes/moonlight/ornaments/corner.png');
 }
 
 html[data-theme="moonlight"] .compass-watermark {
-  background-image: url('../assets/compass-moonlight.png');
+  background-image: url('../assets/themes/moonlight/ornaments/compass.png');
   opacity: .42;
   mix-blend-mode: screen;
 }
 
 html[data-theme="moonlight"] .ship-art {
-  background-image: url('../assets/ship-moonlight.png');
+  background-image: url('../assets/themes/moonlight/ornaments/ship.png');
   opacity: .68;
   mix-blend-mode: screen;
 }
@@ -744,4 +744,226 @@ html[data-theme="moonlight"] .equipped-slot-card.is-active .equipped-slot-icon-w
 html[data-theme="moonlight"] .concentration-toggle input:checked + .concentration-rune,
 html[data-theme="moonlight"] .active-turn .combatant-order-medallion {
   box-shadow: 0 0 13px rgba(99, 191, 255, .34);
+}
+
+
+/* ─── Moonlight phase 3: main-sheet contrast and luminous gilding ─── */
+html[data-theme="moonlight"] {
+  --moon-panel-deep: rgba(3, 17, 42, .88);
+  --moon-panel: rgba(7, 31, 70, .84);
+  --moon-panel-soft: rgba(19, 54, 102, .68);
+  --moon-panel-highlight: rgba(39, 86, 150, .42);
+  --moon-gold: #ffe08a;
+  --moon-gold-bright: #fff0b3;
+  --moon-gold-line: rgba(255, 224, 138, .88);
+  --moon-gold-soft-line: rgba(255, 224, 138, .58);
+}
+
+/* Give the main character sheet stronger card separation. */
+html[data-theme="moonlight"] .ab,
+html[data-theme="moonlight"] .bonbox,
+html[data-theme="moonlight"] .sb-card,
+html[data-theme="moonlight"] .cbox,
+html[data-theme="moonlight"] .dsbox,
+html[data-theme="moonlight"] .condition-control,
+html[data-theme="moonlight"] .condition-explanation,
+html[data-theme="moonlight"] .inventory-card,
+html[data-theme="moonlight"] .inventory-equipment-card,
+html[data-theme="moonlight"] .inventory-unified-card,
+html[data-theme="moonlight"] .inventory-filter-card,
+html[data-theme="moonlight"] .compact-main-coinage-card,
+html[data-theme="moonlight"] .features-traits-main,
+html[data-theme="moonlight"] .proficiencies-card,
+html[data-theme="moonlight"] .armor-class-panel,
+html[data-theme="moonlight"] .equipped-carried-card,
+html[data-theme="moonlight"] .containers-locations-card,
+html[data-theme="moonlight"] .journal-note-entry,
+html[data-theme="moonlight"] .spellbook-card {
+  background: linear-gradient(145deg, var(--moon-panel-soft), var(--moon-panel-deep));
+  border-color: var(--moon-gold-line) !important;
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, .20),
+    0 0 12px rgba(84, 172, 255, .07),
+    inset 0 1px 0 rgba(221, 242, 255, .08);
+}
+
+html[data-theme="moonlight"] .ab::after,
+html[data-theme="moonlight"] .sb-card::after {
+  border-color: rgba(255, 229, 149, .36);
+}
+
+/* Keep panels dark rather than daylight-grey. */
+html[data-theme="moonlight"] .modcircle,
+html[data-theme="moonlight"] .scorebox input,
+html[data-theme="moonlight"] .bonbox input,
+html[data-theme="moonlight"] .hstat input,
+html[data-theme="moonlight"] .cbox2 input,
+html[data-theme="moonlight"] .condition-chip,
+html[data-theme="moonlight"] .armor-class-total,
+html[data-theme="moonlight"] .armor-class-active,
+html[data-theme="moonlight"] .inventory-unified-row,
+html[data-theme="moonlight"] .equipped-slot-card,
+html[data-theme="moonlight"] .custom-equipped-slot,
+html[data-theme="moonlight"] .feature-entry,
+html[data-theme="moonlight"] .proficiency-value-row,
+html[data-theme="moonlight"] .extra-speed-row {
+  background: rgba(5, 25, 58, .72) !important;
+  border-color: var(--moon-gold-soft-line) !important;
+  color: var(--moon-text) !important;
+}
+
+html[data-theme="moonlight"] .modcircle,
+html[data-theme="moonlight"] .scorebox input,
+html[data-theme="moonlight"] .bonbox input,
+html[data-theme="moonlight"] .hstat input,
+html[data-theme="moonlight"] .cbox2 input {
+  box-shadow: inset 0 0 0 1px rgba(176, 221, 255, .08), 0 0 8px rgba(255, 224, 138, .06);
+}
+
+/* Explicit text hierarchy for the main sheet. */
+html[data-theme="moonlight"] .abn,
+html[data-theme="moonlight"] .sb-hdr,
+html[data-theme="moonlight"] .dsbox-title,
+html[data-theme="moonlight"] .wtbl th,
+html[data-theme="moonlight"] .cbox2 label,
+html[data-theme="moonlight"] .hfl > label,
+html[data-theme="moonlight"] .hstat label,
+html[data-theme="moonlight"] .bonbox label,
+html[data-theme="moonlight"] .cbox label,
+html[data-theme="moonlight"] .inventory-subheading,
+html[data-theme="moonlight"] .equipped-slot-label,
+html[data-theme="moonlight"] .feature-meta-row,
+html[data-theme="moonlight"] .proficiency-type-label,
+html[data-theme="moonlight"] .armor-class-panel-title,
+html[data-theme="moonlight"] .inventory-filter-label,
+html[data-theme="moonlight"] .spellbook-subtitle,
+html[data-theme="moonlight"] .tabs .tab {
+  color: var(--moon-gold-bright) !important;
+  opacity: 1 !important;
+  text-shadow: 0 0 7px rgba(255, 224, 138, .13);
+}
+
+html[data-theme="moonlight"] .tabs .tab.on {
+  color: #ffffff !important;
+  border-bottom-color: var(--moon-gold-bright) !important;
+  text-shadow: 0 0 8px rgba(148, 211, 255, .38);
+}
+
+html[data-theme="moonlight"] .sn,
+html[data-theme="moonlight"] .sb,
+html[data-theme="moonlight"] .wtbl td input,
+html[data-theme="moonlight"] .sb-card textarea,
+html[data-theme="moonlight"] .condition-display,
+html[data-theme="moonlight"] .condition-explanation,
+html[data-theme="moonlight"] .condition-explanation strong,
+html[data-theme="moonlight"] .feature-entry,
+html[data-theme="moonlight"] .inventory-unified-row,
+html[data-theme="moonlight"] .journal-note-entry,
+html[data-theme="moonlight"] .proficiency-value-row,
+html[data-theme="moonlight"] .extra-speed-row,
+html[data-theme="moonlight"] .inventory-unified-table td,
+html[data-theme="moonlight"] .inventory-unified-table input,
+html[data-theme="moonlight"] .inventory-unified-table select,
+html[data-theme="moonlight"] .inventory-unified-table textarea {
+  color: var(--moon-text) !important;
+}
+
+html[data-theme="moonlight"] .hfl > input,
+html[data-theme="moonlight"] .cbox input,
+html[data-theme="moonlight"] .hp-cur-input,
+html[data-theme="moonlight"] .hp-max-input,
+html[data-theme="moonlight"] .modcircle input,
+html[data-theme="moonlight"] .scorebox input,
+html[data-theme="moonlight"] .bonbox input,
+html[data-theme="moonlight"] .hstat input,
+html[data-theme="moonlight"] .cbox2 input,
+html[data-theme="moonlight"] .sb,
+html[data-theme="moonlight"] .wtbl td input {
+  color: #ffffff !important;
+  border-color: var(--moon-gold-soft-line) !important;
+}
+
+/* Gold borders should remain clearly visible against ocean blue. */
+html[data-theme="moonlight"] .ab,
+html[data-theme="moonlight"] .bonbox,
+html[data-theme="moonlight"] .sb-card,
+html[data-theme="moonlight"] .cbox,
+html[data-theme="moonlight"] .dsbox,
+html[data-theme="moonlight"] .calendar-widget,
+html[data-theme="moonlight"] .calendar-sheet-bar,
+html[data-theme="moonlight"] .condition-control,
+html[data-theme="moonlight"] .condition-explanation,
+html[data-theme="moonlight"] .inventory-card,
+html[data-theme="moonlight"] .inventory-equipment-card,
+html[data-theme="moonlight"] .inventory-unified-card,
+html[data-theme="moonlight"] .equipped-carried-card,
+html[data-theme="moonlight"] .features-traits-main,
+html[data-theme="moonlight"] .proficiencies-card,
+html[data-theme="moonlight"] .armor-class-panel,
+html[data-theme="moonlight"] .spellbook-card,
+html[data-theme="moonlight"] .spell-card,
+html[data-theme="moonlight"] .wtbl th,
+html[data-theme="moonlight"] .wtbl td,
+html[data-theme="moonlight"] .inventory-unified-table th,
+html[data-theme="moonlight"] .inventory-unified-table td {
+  border-color: var(--moon-gold-soft-line) !important;
+}
+
+html[data-theme="moonlight"] .sb-hdr,
+html[data-theme="moonlight"] .inventory-unified-table th,
+html[data-theme="moonlight"] .wtbl th {
+  background: rgba(3, 18, 45, .60);
+  border-bottom-color: var(--moon-gold-line) !important;
+}
+
+html[data-theme="moonlight"] .sb-hdr::before,
+html[data-theme="moonlight"] .sb-hdr::after,
+html[data-theme="moonlight"] .insp,
+html[data-theme="moonlight"] .dot.on,
+html[data-theme="moonlight"] .svdie.on,
+html[data-theme="moonlight"] .condition-chip.active {
+  color: var(--moon-gold-bright);
+}
+
+html[data-theme="moonlight"] .dot,
+html[data-theme="moonlight"] .svdie {
+  border-color: rgba(194, 227, 255, .82);
+}
+
+html[data-theme="moonlight"] .dot.on,
+html[data-theme="moonlight"] .svdie.on {
+  background: var(--moon-gold);
+  border-color: var(--moon-gold-bright);
+}
+
+html[data-theme="moonlight"] .condition-chip.active {
+  background: rgba(255, 224, 138, .22) !important;
+  border-color: var(--moon-gold-bright) !important;
+}
+
+/* Preserve readable editing surfaces in tables and notes. */
+html[data-theme="moonlight"] .wtbl td,
+html[data-theme="moonlight"] .inventory-unified-table td {
+  background: rgba(2, 16, 39, .44);
+}
+
+html[data-theme="moonlight"] .wtbl tr:hover td,
+html[data-theme="moonlight"] .inventory-unified-table tr:hover td {
+  background: rgba(21, 64, 116, .38);
+}
+
+html[data-theme="moonlight"] .condition-chevron {
+  border-color: var(--moon-gold-bright);
+}
+
+/* Small luminous edge without turning the UI neon. */
+html[data-theme="moonlight"] .sb-card,
+html[data-theme="moonlight"] .ab,
+html[data-theme="moonlight"] .spell-card,
+html[data-theme="moonlight"] .inventory-unified-card,
+html[data-theme="moonlight"] .equipped-carried-card {
+  box-shadow:
+    0 3px 10px rgba(0,0,0,.22),
+    0 0 11px rgba(110, 191, 255, .06),
+    inset 0 0 0 1px rgba(255, 238, 175, .05);
 }
