@@ -2154,3 +2154,57 @@
     width: 58%;
   }
 }
+
+/* ─── DEFENSES — FIXED + BUTTON COLUMN ─────────────────────────────────
+   Keep the three add buttons vertically aligned, like Proficiencies.
+   The label column is fixed so the long Vulnerabilities label can never
+   push its + button into the value input. */
+.defense-type-cell {
+  width: 44%;
+  padding: 7px 4px 7px 7px;
+}
+
+.defense-type-cell .proficiency-type-wrap {
+  display: grid;
+  grid-template-columns: 108px 18px;
+  column-gap: 8px;
+  align-items: center;
+  justify-content: start;
+  width: max-content;
+  max-width: 100%;
+}
+
+.defense-type-cell .proficiency-type-label {
+  min-width: 0;
+  overflow: visible;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.defense-type-cell .proficiency-add-row {
+  justify-self: start;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.defense-table .proficiency-values-cell {
+  width: 56%;
+  padding: 4px 6px 4px 2px;
+}
+
+@media (max-width: 768px) {
+  .defense-type-cell {
+    width: 46%;
+    padding-left: 6px;
+  }
+
+  .defense-type-cell .proficiency-type-wrap {
+    grid-template-columns: 102px 18px;
+    column-gap: 7px;
+  }
+
+  .defense-table .proficiency-values-cell {
+    width: 54%;
+  }
+}
