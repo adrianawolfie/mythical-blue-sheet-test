@@ -2100,3 +2100,57 @@
     letter-spacing: .32px;
   }
 }
+
+/* ─── DEFENSES — LEFT-ALIGNED LABELS WITH ROOMIER VALUE INPUTS ────────── */
+.defense-type-cell {
+  width: 40%;
+  padding: 7px 4px 7px 7px;
+  text-align: left;
+}
+
+.defense-type-cell .proficiency-type-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.defense-type-cell .proficiency-type-label {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: visible;
+  color: var(--navy-deep);
+  font-size: 7.6px;
+  letter-spacing: .5px;
+  line-height: 1.2;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.defense-type-cell .proficiency-add-row {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.defense-table .proficiency-values-cell {
+  width: 60%;
+  padding: 4px 6px 4px 2px;
+}
+
+@media (max-width: 768px) {
+  .defense-type-cell {
+    width: 42%;
+    padding-left: 6px;
+  }
+
+  .defense-type-cell .proficiency-type-label {
+    font-size: 7.2px;
+    letter-spacing: .38px;
+  }
+
+  .defense-table .proficiency-values-cell {
+    width: 58%;
+  }
+}

@@ -1914,3 +1914,40 @@ html[data-theme="moonlight"] .feature-details-panel textarea {
   color: var(--moon-text, #eef6ff);
   border-color: rgba(160, 214, 255, .56);
 }
+
+/* ─── MOONLIGHT — NATIVE DROPDOWN OPTION CONTRAST ──────────────────────
+   Browsers often render an opened <select> on their own surface. Keep the
+   option list explicitly dark so pale Moonlight text stays readable. */
+html[data-theme="moonlight"] select {
+  color-scheme: dark;
+}
+
+html[data-theme="moonlight"] select option,
+html[data-theme="moonlight"] select optgroup {
+  background-color: #082653 !important;
+  color: #f3fbff !important;
+}
+
+html[data-theme="moonlight"] select option:checked,
+html[data-theme="moonlight"] select option:hover,
+html[data-theme="moonlight"] select option:focus {
+  background-color: #315f9f !important;
+  color: #ffffff !important;
+}
+
+/* ─── MOONLIGHT — DEFENSES LEFT-ALIGNED META ROW ─────────────────────── */
+html[data-theme="moonlight"] .defense-type-cell .proficiency-type-label {
+  color: var(--moon-ghost-bright, #dff6ff) !important;
+}
+
+html[data-theme="moonlight"] .defense-type-cell .proficiency-add-row {
+  border-color: var(--moon-ghost-soft-line, rgba(156, 220, 255, .52)) !important;
+  background: rgba(15, 52, 96, .34) !important;
+  color: var(--moon-ghost-bright, #dff6ff) !important;
+}
+
+html[data-theme="moonlight"] .defense-type-cell .proficiency-add-row:hover,
+html[data-theme="moonlight"] .defense-type-cell .proficiency-add-row:focus-visible {
+  border-color: var(--moon-ghost-line, rgba(181, 232, 255, .82)) !important;
+  background: rgba(77, 154, 215, .24) !important;
+}
