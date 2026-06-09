@@ -1759,3 +1759,150 @@
     width: 70px;
   }
 }
+
+/* ─── FEATURES & TRAITS — SEARCH, CATEGORY AND SORT CONTROLS ───────────── */
+.feature-browser-toolbar {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.6fr) minmax(135px, .8fr) minmax(135px, .8fr) auto;
+  gap: 8px;
+  align-items: end;
+  padding: 10px 10px 6px;
+  border-bottom: 1px dotted rgba(184,144,44,.52);
+  background: rgba(255,253,245,.10);
+}
+
+.feature-browser-toolbar label {
+  min-width: 0;
+}
+
+.feature-browser-toolbar label > span,
+.feature-category-row label,
+.feature-filter-count {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--gold-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.feature-browser-toolbar input,
+.feature-browser-toolbar select,
+.feature-category-row select {
+  width: 100%;
+  min-width: 0;
+  min-height: 31px;
+  border: 1px solid rgba(184,144,44,.68);
+  background: rgba(255,253,245,.36);
+  color: var(--ink);
+  font-family: var(--small-italic-font);
+  font-size: 12px;
+  padding: 5px 7px;
+  outline: none;
+}
+
+.feature-browser-toolbar input:focus,
+.feature-browser-toolbar select:focus,
+.feature-category-row select:focus {
+  border-color: var(--navy);
+  background: rgba(255,253,245,.58);
+}
+
+.feature-filter-clear {
+  min-height: 31px;
+  border: 1px solid var(--gold-deep);
+  background: rgba(255,253,245,.20);
+  color: var(--navy-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .7px;
+  padding: 6px 9px;
+  text-transform: uppercase;
+}
+
+.feature-filter-clear:hover,
+.feature-filter-clear:focus-visible {
+  background: rgba(214,168,56,.14);
+  outline: none;
+}
+
+.feature-filter-count {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: rgba(28,39,80,.62);
+  letter-spacing: .7px;
+}
+
+.feature-category-row {
+  display: grid;
+  grid-template-columns: auto minmax(150px, 240px);
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.feature-category-row label {
+  margin: 0;
+}
+
+.feature-entry[hidden] {
+  display: none !important;
+}
+
+/* ─── DEFENSES ─────────────────────────────────────────────────────────── */
+.defenses-card {
+  margin-top: 12px;
+}
+
+.defense-type-cell {
+  width: 42%;
+}
+
+@media (max-width: 768px) {
+  .feature-browser-toolbar {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .feature-filter-search {
+    grid-column: 1 / -1;
+  }
+
+  .feature-filter-clear {
+    justify-self: start;
+  }
+
+  .feature-browser-toolbar input,
+  .feature-browser-toolbar select,
+  .feature-category-row select {
+    min-height: 36px;
+    font-size: 16px;
+  }
+
+  .feature-category-row {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
+  .defenses-card {
+    order: 9;
+    grid-column: 1 / -1;
+  }
+
+  .main-equipment-card {
+    order: 10;
+  }
+
+  .rp > .features-traits-main {
+    order: 11;
+  }
+}
+
+@media (max-width: 420px) {
+  .defenses-card {
+    grid-column: 1 / -1;
+  }
+}

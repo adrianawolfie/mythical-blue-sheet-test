@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderSelectedConditions();
   renderFeatureEntries("featList", []);
   renderProficiencyRows();
+  renderDefenseRows();
   renderArmorClassState();
   bindArmorClassControls();
   bindInventoryControls();

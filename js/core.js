@@ -385,6 +385,7 @@ customLists: {
   weapons: collectWeaponRows(),
   spells: collectSpellRows(),
   proficiencies: collectProficiencyRows(),
+  defenses: collectDefenseRows(),
   journalNotes: collectJournalNotes(),
   inventoryItems: collectUnifiedInventoryRows(),
   inventoryEquipment: collectInventoryEquipmentRows(),
@@ -442,6 +443,7 @@ renderProficiencyRows(
   character.customLists?.proficiencies ||
   proficienciesFromNamedFields(normalizedFields)
 );
+renderDefenseRows(character.customLists?.defenses || {});
 applyUiState(character.uiState || {});
 focusedCondition = "";
 renderSelectedConditions();
@@ -513,6 +515,7 @@ resetInventoryRows();
 renderExtraSpeedRows();
 renderArmorClassState();
 renderProficiencyRows();
+renderDefenseRows();
 applyUiState({});
 focusedCondition = "";
 renderSelectedConditions();

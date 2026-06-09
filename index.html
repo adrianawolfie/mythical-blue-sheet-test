@@ -441,6 +441,13 @@
             </table>
           </div>
 
+          <div class="sb-card defenses-card">
+            <div class="sb-hdr">Defenses</div>
+            <table class="proficiency-table defense-table">
+              <tbody id="defenseBody"></tbody>
+            </table>
+          </div>
+
         </div>
 
         <div class="rp">
@@ -499,6 +506,30 @@
       <button type="button" class="feature-add" onclick="addFeatureEntry('featList')">+ Custom Feature / Trait</button>
       <button type="button" class="feature-add" onclick="toggleFeatureEditMode('featList', this)">Edit</button>
     </div>
+  </div>
+
+  <div class="feature-browser-toolbar" aria-label="Feature and trait filters">
+    <label class="feature-filter-search">
+      <span>Search</span>
+      <input id="featureSearchInput" type="search" placeholder="Search features and traits by name…" autocomplete="off" />
+    </label>
+    <label>
+      <span>Category</span>
+      <select id="featureCategoryFilter">
+        <option value="all">All categories</option>
+      </select>
+    </label>
+    <label>
+      <span>Sort</span>
+      <select id="featureSortSelect">
+        <option value="manual">Manual order</option>
+        <option value="nameAsc">Name A–Z</option>
+        <option value="nameDesc">Name Z–A</option>
+        <option value="categoryAsc">Category A–Z</option>
+      </select>
+    </label>
+    <button id="featureClearFiltersBtn" type="button" class="feature-filter-clear">Clear</button>
+    <span id="featureFilterCount" class="feature-filter-count" aria-live="polite"></span>
   </div>
 
   <div id="featList" class="feature-list"></div>
@@ -848,6 +879,7 @@
 <script src="js/conditions-ui.js"></script>
 <script src="js/features.js"></script>
 <script src="js/proficiencies.js"></script>
+<script src="js/defenses.js"></script>
 <script src="js/inventory.js"></script>
 <script src="js/srd-library-ui.js"></script>
 <script src="js/journal-notes.js"></script>

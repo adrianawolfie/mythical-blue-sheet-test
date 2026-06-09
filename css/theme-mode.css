@@ -1834,3 +1834,33 @@ html[data-theme="moonlight"] .start-page-heading-row {
     width: auto !important;
   }
 }
+
+/* ─── Feature browser and defenses: Moonlight support ─────────────────── */
+html[data-theme="moonlight"] .defenses-card,
+html[data-theme="moonlight"] .feature-browser-toolbar {
+  border-color: var(--moon-ghost-soft-line) !important;
+  background: rgba(2, 22, 57, .42) !important;
+}
+
+html[data-theme="moonlight"] .feature-browser-toolbar label > span,
+html[data-theme="moonlight"] .feature-category-row label,
+html[data-theme="moonlight"] .feature-filter-count,
+html[data-theme="moonlight"] .defense-type-cell .proficiency-type-label {
+  color: var(--moon-ghost-bright) !important;
+}
+
+html[data-theme="moonlight"] .feature-browser-toolbar input,
+html[data-theme="moonlight"] .feature-browser-toolbar select,
+html[data-theme="moonlight"] .feature-category-row select,
+html[data-theme="moonlight"] .feature-filter-clear,
+html[data-theme="moonlight"] .defense-value-row input {
+  border-color: var(--moon-ghost-soft-line) !important;
+  background: rgba(2, 22, 57, .66) !important;
+  color: #eefaff !important;
+}
+
+html[data-theme="moonlight"] .feature-filter-clear:hover,
+html[data-theme="moonlight"] .feature-filter-clear:focus-visible {
+  border-color: var(--moon-ghost-line) !important;
+  background: rgba(77, 154, 215, .22) !important;
+}
