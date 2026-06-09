@@ -4,6 +4,10 @@
 const DEFAULT_FEATURE_CATEGORIES = [
   "Class Feature",
   "Species Trait",
+  "Origin Feat",
+  "General Feat",
+  "Fighting Style Feat",
+  "Epic Boon Feat",
   "Other"
 ];
 
@@ -32,9 +36,11 @@ function collectKnownFeatureCategories(listId = "featList") {
     if (category) categories.add(category);
   });
 
-  return Array.from(categories).sort((a, b) =>
-    a.localeCompare(b, undefined, { sensitivity: "base" })
-  );
+  const extras = Array.from(categories)
+    .filter(category => !DEFAULT_FEATURE_CATEGORIES.includes(category))
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+
+  return [...DEFAULT_FEATURE_CATEGORIES, ...extras];
 }
 
 function featureCategoryOptions(selectedCategory = "Other", listId = "featList") {
@@ -44,7 +50,6 @@ function featureCategoryOptions(selectedCategory = "Other", listId = "featList")
   if (!categories.includes(selected)) categories.push(selected);
 
   return categories
-    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
     .map(category => `<option value="${escapeHtml(category)}" ${category === selected ? "selected" : ""}>${escapeHtml(category)}</option>`)
     .join("") + `<option value="${CREATE_FEATURE_CATEGORY_VALUE}">+ Create category…</option>`;
 }
@@ -86,10 +91,11 @@ function refreshFeatureView(listId = "featList") {
 
   const visibleEntries = entries.filter(entry => {
     const name = String(entry.querySelector(".feature-name")?.value || "").toLowerCase();
+    const short = String(entry.querySelector(".feature-short")?.value || "").toLowerCase();
     const category = String(entry.dataset.category || "Other");
-    const matchesName = !query || name.includes(query);
+    const matchesSearch = !query || `${name} ${short}`.includes(query);
     const matchesCategory = categoryFilter === "all" || category === categoryFilter;
-    const visible = matchesName && matchesCategory;
+    const visible = matchesSearch && matchesCategory;
     entry.hidden = !visible;
     return visible;
   });
@@ -104,18 +110,11 @@ function refreshFeatureView(listId = "featList") {
     }
   };
 
-  const displayOrder = sorters[sortMode]
-    ? [...entries].sort(sorters[sortMode])
-    : entries;
-
-  displayOrder.forEach((entry, index) => {
-    entry.style.order = String(index);
-  });
+  const displayOrder = sorters[sortMode] ? [...entries].sort(sorters[sortMode]) : entries;
+  displayOrder.forEach((entry, index) => { entry.style.order = String(index); });
 
   const count = document.getElementById("featureFilterCount");
-  if (count) {
-    count.textContent = `${visibleEntries.length} of ${entries.length} feature${entries.length === 1 ? "" : "s"}`;
-  }
+  if (count) count.textContent = `${visibleEntries.length} of ${entries.length} feature${entries.length === 1 ? "" : "s"}`;
 }
 
 function clearFeatureFilters(listId = "featList") {
@@ -155,7 +154,6 @@ function promptForFeatureCategory(entry, listId = "featList") {
     refreshFeatureCategorySelects(listId);
     return;
   }
-
   assignFeatureCategory(entry, category, listId);
 }
 
@@ -164,9 +162,7 @@ function addFeatureEntry(listId, data = {}) {
   if (!list) return;
 
   const category = inferFeatureCategory(data);
-  const hasResource =
-    data.hasResource === true ||
-    Boolean(String(data.resource || "").trim());
+  const hasResource = data.hasResource === true || Boolean(String(data.resource || "").trim());
 
   const entry = document.createElement("div");
   entry.className = "feature-entry";
@@ -180,24 +176,21 @@ function addFeatureEntry(listId, data = {}) {
       <input class="feature-short" type="text" placeholder="Short description" value="${escapeHtml(data.short || "")}" />
     </div>
 
-    <div class="feature-category-row">
-      <label>Category</label>
-      <select class="feature-category-select" aria-label="Feature category">
-        ${featureCategoryOptions(category, listId)}
-      </select>
-    </div>
+    <div class="feature-entry-footer">
+      <label class="feature-category-control">
+        <span class="feature-category-label">Category</span>
+        <select class="feature-category-select" aria-label="Feature category">
+          ${featureCategoryOptions(category, listId)}
+        </select>
+      </label>
 
-    <div class="feature-meta-row">
       <details ${data.open ? "open" : ""}>
         <summary>Details</summary>
         <textarea class="feature-details" placeholder="Full rules text, usage limits, recharge, source, notes...">${escapeHtml(data.details || "")}</textarea>
       </details>
 
       <div class="feature-resource-area ${hasResource ? "has-resource" : ""}">
-        <button type="button" class="feature-resource-toggle">
-          + Add Resource
-        </button>
-
+        <button type="button" class="feature-resource-toggle">+ Add Resource</button>
         <div class="feature-resource-box">
           <label>Resource</label>
           <input class="feature-resource" type="text" placeholder="2/3 Short Rest" value="${escapeHtml(data.resource || "")}" />
@@ -235,7 +228,6 @@ function addFeatureEntry(listId, data = {}) {
       promptForFeatureCategory(entry, listId);
       return;
     }
-
     assignFeatureCategory(entry, categorySelect.value, listId);
   });
 
@@ -274,7 +266,6 @@ function addFeatureEntry(listId, data = {}) {
 function toggleFeatureEditMode(listId, button) {
   const list = document.getElementById(listId);
   if (!list) return;
-
   const isEditing = list.classList.toggle("editing");
   if (button) button.classList.toggle("editing-active", isEditing);
 }
@@ -283,14 +274,11 @@ function collectFeatureEntries(listId) {
   return getFeatureEntries(listId).map(entry => {
     const resourceArea = entry.querySelector(".feature-resource-area");
     const hasResource = resourceArea?.classList.contains("has-resource") || false;
-
     return {
       name: entry.querySelector(".feature-name")?.value || "",
       short: entry.querySelector(".feature-short")?.value || "",
       hasResource,
-      resource: hasResource
-        ? entry.querySelector(".feature-resource")?.value || ""
-        : "",
+      resource: hasResource ? entry.querySelector(".feature-resource")?.value || "" : "",
       details: entry.querySelector(".feature-details")?.value || "",
       open: entry.querySelector("details")?.open || false,
       sourceId: entry.dataset.sourceId || "",
@@ -303,29 +291,12 @@ function collectFeatureEntries(listId) {
 function renderFeatureEntries(listId, entries = []) {
   const list = document.getElementById(listId);
   if (!list) return;
-
   list.innerHTML = "";
 
   if (!entries.length) {
-    addFeatureEntry(listId, {
-      name: "Class Feature",
-      category: "Class Feature",
-      short: "Short summary of what this feature does.",
-      resource: "1/1 Short Rest",
-      details: ""
-    });
-    addFeatureEntry(listId, {
-      name: "Species Trait",
-      category: "Species Trait",
-      short: "Short summary of what this trait does.",
-      details: ""
-    });
-    addFeatureEntry(listId, {
-      name: "Feat",
-      category: "Other",
-      short: "Short summary of what this feat does.",
-      details: ""
-    });
+    addFeatureEntry(listId, { name: "Class Feature", category: "Class Feature", short: "Short summary of what this feature does.", resource: "1/1 Short Rest", details: "" });
+    addFeatureEntry(listId, { name: "Species Trait", category: "Species Trait", short: "Short summary of what this trait does.", details: "" });
+    addFeatureEntry(listId, { name: "Feat", category: "Other", short: "Short summary of what this feat does.", details: "" });
     return;
   }
 

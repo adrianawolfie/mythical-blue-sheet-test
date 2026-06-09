@@ -1906,3 +1906,152 @@
     grid-column: 1 / -1;
   }
 }
+
+/* ─── FEATURES & TRAITS — REFINED COMPACT CARDS ───────────────────────── */
+.feature-entry {
+  padding: 9px;
+  border-color: rgba(184,144,44,.62);
+  background: rgba(255,253,245,.22);
+}
+
+.feature-entry-top {
+  grid-template-columns: minmax(145px, .9fr) minmax(0, 1.75fr);
+  gap: 8px;
+}
+
+.feature-entry-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 8px;
+  align-items: center;
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px dotted rgba(184,144,44,.42);
+}
+
+.feature-category-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.feature-category-label {
+  color: rgba(28,39,80,.62);
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .9px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.feature-category-select {
+  width: auto;
+  max-width: 210px;
+  min-width: 0;
+  min-height: 24px;
+  border: none;
+  border-bottom: 1px dotted rgba(184,144,44,.56);
+  background: transparent;
+  color: var(--navy-deep);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  font-style: italic;
+  padding: 2px 20px 2px 3px;
+  outline: none;
+}
+
+.feature-category-select:hover,
+.feature-category-select:focus {
+  border-bottom-color: var(--navy);
+  background: rgba(255,253,245,.22);
+}
+
+.feature-entry-footer details {
+  margin: 0;
+}
+
+.feature-entry-footer details[open] {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.feature-entry-footer details[open] textarea {
+  margin-top: 7px;
+}
+
+.feature-entry-footer .feature-resource-area {
+  justify-self: end;
+}
+
+/* The earlier category row was replaced by the compact footer control. */
+.feature-category-row { display: none !important; }
+
+/* ─── DEFENSES — KEEP LONG LABELS AND + BUTTONS VISIBLE ───────────────── */
+.defense-type-cell {
+  width: 52%;
+  padding: 6px 5px 6px 7px;
+}
+
+.defense-type-cell .proficiency-type-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18px;
+  gap: 4px;
+  align-items: center;
+}
+
+.defense-type-cell .proficiency-type-label {
+  min-width: 0;
+  overflow: visible;
+  font-size: 6.6px;
+  letter-spacing: .45px;
+  white-space: nowrap;
+}
+
+.defense-type-cell .proficiency-add-row {
+  justify-self: end;
+  width: 18px;
+  height: 18px;
+}
+
+.defense-table .proficiency-values-cell {
+  padding-left: 4px;
+  padding-right: 5px;
+}
+
+@media (max-width: 768px) {
+  .feature-entry-top {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-entry-footer {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px;
+  }
+
+  .feature-category-control {
+    grid-column: 1 / -1;
+  }
+
+  .feature-category-select {
+    max-width: min(100%, 250px);
+    min-height: 29px;
+    font-size: 13px;
+  }
+
+  .feature-entry-footer details[open] {
+    grid-row: 3;
+  }
+
+  .defense-type-cell {
+    width: 54%;
+  }
+
+  .defense-type-cell .proficiency-type-label {
+    font-size: 6.2px;
+    letter-spacing: .32px;
+  }
+}

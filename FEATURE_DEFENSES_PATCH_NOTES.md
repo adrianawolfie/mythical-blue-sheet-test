@@ -1,4 +1,4 @@
-# Mythical Blue · Features & Defenses Patch
+# Features & Traits categories + Defenses patch
 
 ## Add or replace
 - index.html
@@ -10,15 +10,14 @@
 - js/defenses.js
 
 ## Features & Traits
-- Adds name search, category filter, and sorting controls.
-- Adds a category selector to every feature / trait card.
-- Includes Class Feature, Species Trait, and Other as permanent category options.
-- Supports custom categories through the + Create category… selector option.
-- Preserves imported SRD / Mythical Blue feat categories.
-- Existing saved entries without categories load as Other unless they match the Class Feature or Species Trait starter templates.
+- Adds name search, category filter, sorting, clear-filters control and result count.
+- Adds compact inline category selection per feature card.
+- Built-in categories: Class Feature, Species Trait, Origin Feat, General Feat, Fighting Style Feat, Epic Boon Feat, Other.
+- Custom category creation remains available through the inline selector.
+- Existing saved features without categories remain backward-compatible and default to Other unless inferred from the starter feature name.
 
 ## Defenses
-- Adds a Defenses card beneath Proficiencies on the Main page.
-- Tracks Resistances, Immunities, and Vulnerabilities.
-- Persists the new data in customLists.defenses.
-- Older characters remain compatible and load with empty defense rows.
+- Adds Resistances, Immunities and Vulnerabilities beneath Proficiencies.
+- Supports multiple editable rows per defense type.
+- Saves under customLists.defenses.
+- Older character files remain compatible and load empty defense rows.
