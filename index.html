@@ -617,6 +617,11 @@
 
         <div class="journal-note-toolbar">
           <label>
+            <span>Search Notes</span>
+            <input id="journalNoteSearch" type="search" placeholder="Search titles, categories, or text…" autocomplete="off">
+          </label>
+
+          <label>
             <span>Show</span>
             <select id="journalNoteFilter">
               <option value="all">All Categories</option>
@@ -624,20 +629,25 @@
           </label>
 
           <label>
-            <span>Category</span>
-            <input id="journalNewNoteCategory" list="journalNoteCategoryOptions" placeholder="NPCs, Quests, Lore…">
+            <span>Sort</span>
+            <select id="journalNoteSort">
+              <option value="manual">Manual order</option>
+              <option value="titleAsc">Title A–Z</option>
+              <option value="titleDesc">Title Z–A</option>
+              <option value="categoryAsc">Category A–Z</option>
+            </select>
           </label>
 
-          <label class="journal-note-title-input">
-            <span>Title</span>
-            <input id="journalNewNoteTitle" placeholder="Captain Elara, Sunken Archive…">
-          </label>
-
-          <button type="button" class="journal-note-add" onclick="addJournalNoteFromToolbar()">+ Add Note</button>
+          <button id="journalAddNoteBtn" type="button" class="journal-note-add">+ New Note</button>
         </div>
 
-        <datalist id="journalNoteCategoryOptions"></datalist>
+        <div class="journal-note-results-bar">
+          <span id="journalNoteCount">0 notes</span>
+          <button id="journalClearFiltersBtn" type="button" class="journal-note-clear">Clear filters</button>
+        </div>
+
         <div id="journalNotesList" class="journal-notes-list"></div>
+        <p id="journalNotesEmptyState" class="journal-notes-empty" hidden>No notes match the current filters.</p>
 
         <details class="journal-imported-notes">
           <summary>Imported / Freeform Notes</summary>

@@ -1897,3 +1897,86 @@ html[data-theme="moonlight"] .defense-type-cell .proficiency-add-row {
   border-color: var(--moon-ghost-soft-line) !important;
   color: var(--moon-ghost-bright) !important;
 }
+
+/* ─── MOONLIGHT SELECT MENUS · FORCE READABLE OPEN DROPDOWNS ─────────
+   Desktop browsers often render the open option list on a pale native
+   surface. Explicit option colors prevent pale-on-pale conditions and
+   categories in Character Overview, DM Screen, Features, and Journal. */
+html[data-theme="moonlight"] select option,
+html[data-theme="moonlight"] select optgroup {
+  background: #071a3d !important;
+  color: #f1f8ff !important;
+}
+
+html[data-theme="moonlight"] select option:checked,
+html[data-theme="moonlight"] select option:hover,
+html[data-theme="moonlight"] select option:focus {
+  background: #245a9c !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="moonlight"] .card-condition-select option,
+html[data-theme="moonlight"] .combatant-condition-picker option,
+html[data-theme="moonlight"] .feature-category-select option,
+html[data-theme="moonlight"] #featureCategoryFilter option,
+html[data-theme="moonlight"] #featureSortSelect option,
+html[data-theme="moonlight"] #journalNoteFilter option,
+html[data-theme="moonlight"] #journalNoteSort option,
+html[data-theme="moonlight"] .journal-note-category option {
+  background: #071a3d !important;
+  color: #f1f8ff !important;
+}
+
+/* ─── JOURNAL NOTES · MOONLIGHT POLISH ─────────────────────────────── */
+html[data-theme="moonlight"] .journal-note-results-bar {
+  color: rgba(220,239,255,.78) !important;
+}
+
+html[data-theme="moonlight"] .journal-note-clear,
+html[data-theme="moonlight"] .journal-note-add {
+  border-color: var(--moon-ghost-line) !important;
+  background: rgba(4,31,70,.82) !important;
+  color: var(--moon-ghost-bright) !important;
+  box-shadow: 0 0 7px rgba(115,196,255,.10), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+
+html[data-theme="moonlight"] .journal-note-clear:hover,
+html[data-theme="moonlight"] .journal-note-clear:focus-visible,
+html[data-theme="moonlight"] .journal-note-add:hover,
+html[data-theme="moonlight"] .journal-note-add:focus-visible {
+  border-color: var(--moon-ghost-bright) !important;
+  background: rgba(15,63,118,.92) !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="moonlight"] .journal-notes-empty {
+  border-color: rgba(138,208,255,.38) !important;
+  color: rgba(220,239,255,.70) !important;
+  background: rgba(2,18,46,.34) !important;
+}
+
+html[data-theme="moonlight"] .journal-note-toolbar input,
+html[data-theme="moonlight"] .journal-note-toolbar select,
+html[data-theme="moonlight"] .journal-note-meta input,
+html[data-theme="moonlight"] .journal-note-meta select,
+html[data-theme="moonlight"] .journal-note-text {
+  border-color: var(--moon-ghost-line) !important;
+  background: rgba(2,18,46,.44) !important;
+  color: #eef7ff !important;
+}
+
+html[data-theme="moonlight"] .journal-note-toolbar input::placeholder,
+html[data-theme="moonlight"] .journal-note-meta input::placeholder,
+html[data-theme="moonlight"] .journal-note-text::placeholder {
+  color: rgba(213,234,255,.52) !important;
+}
+
+html[data-theme="moonlight"] select {
+  color-scheme: dark;
+}
+
+html[data-theme="moonlight"] .card-condition-picker option,
+html[data-theme="moonlight"] .condition-picker option {
+  background: #071a3d !important;
+  color: #f1f8ff !important;
+}

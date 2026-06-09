@@ -2376,3 +2376,92 @@
     background: rgba(255,255,255,.14);
   }
 }
+
+/* ─── JOURNAL NOTES · RELIABLE BROWSER CONTROLS ─────────────────────── */
+.journal-note-toolbar {
+  grid-template-columns: minmax(190px, 1.45fr) minmax(135px, .85fr) minmax(135px, .8fr) auto;
+}
+
+.journal-note-toolbar input[type="search"] {
+  appearance: none;
+}
+
+.journal-note-toolbar select,
+.journal-note-meta select {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  border-bottom: 1px dotted rgba(184,144,44,.58);
+  background: transparent;
+  color: var(--navy-deep);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  outline: none;
+}
+
+.journal-note-results-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 9px 0;
+  color: rgba(28,39,80,.62);
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .55px;
+  text-transform: uppercase;
+}
+
+.journal-note-clear {
+  padding: 3px 6px;
+  border: 1px solid rgba(184,144,44,.42);
+  background: transparent;
+  color: var(--gold-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .45px;
+  text-transform: uppercase;
+}
+
+.journal-note-clear:hover,
+.journal-note-clear:focus-visible {
+  border-color: var(--gold-deep);
+  background: rgba(184,144,44,.10);
+  color: var(--navy-deep);
+  outline: none;
+}
+
+.journal-notes-empty {
+  margin: 2px 8px 8px;
+  padding: 12px 10px;
+  border: 1px dashed rgba(184,144,44,.40);
+  color: rgba(28,39,80,.58);
+  font-family: var(--small-italic-font);
+  font-size: 11px;
+  font-style: italic;
+  text-align: center;
+}
+
+.journal-note-entry[hidden],
+.journal-notes-empty[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .journal-note-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .journal-note-toolbar label:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .journal-note-add {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    min-height: 32px;
+  }
+}
