@@ -177,17 +177,17 @@ function addFeatureEntry(listId, data = {}) {
     </div>
 
     <div class="feature-entry-footer">
+      <button type="button" class="feature-details-toggle" aria-expanded="${data.open ? "true" : "false"}">
+        <span class="feature-details-toggle-icon" aria-hidden="true">${data.open ? "▾" : "▸"}</span>
+        <span>Details</span>
+      </button>
+
       <label class="feature-category-control">
         <span class="feature-category-label">Category</span>
         <select class="feature-category-select" aria-label="Feature category">
           ${featureCategoryOptions(category, listId)}
         </select>
       </label>
-
-      <details ${data.open ? "open" : ""}>
-        <summary>Details</summary>
-        <textarea class="feature-details" placeholder="Full rules text, usage limits, recharge, source, notes...">${escapeHtml(data.details || "")}</textarea>
-      </details>
 
       <div class="feature-resource-area ${hasResource ? "has-resource" : ""}">
         <button type="button" class="feature-resource-toggle">+ Add Resource</button>
@@ -196,6 +196,10 @@ function addFeatureEntry(listId, data = {}) {
           <input class="feature-resource" type="text" placeholder="2/3 Short Rest" value="${escapeHtml(data.resource || "")}" />
           <button type="button" class="feature-resource-remove" aria-label="Remove resource tracker">X</button>
         </div>
+      </div>
+
+      <div class="feature-details-panel${data.open ? " is-open" : ""}" ${data.open ? "" : "hidden"}>
+        <textarea class="feature-details" placeholder="Full rules text, usage limits, recharge, source, notes...">${escapeHtml(data.details || "")}</textarea>
       </div>
     </div>
 
@@ -211,6 +215,21 @@ function addFeatureEntry(listId, data = {}) {
   const resourceInput = entry.querySelector(".feature-resource");
   const resourceRemove = entry.querySelector(".feature-resource-remove");
   const categorySelect = entry.querySelector(".feature-category-select");
+  const detailsToggle = entry.querySelector(".feature-details-toggle");
+  const detailsPanel = entry.querySelector(".feature-details-panel");
+  const detailsToggleIcon = entry.querySelector(".feature-details-toggle-icon");
+
+  function setFeatureDetailsOpen(isOpen) {
+    const open = Boolean(isOpen);
+    detailsPanel.hidden = !open;
+    detailsPanel.classList.toggle("is-open", open);
+    detailsToggle.setAttribute("aria-expanded", String(open));
+    if (detailsToggleIcon) detailsToggleIcon.textContent = open ? "▾" : "▸";
+  }
+
+  detailsToggle.addEventListener("click", () => {
+    setFeatureDetailsOpen(!detailsPanel.classList.contains("is-open"));
+  });
 
   resourceToggle.addEventListener("click", () => {
     resourceArea.classList.add("has-resource");
@@ -280,7 +299,7 @@ function collectFeatureEntries(listId) {
       hasResource,
       resource: hasResource ? entry.querySelector(".feature-resource")?.value || "" : "",
       details: entry.querySelector(".feature-details")?.value || "",
-      open: entry.querySelector("details")?.open || false,
+      open: entry.querySelector(".feature-details-panel")?.classList.contains("is-open") || false,
       sourceId: entry.dataset.sourceId || "",
       source: entry.dataset.source || "",
       category: entry.dataset.category || "Other"

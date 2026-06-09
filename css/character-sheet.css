@@ -1907,7 +1907,7 @@
   }
 }
 
-/* ─── FEATURES & TRAITS — REFINED COMPACT CARDS ───────────────────────── */
+/* ─── FEATURES & TRAITS — STABLE COMPACT META ROW ─────────────────────── */
 .feature-entry {
   padding: 9px;
   border-color: rgba(184,144,44,.62);
@@ -1921,12 +1921,46 @@
 
 .feature-entry-footer {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 8px;
   align-items: center;
   margin-top: 7px;
   padding-top: 7px;
   border-top: 1px dotted rgba(184,144,44,.42);
+}
+
+.feature-details-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3px;
+  min-width: 74px;
+  padding: 3px 0;
+  border: none;
+  background: transparent;
+  color: var(--navy-deep);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .75px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.feature-details-toggle:hover,
+.feature-details-toggle:focus-visible {
+  color: var(--gold-deep);
+  outline: none;
+}
+
+.feature-details-toggle-icon {
+  display: inline-block;
+  width: 9px;
+  color: var(--gold-deep);
+  font-size: 9px;
+  line-height: 1;
+  text-align: center;
 }
 
 .feature-category-control {
@@ -1970,21 +2004,23 @@
   background: rgba(255,253,245,.22);
 }
 
-.feature-entry-footer details {
-  margin: 0;
-}
-
-.feature-entry-footer details[open] {
-  grid-column: 1 / -1;
-  grid-row: 2;
-}
-
-.feature-entry-footer details[open] textarea {
-  margin-top: 7px;
-}
-
 .feature-entry-footer .feature-resource-area {
   justify-self: end;
+}
+
+.feature-details-panel {
+  grid-column: 1 / -1;
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.feature-details-panel[hidden] {
+  display: none !important;
+}
+
+.feature-details-panel textarea {
+  width: 100%;
+  margin-top: 6px;
 }
 
 /* The earlier category row was replaced by the compact footer control. */
@@ -2028,22 +2064,31 @@
   }
 
   .feature-entry-footer {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 7px;
   }
 
+  .feature-details-toggle {
+    min-width: 68px;
+  }
+
   .feature-category-control {
-    grid-column: 1 / -1;
+    min-width: 0;
   }
 
   .feature-category-select {
-    max-width: min(100%, 250px);
+    max-width: min(100%, 220px);
     min-height: 29px;
     font-size: 13px;
   }
 
-  .feature-entry-footer details[open] {
-    grid-row: 3;
+  .feature-entry-footer .feature-resource-area,
+  .feature-details-panel {
+    grid-column: 1 / -1;
+  }
+
+  .feature-entry-footer .feature-resource-area {
+    justify-self: start;
   }
 
   .defense-type-cell {
