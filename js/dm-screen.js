@@ -133,22 +133,61 @@
     return getAllStatblocks().find(statblock => statblock.id === id) || null;
   }
 
+  function explicitNonZeroNumber(value) {
+    const parsed = Number.parseInt(String(value ?? "").trim(), 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+  }
+
+  function cleanStatblockText(statblock) {
+    return String(statblock?.text || "")
+      .replace(/\u2212/g, "-")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
   function getLegendaryResistanceMax(statblock) {
-    if (Number.isFinite(Number(statblock.legendaryResistanceMax))) return Math.max(0, Number(statblock.legendaryResistanceMax));
-    const match = String(statblock.text || "").match(/Legendary Resistance\s*\((\d+)\s*\/\s*Day/i);
-    return match ? Number(match[1]) : 0;
+    const explicit = explicitNonZeroNumber(statblock?.legendaryResistanceMax);
+    if (explicit) return explicit;
+    const text = cleanStatblockText(statblock);
+    const patterns = [
+      /Legendary Resistance\s*\(\s*(\d+)\s*\/\s*Day/i,
+      /Legendary Resistances?\s*[:(]\s*(\d+)/i
+    ];
+    for (const pattern of patterns) {
+      const match = text.match(pattern);
+      if (match) return Number(match[1]);
+    }
+    return 0;
   }
 
   function getLegendaryActionMax(statblock) {
-    if (Number.isFinite(Number(statblock.legendaryActionMax))) return Math.max(0, Number(statblock.legendaryActionMax));
-    const match = String(statblock.text || "").match(/Legendary Action Uses:\s*(\d+)/i);
-    return match ? Number(match[1]) : 0;
+    const explicit = explicitNonZeroNumber(statblock?.legendaryActionMax);
+    if (explicit) return explicit;
+    const text = cleanStatblockText(statblock);
+    const patterns = [
+      /Legendary Action Uses\s*:\s*(\d+)/i,
+      /can take\s+(\d+)\s+legendary actions?/i,
+      /Legendary Actions?\s*\(\s*(\d+)\s*\/\s*Round/i
+    ];
+    for (const pattern of patterns) {
+      const match = text.match(pattern);
+      if (match) return Number(match[1]);
+    }
+    return /Legendary Actions/i.test(text) ? 3 : 0;
   }
 
   function normalizeNpc(npc) {
     const statblock = npc.statblockId ? getStatblockById(npc.statblockId) : null;
-    const lrMax = toNumber(npc.legendaryResistanceMax, statblock ? getLegendaryResistanceMax(statblock) : 0);
-    const laMax = toNumber(npc.legendaryActionMax, statblock ? getLegendaryActionMax(statblock) : 0);
+    const statblockLrMax = statblock ? getLegendaryResistanceMax(statblock) : 0;
+    const statblockLaMax = statblock ? getLegendaryActionMax(statblock) : 0;
+    const savedLrMax = explicitNonZeroNumber(npc.legendaryResistanceMax);
+    const savedLaMax = explicitNonZeroNumber(npc.legendaryActionMax);
+    const lrMax = Math.max(savedLrMax, statblockLrMax);
+    const laMax = Math.max(savedLaMax, statblockLaMax);
+    const savedLrCurrent = Number.parseInt(String(npc.legendaryResistanceCurrent ?? "").trim(), 10);
+    const savedLaCurrent = Number.parseInt(String(npc.legendaryActionCurrent ?? "").trim(), 10);
+    const lrCurrent = Number.isFinite(savedLrCurrent) && (savedLrMax || !statblockLrMax) ? savedLrCurrent : lrMax;
+    const laCurrent = Number.isFinite(savedLaCurrent) && (savedLaMax || !statblockLaMax) ? savedLaCurrent : laMax;
     return {
       id: String(npc.id || createId()),
       name: String(npc.name || "New NPC"),
@@ -161,9 +200,9 @@
       statblockId: String(npc.statblockId || ""),
       source: String(npc.source || ""),
       legendaryResistanceMax: lrMax,
-      legendaryResistanceCurrent: Math.min(lrMax, toNumber(npc.legendaryResistanceCurrent, lrMax)),
+      legendaryResistanceCurrent: Math.max(0, Math.min(lrMax, lrCurrent)),
       legendaryActionMax: laMax,
-      legendaryActionCurrent: Math.min(laMax, toNumber(npc.legendaryActionCurrent, laMax))
+      legendaryActionCurrent: Math.max(0, Math.min(laMax, laCurrent))
     };
   }
 
@@ -374,8 +413,8 @@
     const lrMax = toNumber(combatant.legendaryResistanceMax, 0);
     const laMax = toNumber(combatant.legendaryActionMax, 0);
     if (!lrMax && !laMax) return "";
-    const counter = (kind, label, current, max, note = "") => `<div class="legendary-counter legendary-${kind}"><span>${label}</span><button type="button" data-action="adjust-legendary" data-kind="${kind}" data-delta="-1" aria-label="Use one ${label}">−</button><strong>${escapeHtml(current)} / ${escapeHtml(max)}</strong><button type="button" data-action="adjust-legendary" data-kind="${kind}" data-delta="1" aria-label="Restore one ${label}">+</button>${note ? `<small>${escapeHtml(note)}</small>` : ""}</div>`;
-    return `<div class="legendary-tracker">${lrMax ? counter("resistance", "Legendary Resistance", combatant.legendaryResistanceCurrent, lrMax) : ""}${laMax ? counter("action", "Legendary Action", combatant.legendaryActionCurrent, laMax, "resets at start of turn") : ""}</div>`;
+    const counter = (kind, label, current, max, note = "") => `<div class="legendary-counter legendary-${kind}"><span>${label}</span><button type="button" data-action="adjust-legendary" data-kind="${kind}" data-delta="-1" aria-label="Use one ${label}">−</button><strong>${escapeHtml(current)} / ${escapeHtml(max)} left</strong><button type="button" data-action="adjust-legendary" data-kind="${kind}" data-delta="1" aria-label="Restore one ${label}">+</button>${note ? `<small>${escapeHtml(note)}</small>` : ""}</div>`;
+    return `<div class="legendary-tracker" aria-label="Legendary resources">${lrMax ? counter("resistance", "Legendary Resistances", combatant.legendaryResistanceCurrent, lrMax) : ""}${laMax ? counter("action", "Legendary Actions", combatant.legendaryActionCurrent, laMax, "resets at the start of this monster’s turn") : ""}</div>`;
   }
 
   function renderCombatantRow(combatant, displayIndex) {
@@ -697,12 +736,21 @@
   }
 
   function openCustomStatblockPanel() {
-    document.getElementById("customStatblockPanel")?.removeAttribute("hidden");
-    document.getElementById("customStatName")?.focus();
+    const panel = document.getElementById("customStatblockPanel");
+    const modal = panel?.closest(".npc-picker-modal");
+    if (!panel) return;
+    panel.removeAttribute("hidden");
+    modal?.classList.add("custom-builder-open");
+    window.requestAnimationFrame(() => {
+      panel.scrollIntoView({ block: "start", behavior: "smooth" });
+      document.getElementById("customStatName")?.focus({ preventScroll: true });
+    });
   }
 
   function closeCustomStatblockPanel() {
-    document.getElementById("customStatblockPanel")?.setAttribute("hidden", "");
+    const panel = document.getElementById("customStatblockPanel");
+    panel?.setAttribute("hidden", "");
+    panel?.closest(".npc-picker-modal")?.classList.remove("custom-builder-open");
   }
 
   function getFieldValue(id) {
@@ -825,7 +873,14 @@
     syncChannel?.addEventListener("message", event => receiveLiveUpdate(event.data));
     window.addEventListener("storage", event => { if (event.key !== SYNC_STORAGE_KEY || !event.newValue) return; try { receiveLiveUpdate(JSON.parse(event.newValue)); } catch {} });
 
-    try { await Promise.all([characterStorage.init(), loadStatblockLibrary()]); await refreshPlayers(); startPolling(); }
+    try {
+      await Promise.all([characterStorage.init(), loadStatblockLibrary()]);
+      state.npcs = state.npcs.map(normalizeNpc);
+      state.customStatblocks = getCustomStatblocks();
+      persistTrackerState();
+      await refreshPlayers();
+      startPolling();
+    }
     catch (error) { console.error(error); alert(error.message || "Could not initialize the DM screen."); }
   });
 })();

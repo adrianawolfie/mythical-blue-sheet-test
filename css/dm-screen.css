@@ -2002,3 +2002,22 @@ html[data-theme="moonlight"] .custom-statblock-panel textarea {
     margin-left: -48px;
   }
 }
+
+/* Patch: make custom statblock builder visibly replace the library list while editing */
+.npc-picker-modal.custom-builder-open .npc-picker-filters,
+.npc-picker-modal.custom-builder-open .npc-picker-results-header,
+.npc-picker-modal.custom-builder-open .npc-picker-body {
+  display: none;
+}
+
+.npc-picker-modal.custom-builder-open .custom-statblock-panel {
+  margin-top: 0;
+}
+
+.legendary-counter strong {
+  min-width: 58px;
+}
+
+html[data-theme="moonlight"] .legendary-counter strong {
+  color: var(--moon-text, #eef6ff);
+}
