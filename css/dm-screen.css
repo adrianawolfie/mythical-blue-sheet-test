@@ -2151,3 +2151,75 @@ html[data-theme="moonlight"] .statblock-result-card .dm-subtle-button:focus-visi
     flex: 1 1 30%;
   }
 }
+
+/* Patch: keep the custom statblock builder scrollable inside the Add NPC modal */
+.npc-picker-modal {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.npc-picker-header,
+.npc-picker-actions,
+.npc-picker-filters,
+.npc-picker-results-header {
+  flex: 0 0 auto;
+}
+
+.npc-picker-body {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.npc-picker-modal.custom-builder-open {
+  overflow: hidden;
+}
+
+.npc-picker-modal.custom-builder-open .custom-statblock-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: calc(92vh - 168px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.npc-picker-modal.custom-builder-open .custom-statblock-actions {
+  position: sticky;
+  bottom: -16px;
+  z-index: 5;
+  margin-inline: -16px;
+  padding-inline: 16px;
+  padding-bottom: 14px;
+  background-color: rgba(237, 225, 192, .96);
+  background-image: url('../assets/parchment-seamless.png');
+  background-size: 100% auto;
+  background-repeat: repeat-y;
+  box-shadow: 0 -10px 22px rgba(0, 0, 0, .10);
+}
+
+html[data-theme="moonlight"] .npc-picker-modal.custom-builder-open .custom-statblock-actions {
+  background: rgba(5, 20, 44, .96);
+  box-shadow: 0 -10px 24px rgba(0, 0, 0, .34);
+}
+
+@media (max-width: 600px) {
+  .npc-picker-backdrop {
+    align-items: stretch;
+    padding: 8px;
+  }
+
+  .npc-picker-modal {
+    max-height: calc(100vh - 16px);
+  }
+
+  .npc-picker-modal.custom-builder-open .custom-statblock-panel {
+    max-height: calc(100vh - 142px);
+  }
+
+  .npc-picker-modal.custom-builder-open .custom-statblock-actions {
+    bottom: -12px;
+    margin-inline: -12px;
+    padding-inline: 12px;
+  }
+}
