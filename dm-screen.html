@@ -87,8 +87,9 @@
       </header>
 
       <div class="npc-picker-actions">
-        <button id="addCustomNpcBtn" type="button" class="dm-primary-button">+ Custom NPC</button>
-        <span>or select a statblock below</span>
+        <button id="addCustomNpcBtn" type="button" class="dm-primary-button">+ Quick Custom NPC</button>
+        <button id="openCustomStatblockBtn" type="button" class="dm-secondary-button">✦ Create Custom Statblock</button>
+        <span>or preview a statblock below before adding it</span>
       </div>
 
       <div class="npc-picker-filters">
@@ -118,7 +119,57 @@
         <strong id="statblockResultCount">Loading statblocks…</strong>
         <button id="clearStatblockFiltersBtn" type="button" class="dm-subtle-button">Clear filters</button>
       </div>
-      <div id="statblockResults" class="statblock-results" aria-live="polite"></div>
+      <div class="npc-picker-body">
+        <div id="statblockResults" class="statblock-results" aria-live="polite"></div>
+        <aside id="statblockPreview" class="statblock-preview-panel" aria-live="polite">
+          <p class="initiative-empty-state">Select a statblock to preview its full rules before adding it.</p>
+        </aside>
+      </div>
+
+      <section id="customStatblockPanel" class="custom-statblock-panel" hidden aria-labelledby="customStatblockTitle">
+        <div class="custom-statblock-heading">
+          <div>
+            <div class="dm-section-label">Custom Monster</div>
+            <h3 id="customStatblockTitle">Create Custom Statblock</h3>
+            <p>Build a reusable Mythical Blue statblock. Saved custom statblocks appear in the NPC picker under <strong>Custom</strong>.</p>
+          </div>
+          <button id="closeCustomStatblockBtn" type="button" class="npc-picker-close" aria-label="Close custom statblock builder">×</button>
+        </div>
+        <div class="custom-statblock-grid">
+          <label><span>Name</span><input id="customStatName" placeholder="Tidewraith Captain"></label>
+          <label><span>Size</span><input id="customStatSize" placeholder="Medium"></label>
+          <label><span>Type</span><input id="customStatType" placeholder="Undead"></label>
+          <label><span>Alignment</span><input id="customStatAlignment" placeholder="Chaotic Neutral"></label>
+          <label><span>Armor Class</span><input id="customStatAc" type="number" inputmode="numeric" placeholder="15"></label>
+          <label><span>Hit Points</span><input id="customStatHp" type="number" inputmode="numeric" placeholder="68"></label>
+          <label><span>Hit Dice Formula</span><input id="customStatHpFormula" placeholder="8d8 + 32"></label>
+          <label><span>Initiative</span><input id="customStatInitiative" placeholder="+4"></label>
+          <label><span>Speed</span><input id="customStatSpeed" placeholder="30 ft., Swim 40 ft."></label>
+          <label><span>Challenge Rating</span><input id="customStatCr" placeholder="4"></label>
+          <label><span>Legendary Resistances</span><input id="customStatLegendaryResistance" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+          <label><span>Legendary Actions</span><input id="customStatLegendaryActions" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+        </div>
+        <div class="custom-statblock-abilities" aria-label="Ability scores">
+          <label><span>STR</span><input id="customStatStr" type="number" inputmode="numeric" placeholder="10"></label>
+          <label><span>DEX</span><input id="customStatDex" type="number" inputmode="numeric" placeholder="10"></label>
+          <label><span>CON</span><input id="customStatCon" type="number" inputmode="numeric" placeholder="10"></label>
+          <label><span>INT</span><input id="customStatInt" type="number" inputmode="numeric" placeholder="10"></label>
+          <label><span>WIS</span><input id="customStatWis" type="number" inputmode="numeric" placeholder="10"></label>
+          <label><span>CHA</span><input id="customStatCha" type="number" inputmode="numeric" placeholder="10"></label>
+        </div>
+        <div class="custom-statblock-textareas">
+          <label><span>Skills / Senses / Languages / Defenses</span><textarea id="customStatMeta" placeholder="Skills Perception +5\nResistances Cold\nSenses Darkvision 60 ft.; Passive Perception 15\nLanguages Common"></textarea></label>
+          <label><span>Traits</span><textarea id="customStatTraits" placeholder="Amphibious. The monster can breathe air and water."></textarea></label>
+          <label><span>Actions</span><textarea id="customStatActions" placeholder="Multiattack. The monster makes two attacks.\nHarpoon. Melee or Ranged Attack Roll: +6..."></textarea></label>
+          <label><span>Bonus Actions / Reactions</span><textarea id="customStatExtraActions" placeholder="Bonus Actions\nShadow Step. ...\nReactions\nParry. ..."></textarea></label>
+          <label><span>Legendary Actions</span><textarea id="customStatLegendaryText" placeholder="Legendary Action Uses: 3. Immediately after another creature’s turn...\nMove. The monster moves up to half its Speed."></textarea></label>
+        </div>
+        <div class="custom-statblock-actions">
+          <button id="saveCustomStatblockBtn" type="button" class="dm-secondary-button">Save Statblock</button>
+          <button id="saveAddCustomStatblockBtn" type="button" class="dm-primary-button">Save & Add to Tracker</button>
+          <button id="resetCustomStatblockBtn" type="button" class="dm-subtle-button">Clear Form</button>
+        </div>
+      </section>
     </section>
   </div>
 
