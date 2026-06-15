@@ -476,8 +476,11 @@
     const title = normalizeStatblockLine(value);
     if (!title || title.length > 92 || /[:;!?]/.test(title)) return false;
 
-    const words = title
-      .replace(/[()]/g, " ")
+    // Action names can contain lowercase parenthetical descriptors, such as
+    // "Crossbow (light)." or "Net (thrown).". Those descriptors should not
+    // prevent the line from being treated as a separate statblock entry.
+    const titleWithoutParentheticals = title.replace(/\([^)]*\)/g, " ");
+    const words = titleWithoutParentheticals
       .split(/\s+/)
       .map(word => word.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9’'-]+$/g, ""))
       .filter(Boolean);
