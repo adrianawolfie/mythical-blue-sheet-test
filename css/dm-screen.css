@@ -2021,3 +2021,53 @@ html[data-theme="moonlight"] .custom-statblock-panel textarea {
 html[data-theme="moonlight"] .legendary-counter strong {
   color: var(--moon-text, #eef6ff);
 }
+
+/* Patch: brighter SRD/custom result metadata and edit controls in Moonlight mode */
+.statblock-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.statblock-preview-actions {
+  gap: 8px;
+}
+
+html[data-theme="moonlight"] .statblock-result-card h3 {
+  color: rgba(244, 252, 255, .98);
+  text-shadow: 0 0 7px rgba(96, 190, 255, .26);
+}
+
+html[data-theme="moonlight"] .statblock-result-card p,
+html[data-theme="moonlight"] .statblock-result-card small {
+  color: rgba(218, 244, 255, .78);
+}
+
+html[data-theme="moonlight"] .statblock-result-card .statblock-summary-chips span {
+  color: rgba(244, 252, 255, .94);
+  background: rgba(121, 191, 232, .24);
+  border-color: rgba(205, 242, 255, .62);
+}
+
+html[data-theme="moonlight"] .statblock-result-card .dm-subtle-button {
+  border-color: rgba(183, 230, 255, .62);
+  background: rgba(8, 33, 70, .62);
+  color: rgba(239, 250, 255, .94);
+}
+
+html[data-theme="moonlight"] .statblock-result-card .dm-subtle-button:hover,
+html[data-theme="moonlight"] .statblock-result-card .dm-subtle-button:focus-visible {
+  background: rgba(62, 148, 209, .28);
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .statblock-result-actions {
+    justify-content: stretch;
+  }
+
+  .statblock-result-actions button {
+    flex: 1 1 30%;
+  }
+}

@@ -16,6 +16,7 @@
   let saveTimers = new Map();
   let pollTimer = null;
   let selectedStatblockId = "";
+  let editingStatblockId = "";
   const focusedConditions = new Map();
   const expandedStatblocks = new Set();
 
@@ -388,7 +389,7 @@
     return `<div class="inline-statblock-sections">${sections.map(section => `<section class="inline-statblock-section"><h4>${escapeHtml(section.title)}</h4>${section.entries.map(entry => `<article class="inline-statblock-entry">${entry.title ? `<h5>${escapeHtml(entry.title)}</h5>` : ""}<p>${escapeHtml(entry.text)}</p></article>`).join("")}</section>`).join("")}</div>`;
   }
 
-  function statblockPanelMarkup(statblock, { closeButton = false, addButton = false } = {}) {
+  function statblockPanelMarkup(statblock, { closeButton = false, addButton = false, editButton = false } = {}) {
     if (!statblock) return "";
     const structured = parseStructuredStatblock(statblock);
     return `<section class="inline-statblock" aria-label="${escapeHtml(statblock.name)} statblock">
@@ -397,8 +398,8 @@
       ${statblockAbilityMarkup(structured.abilities)}
       ${statblockMetadataMarkup(structured.metadata)}
       ${statblockSectionsMarkup(structured.sections)}
-      ${addButton ? `<div class="statblock-preview-actions"><button type="button" class="dm-primary-button" data-action="add-previewed-statblock" data-statblock-id="${escapeHtml(statblock.id)}">+ Add to Tracker</button></div>` : ""}
-    </section>`;
+      ${addButton || editButton ? `<div class="statblock-preview-actions">${editButton ? `<button type="button" class="dm-secondary-button" data-action="edit-statblock" data-statblock-id="${escapeHtml(statblock.id)}">Edit Statblock</button>` : ""}${addButton ? `<button type="button" class="dm-primary-button" data-action="add-previewed-statblock" data-statblock-id="${escapeHtml(statblock.id)}">+ Add to Tracker</button>` : ""}</div>` : ""}
+    </section`;
   }
 
   function expandedStatblockMarkup(combatant) {
@@ -692,7 +693,7 @@
 
   function renderStatblockResult(statblock) {
     const selectedClass = selectedStatblockId === statblock.id ? " selected" : "";
-    return `<article class="statblock-result-card${selectedClass}"><div><h3>${escapeHtml(statblock.name)}</h3><p>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}, ${escapeHtml(statblock.alignment)}</p>${statblockSummaryMarkup(statblock)}<small>${escapeHtml(statblock.section)} · Speed ${escapeHtml(statblock.speed || "—")}</small></div><div class="statblock-result-actions"><button type="button" class="dm-subtle-button" data-action="preview-statblock" data-statblock-id="${escapeHtml(statblock.id)}">Preview</button><button type="button" class="dm-primary-button" data-action="add-statblock-npc" data-statblock-id="${escapeHtml(statblock.id)}">Add</button></div></article>`;
+    return `<article class="statblock-result-card${selectedClass}"><div><h3>${escapeHtml(statblock.name)}</h3><p>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}, ${escapeHtml(statblock.alignment)}</p>${statblockSummaryMarkup(statblock)}<small>${escapeHtml(statblock.section)} · Speed ${escapeHtml(statblock.speed || "—")}</small></div><div class="statblock-result-actions"><button type="button" class="dm-subtle-button" data-action="preview-statblock" data-statblock-id="${escapeHtml(statblock.id)}">Preview</button><button type="button" class="dm-subtle-button" data-action="edit-statblock" data-statblock-id="${escapeHtml(statblock.id)}">Edit</button><button type="button" class="dm-primary-button" data-action="add-statblock-npc" data-statblock-id="${escapeHtml(statblock.id)}">Add</button></div></article>`;
   }
 
   function renderStatblockPreview(statblockId = selectedStatblockId) {
@@ -700,7 +701,7 @@
     if (!preview) return;
     const statblock = statblockId ? getStatblockById(statblockId) : null;
     selectedStatblockId = statblock?.id || "";
-    preview.innerHTML = statblock ? statblockPanelMarkup(statblock, { addButton: true }) : `<p class="initiative-empty-state">Select a statblock to preview its full rules before adding it.</p>`;
+    preview.innerHTML = statblock ? statblockPanelMarkup(statblock, { addButton: true, editButton: true }) : `<p class="initiative-empty-state">Select a statblock to preview its full rules before adding it.</p>`;
   }
 
   function renderStatblockResults() {
@@ -758,8 +759,78 @@
   }
 
   function clearCustomStatblockForm() {
+    editingStatblockId = "";
     document.querySelectorAll("#customStatblockPanel input, #customStatblockPanel textarea").forEach(input => { input.value = ""; });
+    const title = document.getElementById("customStatblockTitle");
+    if (title) title.textContent = "Create Custom Statblock";
+    const saveButton = document.getElementById("saveCustomStatblockBtn");
+    if (saveButton) saveButton.textContent = "Save Statblock";
     document.getElementById("customStatName")?.focus();
+  }
+
+  function setCustomField(id, value) {
+    const field = document.getElementById(id);
+    if (field) field.value = String(value ?? "");
+  }
+
+  function statblockEntriesToText(section, { skipLegendaryUses = false, skipLegendaryResistance = false } = {}) {
+    if (!section) return "";
+    return section.entries
+      .filter(entry => {
+        const combined = `${entry.title || ""} ${entry.text || ""}`.trim();
+        if (skipLegendaryUses && /^Legendary Action Uses\b/i.test(combined)) return false;
+        if (skipLegendaryResistance && /^Legendary Resistance\b/i.test(combined)) return false;
+        return Boolean(combined);
+      })
+      .map(entry => entry.title ? `${entry.title}. ${entry.text || ""}`.trim() : String(entry.text || "").trim())
+      .join("\n");
+  }
+
+  function openStatblockEditor(statblockId) {
+    const statblock = getStatblockById(statblockId);
+    if (!statblock) return;
+    editingStatblockId = statblock.id;
+    const structured = parseStructuredStatblock(statblock);
+    const abilityMap = new Map(structured.abilities.map(ability => [ability.name.toLowerCase(), ability.score]));
+    const sectionByTitle = new Map(structured.sections.map(section => [section.title, section]));
+    const meta = structured.metadata
+      .filter(item => item.label !== "CR")
+      .map(item => `${item.label} ${item.value || ""}`.trim())
+      .join("\n");
+
+    setCustomField("customStatName", statblock.name);
+    setCustomField("customStatSize", statblock.size);
+    setCustomField("customStatType", statblock.type);
+    setCustomField("customStatAlignment", statblock.alignment);
+    setCustomField("customStatAc", statblock.armorClass);
+    setCustomField("customStatHp", statblock.hp);
+    setCustomField("customStatHpFormula", statblock.hpFormula);
+    setCustomField("customStatInitiative", statblock.initiative);
+    setCustomField("customStatSpeed", statblock.speed);
+    setCustomField("customStatCr", statblock.challengeRating);
+    setCustomField("customStatLegendaryResistance", getLegendaryResistanceMax(statblock));
+    setCustomField("customStatLegendaryActions", getLegendaryActionMax(statblock));
+    setCustomField("customStatStr", abilityMap.get("str") || "10");
+    setCustomField("customStatDex", abilityMap.get("dex") || "10");
+    setCustomField("customStatCon", abilityMap.get("con") || "10");
+    setCustomField("customStatInt", abilityMap.get("int") || "10");
+    setCustomField("customStatWis", abilityMap.get("wis") || "10");
+    setCustomField("customStatCha", abilityMap.get("cha") || "10");
+    setCustomField("customStatMeta", meta);
+    setCustomField("customStatTraits", statblockEntriesToText(sectionByTitle.get("Traits"), { skipLegendaryResistance: true }));
+    setCustomField("customStatActions", statblockEntriesToText(sectionByTitle.get("Actions")));
+    setCustomField("customStatExtraActions", [
+      sectionByTitle.has("Bonus Actions") ? `Bonus Actions\n${statblockEntriesToText(sectionByTitle.get("Bonus Actions"))}` : "",
+      sectionByTitle.has("Reactions") ? `Reactions\n${statblockEntriesToText(sectionByTitle.get("Reactions"))}` : ""
+    ].filter(Boolean).join("\n"));
+    setCustomField("customStatLegendaryText", statblockEntriesToText(sectionByTitle.get("Legendary Actions"), { skipLegendaryUses: true }));
+
+    const title = document.getElementById("customStatblockTitle");
+    const saveButton = document.getElementById("saveCustomStatblockBtn");
+    const isCustom = String(statblock.section || "").toLowerCase() === "custom";
+    if (title) title.textContent = isCustom ? `Edit ${statblock.name}` : `Edit ${statblock.name} as Custom`;
+    if (saveButton) saveButton.textContent = isCustom ? "Save Changes" : "Save Custom Copy";
+    openCustomStatblockPanel();
   }
 
   function buildCustomStatblockFromForm() {
@@ -804,6 +875,7 @@
   function saveCustomStatblock({ addToTracker = false } = {}) {
     const statblock = buildCustomStatblockFromForm();
     state.customStatblocks = [...(state.customStatblocks || []).filter(item => item.id !== statblock.id), statblock];
+    editingStatblockId = statblock.id;
     persistTrackerState();
     refreshStatblockFilters();
     selectedStatblockId = statblock.id;
@@ -847,7 +919,7 @@
 
     document.getElementById("addNpcBtn")?.addEventListener("click", openNpcPicker);
     document.getElementById("addCustomNpcBtn")?.addEventListener("click", addCustomNpc);
-    document.getElementById("openCustomStatblockBtn")?.addEventListener("click", openCustomStatblockPanel);
+    document.getElementById("openCustomStatblockBtn")?.addEventListener("click", () => { clearCustomStatblockForm(); openCustomStatblockPanel(); });
     document.getElementById("closeCustomStatblockBtn")?.addEventListener("click", closeCustomStatblockPanel);
     document.getElementById("saveCustomStatblockBtn")?.addEventListener("click", () => saveCustomStatblock({ addToTracker: false }));
     document.getElementById("saveAddCustomStatblockBtn")?.addEventListener("click", () => saveCustomStatblock({ addToTracker: true }));
@@ -857,12 +929,16 @@
     document.getElementById("statblockResults")?.addEventListener("click", event => {
       const addButton = event.target.closest('[data-action="add-statblock-npc"]');
       const previewButton = event.target.closest('[data-action="preview-statblock"]');
+      const editButton = event.target.closest('[data-action="edit-statblock"]');
       if (addButton) addStatblockNpc(addButton.dataset.statblockId || "");
       if (previewButton) { selectedStatblockId = previewButton.dataset.statblockId || ""; renderStatblockResults(); }
+      if (editButton) openStatblockEditor(editButton.dataset.statblockId || "");
     });
     document.getElementById("statblockPreview")?.addEventListener("click", event => {
-      const button = event.target.closest('[data-action="add-previewed-statblock"]');
-      if (button) addStatblockNpc(button.dataset.statblockId || selectedStatblockId);
+      const addButton = event.target.closest('[data-action="add-previewed-statblock"]');
+      const editButton = event.target.closest('[data-action="edit-statblock"]');
+      if (addButton) addStatblockNpc(addButton.dataset.statblockId || selectedStatblockId);
+      if (editButton) openStatblockEditor(editButton.dataset.statblockId || selectedStatblockId);
     });
     ["statblockSearchInput", "statblockSectionFilter", "statblockTypeFilter", "statblockSizeFilter", "statblockCrFilter"].forEach(id => document.getElementById(id)?.addEventListener(id === "statblockSearchInput" ? "input" : "change", renderStatblockResults));
     document.getElementById("clearStatblockFiltersBtn")?.addEventListener("click", clearStatblockFilters);
