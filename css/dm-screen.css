@@ -1947,6 +1947,16 @@
   line-height: 1.4;
 }
 
+.custom-statblock-field-help {
+  display: block;
+  margin-top: 4px;
+  color: rgba(43,56,102,.72);
+  font-family: 'Lora', serif;
+  font-size: 11px;
+  font-style: italic;
+  line-height: 1.35;
+}
+
 .custom-statblock-panel input[type="checkbox"] {
   accent-color: var(--gold-deep);
 }
@@ -2378,4 +2388,8 @@ html[data-theme="moonlight"] .combatant-row > .legendary-tracker .legendary-coun
     flex: 1 1 190px;
     min-width: 0;
   }
+}
+
+html[data-theme="moonlight"] .custom-statblock-field-help {
+  color: rgba(236,248,255,.76);
 }

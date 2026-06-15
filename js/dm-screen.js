@@ -449,6 +449,29 @@
     return String(value || "").replace(/\s+/g, " ").trim();
   }
 
+  function normalizeEscapedLineBreaks(value) {
+    return String(value || "")
+      .replace(/\\r\\n/g, "\n")
+      .replace(/\\n/g, "\n")
+      .replace(/\\r/g, "\n");
+  }
+
+  function normalizeStatblockTextareaValue(value) {
+    return normalizeEscapedLineBreaks(value)
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .join("\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  function expandInlineStatblockEntryBreaks(value) {
+    return normalizeEscapedLineBreaks(value).replace(
+      /([.!?])\s+([A-Z][A-Za-z0-9’'()/-]*(?:\s+[A-Za-z0-9’'()/-]+){0,5})\.\s+(?=(?:Melee|Ranged|Weapon|Spell|Attack|The monster|The target|If|One|Each|DC|Dexterity|Strength|Constitution|Wisdom|Intelligence|Charisma|Hit|Saving)\b)/g,
+      (_match, punctuation, title) => `${punctuation}\n${title}. `
+    );
+  }
+
   function looksLikeStatblockEntryTitle(value) {
     const title = normalizeStatblockLine(value);
     if (!title || title.length > 92 || /[:;!?]/.test(title)) return false;
@@ -470,7 +493,8 @@
   }
 
   function splitStatblockEntries(lines) {
-    const sourceLines = Array.isArray(lines) ? lines : String(lines || "").split(/\r?\n/);
+    const rawText = Array.isArray(lines) ? lines.join("\n") : String(lines || "");
+    const sourceLines = expandInlineStatblockEntryBreaks(rawText).split(/\r?\n/);
     const entries = [];
     let current = null;
 
@@ -495,7 +519,7 @@
   }
 
   function parseStructuredStatblock(statblock) {
-    const lines = String(statblock.text || "").split(/\r?\n/).map(normalizeStatblockLine).filter(Boolean);
+    const lines = normalizeEscapedLineBreaks(statblock.text || "").split(/\r?\n/).map(normalizeStatblockLine).filter(Boolean);
     const firstSectionIndex = lines.findIndex(line => STATBLOCK_SECTION_HEADINGS.includes(line));
     const preamble = lines.slice(0, firstSectionIndex < 0 ? lines.length : firstSectionIndex);
     const abilityText = preamble.join(" ").replace(/MOD SAVE/g, " ");
@@ -998,7 +1022,13 @@
 
   function setCustomField(id, value) {
     const field = document.getElementById(id);
-    if (field) field.value = String(value ?? "");
+    if (!field) return;
+    const nextValue = String(value ?? "");
+    field.value = field.tagName === "TEXTAREA" ? normalizeEscapedLineBreaks(nextValue) : nextValue;
+  }
+
+  function getTextareaValue(id) {
+    return normalizeStatblockTextareaValue(document.getElementById(id)?.value || "");
   }
 
   function statblockEntriesToText(section, { skipLegendaryUses = false, skipLegendaryResistance = false } = {}) {
@@ -1074,7 +1104,7 @@
     const size = getFieldValue("customStatSize") || "Medium";
     const type = getFieldValue("customStatType") || "Creature";
     const alignment = getFieldValue("customStatAlignment") || "Unaligned";
-    const description = getFieldValue("customStatDescription");
+    const description = getTextareaValue("customStatDescription");
     const armorClass = getFieldValue("customStatAc") || "10";
     const hp = getFieldValue("customStatHp") || "1";
     const hpFormula = getFieldValue("customStatHpFormula");
@@ -1103,11 +1133,11 @@
       return `${label} ${score} ${formatBonus(modifier)} ${formatBonus(save)}`;
     }).join("\n");
     const generatedSkills = buildSkillsLine(skillProficiencies, skillExpertise, abilityScores, proficiencyBonus);
-    const meta = [generatedSkills, getFieldValue("customStatMeta")].filter(Boolean).join("\n");
-    const traits = getFieldValue("customStatTraits");
-    const actions = getFieldValue("customStatActions");
-    const extra = getFieldValue("customStatExtraActions");
-    const legendaryText = getFieldValue("customStatLegendaryText");
+    const meta = [generatedSkills, getTextareaValue("customStatMeta")].filter(Boolean).join("\n");
+    const traits = getTextareaValue("customStatTraits");
+    const actions = getTextareaValue("customStatActions");
+    const extra = getTextareaValue("customStatExtraActions");
+    const legendaryText = getTextareaValue("customStatLegendaryText");
     const legendaryResistanceText = lr ? `Legendary Resistance (${lr}/Day). If the monster fails a saving throw, it can choose to succeed instead.` : "";
     const legendaryHeader = la ? `Legendary Action Uses: ${la}. Immediately after another creature’s turn, the monster can expend a use to take one of the following actions. The monster regains all expended uses at the start of each of its turns.` : "";
     const sections = [
