@@ -6,6 +6,8 @@
   const SYNC_CHANNEL_NAME = "mythical-blue-hp-sync-v1";
   const SYNC_STORAGE_KEY = "mythicalBlueHPBroadcastV1";
   const STATBLOCK_LIBRARY_URL = "data/srd-statblocks.json";
+  const CUSTOM_STATBLOCK_LIBRARY_URL = "data/custom-statblocks.json";
+  const CUSTOM_MONSTER_SECTION = "Custom Monsters";
   const SAVE_DELAY = 550;
   const POLL_DELAY = 5000;
   const CUSTOM_CONDITION_VALUE = "__custom__";
@@ -33,6 +35,7 @@
 
   let playerCharacters = [];
   let statblockLibrary = [];
+  let customStatblockLibrary = [];
   let state = loadTrackerState();
   let saveTimers = new Map();
   let pollTimer = null;
@@ -150,10 +153,12 @@
   }
 
   function normalizeStatblock(statblock) {
+    const rawSection = String(statblock.section || CUSTOM_MONSTER_SECTION);
+    const section = rawSection.toLowerCase() === "custom" ? CUSTOM_MONSTER_SECTION : rawSection;
     const normalized = {
       id: String(statblock.id || createId("custom-statblock")),
       name: String(statblock.name || "Unnamed Statblock"),
-      section: String(statblock.section || "Custom"),
+      section,
       size: String(statblock.size || "Medium"),
       type: String(statblock.type || "Creature"),
       alignment: String(statblock.alignment || "Unaligned"),
@@ -164,8 +169,9 @@
       speed: String(statblock.speed || ""),
       challengeRating: String(statblock.challengeRating || ""),
       proficiencyBonus: String(statblock.proficiencyBonus || ""),
+      description: String(statblock.description || ""),
       text: String(statblock.text || ""),
-      source: String(statblock.source || (statblock.section === "Custom" ? "Custom" : "SRD 5.2.1")),
+      source: String(statblock.source || (section === CUSTOM_MONSTER_SECTION ? "Custom Monster" : "SRD 5.2.1")),
       saveProficiencies: Array.isArray(statblock.saveProficiencies) ? statblock.saveProficiencies : [],
       skillProficiencies: Array.isArray(statblock.skillProficiencies) ? statblock.skillProficiencies : [],
       skillExpertise: Array.isArray(statblock.skillExpertise) ? statblock.skillExpertise : []
@@ -183,7 +189,17 @@
   function getAllStatblocks() {
     const custom = getCustomStatblocks();
     const customIds = new Set(custom.map(item => item.id));
-    return [...custom, ...statblockLibrary.filter(item => !customIds.has(item.id)).map(normalizeStatblock)];
+    const seededCustom = customStatblockLibrary.filter(item => !customIds.has(item.id)).map(normalizeStatblock);
+    const libraryIds = new Set([...customIds, ...seededCustom.map(item => item.id)]);
+    const srd = statblockLibrary.filter(item => !libraryIds.has(item.id)).map(normalizeStatblock);
+    return [...custom, ...seededCustom, ...srd];
+  }
+
+  function isCustomStatblock(statblock) {
+    const section = String(statblock?.section || "").toLowerCase();
+    const source = String(statblock?.source || "").toLowerCase();
+    const id = String(statblock?.id || "").toLowerCase();
+    return section === "custom" || section === CUSTOM_MONSTER_SECTION.toLowerCase() || source.includes("custom") || id.startsWith("custom-");
   }
 
   function getStatblockById(id) {
@@ -326,6 +342,7 @@
       concentrating: Boolean(npc.concentrating),
       statblockId: String(npc.statblockId || ""),
       source: String(npc.source || ""),
+      description: String(npc.description ?? statblock?.description ?? ""),
       legendaryResistanceMax: lrMax,
       legendaryResistanceCurrent: Math.max(0, Math.min(lrMax, lrCurrent)),
       legendaryActionMax: laMax,
@@ -346,6 +363,7 @@
       concentrating: Boolean(state.playerConcentration[character.id]),
       statblockId: "",
       source: "",
+      description: "",
       legendaryResistanceMax: 0,
       legendaryResistanceCurrent: 0,
       legendaryActionMax: 0,
@@ -523,6 +541,7 @@
     return `<section class="inline-statblock" aria-label="${escapeHtml(statblock.name)} statblock">
       <header class="inline-statblock-header"><div><div class="dm-section-label">${escapeHtml(statblock.source || statblock.section || "Statblock")}</div><h3>${escapeHtml(statblock.name)}</h3><p>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}, ${escapeHtml(statblock.alignment)}</p></div>${closeButton ? `<button type="button" class="inline-statblock-close" data-action="toggle-statblock" aria-label="Close ${escapeHtml(statblock.name)} statblock">×</button>` : ""}</header>
       <div class="inline-statblock-vitals"><div><span>Armor Class</span><strong>${escapeHtml(statblock.armorClass || "—")}</strong></div><div><span>Hit Points</span><strong>${escapeHtml(statblock.hp || "—")}</strong><small>${statblock.hpFormula ? `(${escapeHtml(statblock.hpFormula)})` : ""}</small></div><div><span>Initiative</span><strong>${escapeHtml(statblock.initiative || "—")}</strong></div><div><span>Speed</span><strong>${escapeHtml(statblock.speed || "—")}</strong></div><div><span>Challenge</span><strong>${statblock.challengeRating ? `CR ${escapeHtml(statblock.challengeRating)}` : "—"}</strong></div><div><span>Proficiency</span><strong>${getProficiencyBonus(statblock) ? `PB +${escapeHtml(getProficiencyBonus(statblock))}` : "—"}</strong></div></div>
+      ${statblock.description ? `<p class="inline-statblock-description">${escapeHtml(statblock.description)}</p>` : ""}
       ${statblockAbilityMarkup(structured.abilities)}
       ${statblockMetadataMarkup(structured.metadata)}
       ${statblockSectionsMarkup(structured.sections)}
@@ -542,8 +561,8 @@
     const lrMax = toNumber(combatant.legendaryResistanceMax, 0);
     const laMax = toNumber(combatant.legendaryActionMax, 0);
     if (!lrMax && !laMax) return "";
-    const counter = (kind, label, current, max, note = "") => `<div class="legendary-counter legendary-${kind}"><span>${label}</span><button type="button" data-action="adjust-legendary" data-kind="${kind}" data-delta="-1" aria-label="Use one ${label}">−</button><strong>${escapeHtml(current)} / ${escapeHtml(max)} left</strong><button type="button" data-action="adjust-legendary" data-kind="${kind}" data-delta="1" aria-label="Restore one ${label}">+</button>${note ? `<small>${escapeHtml(note)}</small>` : ""}</div>`;
-    return `<div class="legendary-tracker" aria-label="Legendary resources">${lrMax ? counter("resistance", "Legendary Resistances", combatant.legendaryResistanceCurrent, lrMax) : ""}${laMax ? counter("action", "Legendary Actions", combatant.legendaryActionCurrent, laMax, "resets at the start of this monster’s turn") : ""}</div>`;
+    const counter = (kind, label, current, max) => `<div class="legendary-counter legendary-${kind}"><span>${label}</span><button type="button" data-action="adjust-legendary" data-kind="${kind}" data-delta="-1" aria-label="Use one ${label}">−</button><strong>${escapeHtml(current)} / ${escapeHtml(max)} left</strong><button type="button" data-action="adjust-legendary" data-kind="${kind}" data-delta="1" aria-label="Restore one ${label}">+</button></div>`;
+    return `<div class="legendary-tracker" aria-label="Legendary resources">${lrMax ? counter("resistance", "Legendary Resistances", combatant.legendaryResistanceCurrent, lrMax) : ""}${laMax ? counter("action", "Legendary Actions", combatant.legendaryActionCurrent, laMax) : ""}</div>`;
   }
 
   function renderCombatantRow(combatant, displayIndex) {
@@ -560,6 +579,7 @@
         <span class="combatant-type">${isNpc ? (statblock ? `${escapeHtml(statblock.section)} · ${escapeHtml(statblock.source || "Statblock")}` : "Custom NPC") : "Player character · live sync"}</span>
         ${statblock ? `<button type="button" class="statblock-toggle" data-action="toggle-statblock">${expandedStatblocks.has(combatant.id) ? "Hide" : "View"} statblock</button>` : ""}
         ${legendaryTrackerMarkup(combatant)}
+        ${isNpc ? `<textarea class="combatant-description-input" data-field="description" rows="2" aria-label="Description or table note for ${encodedName}" placeholder="Monster description / table note…">${escapeHtml(combatant.description || "")}</textarea>` : ""}
       </div>
       <div class="combatant-initiative">${rowInput({ className: "initiative-input", field: "initiative", value: combatant.initiative, label: `Initiative for ${combatant.name}`, type: "number", inputmode: "numeric" })}</div>
       <div class="combatant-hp">${hpBarMarkup(combatant)}<div class="combatant-hp-fields">${rowInput({ className: "hp-current-input", field: "hpCurrent", value: combatant.hpCurrent, label: `Current HP for ${combatant.name}`, type: "number", inputmode: "numeric" })}<span class="hp-divider">/</span>${rowInput({ className: "hp-max-input", field: "hpMax", value: combatant.hpMax, label: `Maximum HP for ${combatant.name}`, type: "number", inputmode: "numeric" })}</div></div>
@@ -704,6 +724,7 @@
       armorClass: statblock.armorClass,
       statblockId: statblock.id,
       source: statblock.source || "SRD 5.2.1",
+      description: statblock.description || "",
       legendaryResistanceMax: lr,
       legendaryResistanceCurrent: lr,
       legendaryActionMax: la,
@@ -787,11 +808,30 @@
     select.innerHTML = first + uniqueSorted(values).map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
   }
 
+  async function fetchStatblockJson(url, required = false) {
+    try {
+      const response = await fetch(`${url}?cacheBust=${Date.now()}`, { cache: "no-store" });
+      if (!response.ok) {
+        if (required) throw new Error(`Could not load ${url}.`);
+        return [];
+      }
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      if (required) throw error;
+      console.warn(error.message);
+      return [];
+    }
+  }
+
   async function loadStatblockLibrary() {
     try {
-      const response = await fetch(`${STATBLOCK_LIBRARY_URL}?cacheBust=${Date.now()}`, { cache: "no-store" });
-      if (!response.ok) throw new Error("Could not load SRD statblocks.");
-      statblockLibrary = (await response.json()).map(normalizeStatblock);
+      const [srdStatblocks, customStatblocks] = await Promise.all([
+        fetchStatblockJson(STATBLOCK_LIBRARY_URL, true),
+        fetchStatblockJson(CUSTOM_STATBLOCK_LIBRARY_URL, false)
+      ]);
+      statblockLibrary = srdStatblocks.map(normalizeStatblock);
+      customStatblockLibrary = customStatblocks.map(normalizeStatblock);
       refreshStatblockFilters();
       renderStatblockResults();
     } catch (error) {
@@ -917,7 +957,7 @@
   function openStatblockEditor(statblockId) {
     const statblock = getStatblockById(statblockId);
     if (!statblock) return;
-    const isCustom = String(statblock.section || "").toLowerCase() === "custom";
+    const isCustom = isCustomStatblock(statblock);
     editingStatblockId = isCustom ? statblock.id : "";
     const structured = parseStructuredStatblock(statblock);
     const abilityMap = new Map(structured.abilities.map(ability => [ability.name.toLowerCase(), ability.score]));
@@ -934,6 +974,7 @@
     setCustomField("customStatSize", statblock.size);
     setCustomField("customStatType", statblock.type);
     setCustomField("customStatAlignment", statblock.alignment);
+    setCustomField("customStatDescription", statblock.description || "");
     setCustomField("customStatAc", statblock.armorClass);
     setCustomField("customStatHp", statblock.hp);
     setCustomField("customStatHpFormula", statblock.hpFormula);
@@ -973,6 +1014,7 @@
     const size = getFieldValue("customStatSize") || "Medium";
     const type = getFieldValue("customStatType") || "Creature";
     const alignment = getFieldValue("customStatAlignment") || "Unaligned";
+    const description = getFieldValue("customStatDescription");
     const armorClass = getFieldValue("customStatAc") || "10";
     const hp = getFieldValue("customStatHp") || "1";
     const hpFormula = getFieldValue("customStatHpFormula");
@@ -1018,7 +1060,7 @@
     return normalizeStatblock({
       id: editingStatblockId || createId("custom-statblock"),
       name,
-      section: "Custom",
+      section: CUSTOM_MONSTER_SECTION,
       size,
       type,
       alignment,
@@ -1030,7 +1072,8 @@
       challengeRating,
       proficiencyBonus,
       text: sections.filter(Boolean).join("\n"),
-      source: "Custom",
+      source: "Custom Monster",
+      description,
       legendaryResistanceMax: lr,
       legendaryActionMax: la,
       saveProficiencies,
@@ -1069,7 +1112,7 @@
       const actionElement = event.target.closest("[data-action]");
       const action = actionElement?.dataset.action;
       if (!row) return;
-      if (!action && row.classList.contains("has-statblock") && !event.target.closest("input, select, button, label, .inline-statblock, .legendary-tracker")) {
+      if (!action && row.classList.contains("has-statblock") && !event.target.closest("input, textarea, select, button, label, .inline-statblock, .legendary-tracker")) {
         const id = row.dataset.id || "";
         if (expandedStatblocks.has(id)) expandedStatblocks.delete(id); else expandedStatblocks.add(id);
         renderTracker();

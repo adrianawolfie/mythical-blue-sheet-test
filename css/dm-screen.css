@@ -2223,3 +2223,109 @@ html[data-theme="moonlight"] .npc-picker-modal.custom-builder-open .custom-statb
     padding-inline: 12px;
   }
 }
+
+/* Patch: compact legendary resources, tracker descriptions, and seeded custom monsters */
+.legendary-tracker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 7px 0 0;
+}
+
+.legendary-counter {
+  min-width: 0;
+  width: auto;
+  padding: 3px 6px;
+}
+
+.legendary-counter strong {
+  min-width: 52px;
+  white-space: nowrap;
+}
+
+.legendary-counter small {
+  display: none;
+}
+
+.combatant-description-input {
+  display: block;
+  width: 100%;
+  min-height: 38px;
+  max-height: 88px;
+  margin-top: 7px;
+  border: 1px solid rgba(184,144,44,.42);
+  background: rgba(255,253,245,.20);
+  color: var(--navy-deep);
+  font-family: 'Lora', serif;
+  font-size: 11px;
+  font-style: italic;
+  line-height: 1.35;
+  padding: 5px 6px;
+  resize: vertical;
+}
+
+.combatant-description-input::placeholder {
+  color: rgba(28,39,80,.48);
+}
+
+.combatant-description-input:focus {
+  border-color: var(--gold-deep);
+  background: rgba(255,253,245,.34);
+  outline: none;
+}
+
+.inline-statblock-description {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-left: 3px solid rgba(184,144,44,.62);
+  background: rgba(255,253,245,.20);
+  color: rgba(28,39,80,.76);
+  font-family: 'Lora', serif;
+  font-size: 12px;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.custom-statblock-description-field {
+  grid-column: span 2;
+}
+
+.custom-statblock-description-field textarea {
+  min-height: 32px;
+  max-height: 92px;
+}
+
+html[data-theme="moonlight"] .combatant-description-input,
+html[data-theme="moonlight"] .inline-statblock-description {
+  border-color: rgba(177, 229, 255, .38);
+  background: rgba(4, 17, 38, .34);
+  color: rgba(232, 247, 255, .88);
+}
+
+html[data-theme="moonlight"] .combatant-description-input::placeholder {
+  color: rgba(218, 244, 255, .48);
+}
+
+@media (max-width: 900px) {
+  .custom-statblock-description-field {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .legendary-tracker {
+    margin-left: 0;
+    gap: 5px;
+  }
+
+  .legendary-counter {
+    flex: 1 1 150px;
+    justify-content: center;
+  }
+
+  .combatant-description-input {
+    min-height: 42px;
+    font-size: 16px;
+  }
+}

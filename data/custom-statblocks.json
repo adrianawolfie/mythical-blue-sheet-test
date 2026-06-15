@@ -1,0 +1,72 @@
+[
+  {
+    "id": "custom-monster-deck-swabbie",
+    "name": "Deck Swabbie",
+    "section": "Custom Monsters",
+    "size": "Medium",
+    "type": "Humanoid (human)",
+    "alignment": "Neutral",
+    "armorClass": "12",
+    "initiative": "+1",
+    "hp": "11",
+    "hpFormula": "2d8 + 2",
+    "speed": "30 ft.",
+    "challengeRating": "1",
+    "proficiencyBonus": "2",
+    "description": "An Able-Bodied Seaman (Swabbie): part of the majority of the crew. Though they normally handle manual labor such as scrubbing the decks or trimming the sails, when docked the Deck Swabbie is tasked with standing guard on deck. Ensuring no unauthorised being gets on or off board.",
+    "text": "Deck Swabbie\nMedium Humanoid (human), Neutral\nAC 12 (Leather Armor)\nHP 11 (2d8 + 2)\nSpeed 30 ft.\nMOD SAVE\nStr 11 +0 +0\nDex 12 +1 +1\nCon 12 +1 +1\nInt 10 +0 +0\nWis 10 +0 +0\nCha 10 +0 +0\nSkills Acrobatics +3\nSenses Passive Perception 10\nLanguages Common\nCR 1 (PB +2)\nActions\nScimitar. Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d6 +1) slashing damage.\nCrossbow (light). Ranged Weapon Attack: +3 to hit, reach 80-320 ft., one target. Hit: 6 (1d8 + 1) piercing damage.",
+    "source": "Custom Monster",
+    "saveProficiencies": [],
+    "skillProficiencies": [
+      "Acrobatics"
+    ],
+    "skillExpertise": []
+  },
+  {
+    "id": "custom-monster-bosun",
+    "name": "Bosun",
+    "section": "Custom Monsters",
+    "size": "Medium",
+    "type": "Humanoid (human)",
+    "alignment": "Neutral",
+    "armorClass": "14",
+    "initiative": "+3",
+    "hp": "33",
+    "hpFormula": "6d8 + 6",
+    "speed": "30 ft.",
+    "challengeRating": "4",
+    "proficiencyBonus": "2",
+    "description": "Boatswain (Bosun): The manager of the ship's maintenance. They supervise rigging, anchors, and sails. Among the crew they're also known as jailer as they're in charge of administering and handling punishments.",
+    "text": "Bosun\nMedium Humanoid (human), Neutral\nAC 14 (leather armor)\nHP 33 (6d8 + 6)\nSpeed 30 ft.\nMOD SAVE\nStr 10 +0 +0\nDex 16 +3 +3\nCon 12 +1 +1\nInt 12 +1 +1\nWis 12 +1 +1\nCha 10 +0 +0\nSkills Intimidation +2, Insight +3\nSenses Passive Perception 11\nLanguages Common\nCR 4 (PB +2)\nTraits\nMultiattack. Can make two melee attacks (e.g., Dagger or Scimitar) on their turn. It can exchange one of its attacks to use its nets.\nActions\nScimitar. Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 +3) slashing damage.\nCrossbow (light). Ranged Weapon Attack: +5 to hit, reach 80-320 ft., one target. Hit: 7 (1d8 + 3) piercing damage (loading, no multiattack possible).\nDagger. Melee/Ranged Weapon Attack: +5 to hit, reach 5-20/60 ft., one target. Hit: 5 (1d4 +3) piercing damage.\nNet. Instead of making a second attack, the Bosun can throw one of its nets without disadvantage (before or after the first attack). Ranged Weapon Attack: +5 to hit, reach 5-15 ft., one target. Hit: target becomes restrained\nBonus Actions\nSwashbuckler's Footwork. Dash, Disengage, or Hide.\nReactions\nParry. It can parry a single attack as a reaction by adding its PB (+2) to its AC.",
+    "source": "Custom Monster",
+    "saveProficiencies": [],
+    "skillProficiencies": [
+      "Intimidation",
+      "Insight"
+    ],
+    "skillExpertise": []
+  },
+  {
+    "id": "custom-monster-below-deck-swabbie",
+    "name": "Below Deck Swabbie",
+    "section": "Custom Monsters",
+    "size": "Medium",
+    "type": "Humanoid (human)",
+    "alignment": "Neutral",
+    "armorClass": "12",
+    "initiative": "+1",
+    "hp": "11",
+    "hpFormula": "2d8 + 2",
+    "speed": "30 ft.",
+    "challengeRating": "2",
+    "proficiencyBonus": "2",
+    "description": "An Able-Bodied Seaman (Swabbie): part of the majority of the crew. Though they normally handle manual labor such as scrubbing the decks or trimming the sails, when docked the Below Deck Swabbie is tasked with standing guard below deck. Ensuring no unauthorised being gets beyond them, they guard the goods and sometimes the prisoners.",
+    "text": "Below Deck Swabbie\nMedium Humanoid (human), Neutral\nAC 12 (Leather Armor)\nHP 11 (2d8 + 2)\nSpeed 30 ft.\nMOD SAVE\nStr 11 +0 +0\nDex 12 +1 +1\nCon 12 +1 +1\nInt 10 +0 +0\nWis 10 +0 +0\nCha 10 +0 +0\nSkills Intimidation +2\nSenses Passive Perception 10\nLanguages Common\nCR 2 (PB +2)\nActions\nScimitar. Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 1) slashing damage.\nBonus Actions\nDagger. Melee/Ranged Weapon Attack: +3 to hit, reach 5-20/60 ft., one target. Hit: 2 (1d4) piercing damage.",
+    "source": "Custom Monster",
+    "saveProficiencies": [],
+    "skillProficiencies": [
+      "Intimidation"
+    ],
+    "skillExpertise": []
+  }
+]
