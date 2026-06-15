@@ -9,6 +9,27 @@
   const SAVE_DELAY = 550;
   const POLL_DELAY = 5000;
   const CUSTOM_CONDITION_VALUE = "__custom__";
+  const ABILITY_LABELS = ["Str", "Dex", "Con", "Int", "Wis", "Cha"];
+  const SKILL_ABILITIES = {
+    acrobatics: "Dex",
+    "animal handling": "Wis",
+    arcana: "Int",
+    athletics: "Str",
+    deception: "Cha",
+    history: "Int",
+    insight: "Wis",
+    intimidation: "Cha",
+    investigation: "Int",
+    medicine: "Wis",
+    nature: "Int",
+    perception: "Wis",
+    performance: "Cha",
+    persuasion: "Cha",
+    religion: "Int",
+    "sleight of hand": "Dex",
+    stealth: "Dex",
+    survival: "Wis"
+  };
 
   let playerCharacters = [];
   let statblockLibrary = [];
@@ -76,10 +97,40 @@
     return Number.isFinite(parsed) ? Math.max(0, parsed) : fallback;
   }
 
-  function abilityModifier(score) {
+  function abilityModifierNumber(score) {
     const value = Number.parseInt(String(score || "10"), 10);
-    const modifier = Math.floor(((Number.isFinite(value) ? value : 10) - 10) / 2);
-    return `${modifier >= 0 ? "+" : ""}${modifier}`;
+    return Math.floor(((Number.isFinite(value) ? value : 10) - 10) / 2);
+  }
+
+  function formatBonus(value) {
+    const numeric = Number.parseInt(String(value ?? "0"), 10);
+    const safe = Number.isFinite(numeric) ? numeric : 0;
+    return `${safe >= 0 ? "+" : ""}${safe}`;
+  }
+
+  function abilityModifier(score) {
+    return formatBonus(abilityModifierNumber(score));
+  }
+
+  function bonusToNumber(value) {
+    const parsed = Number.parseInt(String(value ?? "").replace(/−/g, "-").replace(/\s+/g, ""), 10);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  function challengeToProficiencyBonus(cr) {
+    const raw = String(cr || "0").trim().toLowerCase();
+    const numeric = raw.includes("/")
+      ? raw.split("/").reduce((acc, part, index) => index === 0 ? Number(part) : acc / Number(part), 0)
+      : Number.parseFloat(raw);
+    const value = Number.isFinite(numeric) ? numeric : 0;
+    if (value >= 29) return 9;
+    if (value >= 25) return 8;
+    if (value >= 21) return 7;
+    if (value >= 17) return 6;
+    if (value >= 13) return 5;
+    if (value >= 9) return 4;
+    if (value >= 5) return 3;
+    return 2;
   }
 
   function normalizeConditionNames(value) {
@@ -112,9 +163,14 @@
       hpFormula: String(statblock.hpFormula || ""),
       speed: String(statblock.speed || ""),
       challengeRating: String(statblock.challengeRating || ""),
+      proficiencyBonus: String(statblock.proficiencyBonus || ""),
       text: String(statblock.text || ""),
-      source: String(statblock.source || (statblock.section === "Custom" ? "Custom" : "SRD 5.2.1"))
+      source: String(statblock.source || (statblock.section === "Custom" ? "Custom" : "SRD 5.2.1")),
+      saveProficiencies: Array.isArray(statblock.saveProficiencies) ? statblock.saveProficiencies : [],
+      skillProficiencies: Array.isArray(statblock.skillProficiencies) ? statblock.skillProficiencies : [],
+      skillExpertise: Array.isArray(statblock.skillExpertise) ? statblock.skillExpertise : []
     };
+    normalized.proficiencyBonus = String(getProficiencyBonus(normalized) || "");
     normalized.legendaryResistanceMax = getLegendaryResistanceMax(normalized);
     normalized.legendaryActionMax = getLegendaryActionMax(normalized);
     return normalized;
@@ -175,6 +231,76 @@
       if (match) return Number(match[1]);
     }
     return /Legendary Actions/i.test(text) ? 3 : 0;
+  }
+
+  function getProficiencyBonus(statblock) {
+    const explicit = explicitNonZeroNumber(statblock?.proficiencyBonus);
+    if (explicit) return explicit;
+    const text = cleanStatblockText(statblock);
+    const pbMatch = text.match(/\bPB\s*([+−-]?\s*\d+)/i);
+    if (pbMatch) return Math.max(0, bonusToNumber(pbMatch[1]));
+    const crMatch = text.match(/\bCR\s+([^\s(]+)/i);
+    return challengeToProficiencyBonus(statblock?.challengeRating || crMatch?.[1] || 0);
+  }
+
+  function parseCommaList(value) {
+    return String(value || "")
+      .split(/[,;\n]/)
+      .map(item => item.trim())
+      .filter(Boolean)
+      .filter((item, index, array) => array.findIndex(other => other.toLowerCase() === item.toLowerCase()) === index);
+  }
+
+  function selectedCheckboxValues(name) {
+    return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(input => input.value);
+  }
+
+  function setCheckedValues(name, values) {
+    const selected = new Set((values || []).map(value => String(value).toLowerCase()));
+    document.querySelectorAll(`input[name="${name}"]`).forEach(input => { input.checked = selected.has(String(input.value).toLowerCase()); });
+  }
+
+  function abilityScoreMapFromPairs(abilities) {
+    return new Map(abilities.map(([label, score]) => [label.toLowerCase(), score]));
+  }
+
+  function buildSkillsLine(skillProficiencies, skillExpertise, abilityScores, proficiencyBonus) {
+    const expertiseSet = new Set(skillExpertise.map(item => item.toLowerCase()));
+    const allSkills = [...skillProficiencies, ...skillExpertise]
+      .filter((item, index, array) => array.findIndex(other => other.toLowerCase() === item.toLowerCase()) === index);
+    const entries = allSkills.map(skill => {
+      const ability = SKILL_ABILITIES[skill.toLowerCase()];
+      if (!ability) return "";
+      const mod = abilityModifierNumber(abilityScores.get(ability.toLowerCase()) || 10);
+      const multiplier = expertiseSet.has(skill.toLowerCase()) ? 2 : 1;
+      return `${skill} ${formatBonus(mod + proficiencyBonus * multiplier)}`;
+    }).filter(Boolean);
+    return entries.length ? `Skills ${entries.join(", ")}` : "";
+  }
+
+  function inferSaveProficiencies(abilities, proficiencyBonus) {
+    return abilities
+      .filter(ability => Math.abs(bonusToNumber(ability.save) - bonusToNumber(ability.modifier) - proficiencyBonus) <= 0)
+      .map(ability => ability.name.charAt(0).toUpperCase() + ability.name.slice(1).toLowerCase());
+  }
+
+  function inferSkillsFromMetadata(metadata, abilities, proficiencyBonus) {
+    const abilityScores = new Map((abilities || []).map(ability => [ability.name.toLowerCase(), ability.score]));
+    const skillsLine = metadata.find(item => item.label === "Skills")?.value || "";
+    const proficient = [];
+    const expert = [];
+    skillsLine.split(",").map(item => item.trim()).filter(Boolean).forEach(item => {
+      const match = item.match(/^(.+?)\s+([+−-]\s*\d+)$/);
+      if (!match) return;
+      const skill = match[1].trim();
+      const ability = SKILL_ABILITIES[skill.toLowerCase()];
+      if (!ability) return;
+      const mod = abilityModifierNumber(abilityScores.get(ability.toLowerCase()) || 10);
+      const total = bonusToNumber(match[2]);
+      if (total >= mod + proficiencyBonus * 2) expert.push(skill);
+      else if (total >= mod + proficiencyBonus) proficient.push(skill);
+    });
+    return { proficient, expert };
   }
 
   function normalizeNpc(npc) {
@@ -280,6 +406,8 @@
     const legendary = [];
     const lr = getLegendaryResistanceMax(statblock);
     const la = getLegendaryActionMax(statblock);
+    const pb = getProficiencyBonus(statblock);
+    if (pb) legendary.push(`PB +${pb}`);
     if (lr) legendary.push(`LR ${lr}`);
     if (la) legendary.push(`LA ${la}`);
     return `<div class="statblock-summary-chips"><span>AC ${escapeHtml(statblock.armorClass)}</span><span>HP ${escapeHtml(statblock.hp)}${statblock.hpFormula ? ` (${escapeHtml(statblock.hpFormula)})` : ""}</span><span>CR ${escapeHtml(statblock.challengeRating || "—")}</span><span>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}</span>${legendary.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>`;
@@ -394,12 +522,12 @@
     const structured = parseStructuredStatblock(statblock);
     return `<section class="inline-statblock" aria-label="${escapeHtml(statblock.name)} statblock">
       <header class="inline-statblock-header"><div><div class="dm-section-label">${escapeHtml(statblock.source || statblock.section || "Statblock")}</div><h3>${escapeHtml(statblock.name)}</h3><p>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}, ${escapeHtml(statblock.alignment)}</p></div>${closeButton ? `<button type="button" class="inline-statblock-close" data-action="toggle-statblock" aria-label="Close ${escapeHtml(statblock.name)} statblock">×</button>` : ""}</header>
-      <div class="inline-statblock-vitals"><div><span>Armor Class</span><strong>${escapeHtml(statblock.armorClass || "—")}</strong></div><div><span>Hit Points</span><strong>${escapeHtml(statblock.hp || "—")}</strong><small>${statblock.hpFormula ? `(${escapeHtml(statblock.hpFormula)})` : ""}</small></div><div><span>Initiative</span><strong>${escapeHtml(statblock.initiative || "—")}</strong></div><div><span>Speed</span><strong>${escapeHtml(statblock.speed || "—")}</strong></div><div><span>Challenge</span><strong>${statblock.challengeRating ? `CR ${escapeHtml(statblock.challengeRating)}` : "—"}</strong></div></div>
+      <div class="inline-statblock-vitals"><div><span>Armor Class</span><strong>${escapeHtml(statblock.armorClass || "—")}</strong></div><div><span>Hit Points</span><strong>${escapeHtml(statblock.hp || "—")}</strong><small>${statblock.hpFormula ? `(${escapeHtml(statblock.hpFormula)})` : ""}</small></div><div><span>Initiative</span><strong>${escapeHtml(statblock.initiative || "—")}</strong></div><div><span>Speed</span><strong>${escapeHtml(statblock.speed || "—")}</strong></div><div><span>Challenge</span><strong>${statblock.challengeRating ? `CR ${escapeHtml(statblock.challengeRating)}` : "—"}</strong></div><div><span>Proficiency</span><strong>${getProficiencyBonus(statblock) ? `PB +${escapeHtml(getProficiencyBonus(statblock))}` : "—"}</strong></div></div>
       ${statblockAbilityMarkup(structured.abilities)}
       ${statblockMetadataMarkup(structured.metadata)}
       ${statblockSectionsMarkup(structured.sections)}
       ${addButton || editButton ? `<div class="statblock-preview-actions">${editButton ? `<button type="button" class="dm-secondary-button" data-action="edit-statblock" data-statblock-id="${escapeHtml(statblock.id)}">Edit Statblock</button>` : ""}${addButton ? `<button type="button" class="dm-primary-button" data-action="add-previewed-statblock" data-statblock-id="${escapeHtml(statblock.id)}">+ Add to Tracker</button>` : ""}</div>` : ""}
-    </section`;
+    </section>`;
   }
 
   function expandedStatblockMarkup(combatant) {
@@ -760,7 +888,7 @@
 
   function clearCustomStatblockForm() {
     editingStatblockId = "";
-    document.querySelectorAll("#customStatblockPanel input, #customStatblockPanel textarea").forEach(input => { input.value = ""; });
+    document.querySelectorAll("#customStatblockPanel input, #customStatblockPanel textarea").forEach(input => { if (input.type === "checkbox") input.checked = false; else input.value = ""; });
     const title = document.getElementById("customStatblockTitle");
     if (title) title.textContent = "Create Custom Statblock";
     const saveButton = document.getElementById("saveCustomStatblockBtn");
@@ -789,12 +917,16 @@
   function openStatblockEditor(statblockId) {
     const statblock = getStatblockById(statblockId);
     if (!statblock) return;
-    editingStatblockId = statblock.id;
+    const isCustom = String(statblock.section || "").toLowerCase() === "custom";
+    editingStatblockId = isCustom ? statblock.id : "";
     const structured = parseStructuredStatblock(statblock);
     const abilityMap = new Map(structured.abilities.map(ability => [ability.name.toLowerCase(), ability.score]));
     const sectionByTitle = new Map(structured.sections.map(section => [section.title, section]));
+    const proficiencyBonus = getProficiencyBonus(statblock);
+    const inferredSkills = inferSkillsFromMetadata(structured.metadata, structured.abilities, proficiencyBonus);
+    const inferredSaves = inferSaveProficiencies(structured.abilities, proficiencyBonus);
     const meta = structured.metadata
-      .filter(item => item.label !== "CR")
+      .filter(item => item.label !== "CR" && item.label !== "Skills")
       .map(item => `${item.label} ${item.value || ""}`.trim())
       .join("\n");
 
@@ -808,6 +940,7 @@
     setCustomField("customStatInitiative", statblock.initiative);
     setCustomField("customStatSpeed", statblock.speed);
     setCustomField("customStatCr", statblock.challengeRating);
+    setCustomField("customStatPb", proficiencyBonus);
     setCustomField("customStatLegendaryResistance", getLegendaryResistanceMax(statblock));
     setCustomField("customStatLegendaryActions", getLegendaryActionMax(statblock));
     setCustomField("customStatStr", abilityMap.get("str") || "10");
@@ -816,6 +949,9 @@
     setCustomField("customStatInt", abilityMap.get("int") || "10");
     setCustomField("customStatWis", abilityMap.get("wis") || "10");
     setCustomField("customStatCha", abilityMap.get("cha") || "10");
+    setCheckedValues("customSaveProficiency", statblock.saveProficiencies?.length ? statblock.saveProficiencies : inferredSaves);
+    setCustomField("customStatSkillProficiencies", (statblock.skillProficiencies?.length ? statblock.skillProficiencies : inferredSkills.proficient).join(", "));
+    setCustomField("customStatSkillExpertise", (statblock.skillExpertise?.length ? statblock.skillExpertise : inferredSkills.expert).join(", "));
     setCustomField("customStatMeta", meta);
     setCustomField("customStatTraits", statblockEntriesToText(sectionByTitle.get("Traits"), { skipLegendaryResistance: true }));
     setCustomField("customStatActions", statblockEntriesToText(sectionByTitle.get("Actions")));
@@ -827,7 +963,6 @@
 
     const title = document.getElementById("customStatblockTitle");
     const saveButton = document.getElementById("saveCustomStatblockBtn");
-    const isCustom = String(statblock.section || "").toLowerCase() === "custom";
     if (title) title.textContent = isCustom ? `Edit ${statblock.name}` : `Edit ${statblock.name} as Custom`;
     if (saveButton) saveButton.textContent = isCustom ? "Save Changes" : "Save Custom Copy";
     openCustomStatblockPanel();
@@ -844,6 +979,10 @@
     const initiative = getFieldValue("customStatInitiative");
     const speed = getFieldValue("customStatSpeed") || "30 ft.";
     const challengeRating = getFieldValue("customStatCr") || "0";
+    const proficiencyBonus = toNumber(getFieldValue("customStatPb"), challengeToProficiencyBonus(challengeRating));
+    const saveProficiencies = selectedCheckboxValues("customSaveProficiency");
+    const skillProficiencies = parseCommaList(getFieldValue("customStatSkillProficiencies"));
+    const skillExpertise = parseCommaList(getFieldValue("customStatSkillExpertise"));
     const lr = toNumber(getFieldValue("customStatLegendaryResistance"), 0);
     const la = toNumber(getFieldValue("customStatLegendaryActions"), 0);
     const abilities = [
@@ -854,8 +993,15 @@
       ["Wis", getFieldValue("customStatWis") || "10"],
       ["Cha", getFieldValue("customStatCha") || "10"]
     ];
-    const abilityLines = abilities.map(([label, score]) => `${label} ${score} ${abilityModifier(score)} ${abilityModifier(score)}`).join("\n");
-    const meta = getFieldValue("customStatMeta");
+    const abilityScores = abilityScoreMapFromPairs(abilities);
+    const saveSet = new Set(saveProficiencies.map(item => item.toLowerCase()));
+    const abilityLines = abilities.map(([label, score]) => {
+      const modifier = abilityModifierNumber(score);
+      const save = modifier + (saveSet.has(label.toLowerCase()) ? proficiencyBonus : 0);
+      return `${label} ${score} ${formatBonus(modifier)} ${formatBonus(save)}`;
+    }).join("\n");
+    const generatedSkills = buildSkillsLine(skillProficiencies, skillExpertise, abilityScores, proficiencyBonus);
+    const meta = [generatedSkills, getFieldValue("customStatMeta")].filter(Boolean).join("\n");
     const traits = getFieldValue("customStatTraits");
     const actions = getFieldValue("customStatActions");
     const extra = getFieldValue("customStatExtraActions");
@@ -863,13 +1009,34 @@
     const legendaryResistanceText = lr ? `Legendary Resistance (${lr}/Day). If the monster fails a saving throw, it can choose to succeed instead.` : "";
     const legendaryHeader = la ? `Legendary Action Uses: ${la}. Immediately after another creature’s turn, the monster can expend a use to take one of the following actions. The monster regains all expended uses at the start of each of its turns.` : "";
     const sections = [
-      `${name}\n${size} ${type}, ${alignment}\nAC ${armorClass}\n${initiative ? `Initiative ${initiative}\n` : ""}HP ${hp}${hpFormula ? ` (${hpFormula})` : ""}\nSpeed ${speed}\nMOD SAVE\n${abilityLines}\n${meta}\nCR ${challengeRating}`,
+      `${name}\n${size} ${type}, ${alignment}\nAC ${armorClass}\n${initiative ? `Initiative ${initiative}\n` : ""}HP ${hp}${hpFormula ? ` (${hpFormula})` : ""}\nSpeed ${speed}\nMOD SAVE\n${abilityLines}\n${meta}\nCR ${challengeRating} (PB ${formatBonus(proficiencyBonus)})`,
       [legendaryResistanceText, traits].filter(Boolean).length ? `Traits\n${[legendaryResistanceText, traits].filter(Boolean).join("\n")}` : "",
       actions ? `Actions\n${actions}` : "",
       extra,
       la || legendaryText ? `Legendary Actions\n${[legendaryHeader, legendaryText].filter(Boolean).join("\n")}` : ""
     ];
-    return normalizeStatblock({ id: createId("custom-statblock"), name, section: "Custom", size, type, alignment, armorClass, initiative, hp, hpFormula, speed, challengeRating, text: sections.filter(Boolean).join("\n"), source: "Custom", legendaryResistanceMax: lr, legendaryActionMax: la });
+    return normalizeStatblock({
+      id: editingStatblockId || createId("custom-statblock"),
+      name,
+      section: "Custom",
+      size,
+      type,
+      alignment,
+      armorClass,
+      initiative,
+      hp,
+      hpFormula,
+      speed,
+      challengeRating,
+      proficiencyBonus,
+      text: sections.filter(Boolean).join("\n"),
+      source: "Custom",
+      legendaryResistanceMax: lr,
+      legendaryActionMax: la,
+      saveProficiencies,
+      skillProficiencies,
+      skillExpertise
+    });
   }
 
   function saveCustomStatblock({ addToTracker = false } = {}) {

@@ -1840,7 +1840,8 @@
 
 .custom-statblock-grid,
 .custom-statblock-abilities,
-.custom-statblock-textareas {
+.custom-statblock-textareas,
+.custom-skill-proficiency-grid {
   display: grid;
   gap: 10px;
 }
@@ -1855,6 +1856,60 @@
 }
 
 .custom-statblock-textareas {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 10px;
+}
+
+.custom-statblock-proficiencies {
+  margin-top: 10px;
+  border: 1px solid rgba(184,144,44,.32);
+  background: rgba(255,253,245,.12);
+  padding: 10px;
+}
+
+.custom-statblock-proficiencies legend {
+  padding: 0 8px;
+  color: var(--gold-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.custom-statblock-proficiency-help {
+  color: rgba(10, 31, 68, .78);
+  font-size: 12px;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.custom-save-proficiency-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.custom-save-proficiency-grid label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(184,144,44,.36);
+  background: rgba(255,253,245,.22);
+  padding: 6px;
+}
+
+.custom-save-proficiency-grid input {
+  width: auto;
+  min-width: auto;
+}
+
+.custom-save-proficiency-grid label span {
+  margin: 0;
+}
+
+.custom-skill-proficiency-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-top: 10px;
 }
@@ -1890,6 +1945,10 @@
   min-height: 96px;
   resize: vertical;
   line-height: 1.4;
+}
+
+.custom-statblock-panel input[type="checkbox"] {
+  accent-color: var(--gold-deep);
 }
 
 .custom-statblock-actions {
@@ -1930,6 +1989,25 @@ html[data-theme="moonlight"] .custom-statblock-heading p {
 
 html[data-theme="moonlight"] .legendary-counter small {
   color: rgba(223, 241, 255, .70);
+}
+
+html[data-theme="moonlight"] .custom-statblock-proficiencies {
+  border-color: rgba(177, 229, 255, .32);
+  background: rgba(4, 17, 38, .26);
+}
+
+html[data-theme="moonlight"] .custom-statblock-proficiencies legend,
+html[data-theme="moonlight"] .custom-save-proficiency-grid label span {
+  color: rgba(229, 247, 255, .92);
+}
+
+html[data-theme="moonlight"] .custom-statblock-proficiency-help {
+  color: rgba(223, 241, 255, .72);
+}
+
+html[data-theme="moonlight"] .custom-save-proficiency-grid label {
+  border-color: rgba(177, 229, 255, .32);
+  background: rgba(4, 17, 38, .34);
 }
 
 html[data-theme="moonlight"] .custom-statblock-panel input,
@@ -1988,7 +2066,9 @@ html[data-theme="moonlight"] .custom-statblock-panel textarea {
   }
 
   .custom-statblock-grid,
-  .custom-statblock-abilities {
+  .custom-statblock-abilities,
+  .custom-save-proficiency-grid,
+  .custom-skill-proficiency-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 

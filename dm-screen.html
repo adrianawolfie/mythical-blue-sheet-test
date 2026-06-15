@@ -146,6 +146,7 @@
           <label><span>Initiative</span><input id="customStatInitiative" placeholder="+4"></label>
           <label><span>Speed</span><input id="customStatSpeed" placeholder="30 ft., Swim 40 ft."></label>
           <label><span>Challenge Rating</span><input id="customStatCr" placeholder="4"></label>
+          <label><span>Proficiency Bonus</span><input id="customStatPb" type="number" min="0" inputmode="numeric" placeholder="2"></label>
           <label><span>Legendary Resistances</span><input id="customStatLegendaryResistance" type="number" min="0" inputmode="numeric" placeholder="0"></label>
           <label><span>Legendary Actions</span><input id="customStatLegendaryActions" type="number" min="0" inputmode="numeric" placeholder="0"></label>
         </div>
@@ -157,8 +158,24 @@
           <label><span>WIS</span><input id="customStatWis" type="number" inputmode="numeric" placeholder="10"></label>
           <label><span>CHA</span><input id="customStatCha" type="number" inputmode="numeric" placeholder="10"></label>
         </div>
+        <fieldset class="custom-statblock-proficiencies">
+          <legend>Proficiencies</legend>
+          <div class="custom-statblock-proficiency-help">Choose which saving throws and skills should include the monster’s proficiency bonus. Expertise adds the bonus twice.</div>
+          <div class="custom-save-proficiency-grid" aria-label="Saving throw proficiencies">
+            <label><input type="checkbox" name="customSaveProficiency" value="Str"><span>STR Save</span></label>
+            <label><input type="checkbox" name="customSaveProficiency" value="Dex"><span>DEX Save</span></label>
+            <label><input type="checkbox" name="customSaveProficiency" value="Con"><span>CON Save</span></label>
+            <label><input type="checkbox" name="customSaveProficiency" value="Int"><span>INT Save</span></label>
+            <label><input type="checkbox" name="customSaveProficiency" value="Wis"><span>WIS Save</span></label>
+            <label><input type="checkbox" name="customSaveProficiency" value="Cha"><span>CHA Save</span></label>
+          </div>
+          <div class="custom-skill-proficiency-grid">
+            <label><span>Skill Proficiencies</span><input id="customStatSkillProficiencies" placeholder="Perception, Stealth, Arcana"></label>
+            <label><span>Skill Expertise</span><input id="customStatSkillExpertise" placeholder="History, Perception"></label>
+          </div>
+        </fieldset>
         <div class="custom-statblock-textareas">
-          <label><span>Skills / Senses / Languages / Defenses</span><textarea id="customStatMeta" placeholder="Skills Perception +5\nResistances Cold\nSenses Darkvision 60 ft.; Passive Perception 15\nLanguages Common"></textarea></label>
+          <label><span>Senses / Languages / Defenses / Other Metadata</span><textarea id="customStatMeta" placeholder="Resistances Cold\nSenses Darkvision 60 ft.; Passive Perception 15\nLanguages Common"></textarea></label>
           <label><span>Traits</span><textarea id="customStatTraits" placeholder="Amphibious. The monster can breathe air and water."></textarea></label>
           <label><span>Actions</span><textarea id="customStatActions" placeholder="Multiattack. The monster makes two attacks.\nHarpoon. Melee or Ranged Attack Roll: +6..."></textarea></label>
           <label><span>Bonus Actions / Reactions</span><textarea id="customStatExtraActions" placeholder="Bonus Actions\nShadow Step. ...\nReactions\nParry. ..."></textarea></label>
