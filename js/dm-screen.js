@@ -1,5 +1,5 @@
 // Mythical Blue · DM screen initiative tracker
-// Player rows stay connected to live character summaries. SRD NPCs keep an inline statblock reference.
+// Player rows stay connected to live character summaries. SRD and custom NPCs can show inline statblocks.
 
 (() => {
   const DM_STATE_KEY = "mythicalBlueDMTrackerV1";
@@ -15,6 +15,7 @@
   let state = loadTrackerState();
   let saveTimers = new Map();
   let pollTimer = null;
+  let selectedStatblockId = "";
   const focusedConditions = new Map();
   const expandedStatblocks = new Set();
 
@@ -30,21 +31,19 @@
   }
 
   function loadTrackerState() {
+    const fallback = { round: 1, activeId: "", playerInitiatives: {}, playerConcentration: {}, npcs: [], customStatblocks: [] };
     try {
       const parsed = JSON.parse(localStorage.getItem(DM_STATE_KEY) || "{}");
       return {
         round: Math.max(1, Number(parsed.round) || 1),
         activeId: String(parsed.activeId || ""),
-        playerInitiatives: parsed.playerInitiatives && typeof parsed.playerInitiatives === "object"
-          ? parsed.playerInitiatives
-          : {},
-        playerConcentration: parsed.playerConcentration && typeof parsed.playerConcentration === "object"
-          ? parsed.playerConcentration
-          : {},
-        npcs: Array.isArray(parsed.npcs) ? parsed.npcs : []
+        playerInitiatives: parsed.playerInitiatives && typeof parsed.playerInitiatives === "object" ? parsed.playerInitiatives : {},
+        playerConcentration: parsed.playerConcentration && typeof parsed.playerConcentration === "object" ? parsed.playerConcentration : {},
+        npcs: Array.isArray(parsed.npcs) ? parsed.npcs : [],
+        customStatblocks: Array.isArray(parsed.customStatblocks) ? parsed.customStatblocks : []
       };
     } catch {
-      return { round: 1, activeId: "", playerInitiatives: {}, playerConcentration: {}, npcs: [] };
+      return fallback;
     }
   }
 
@@ -71,6 +70,17 @@
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
+  function toNumber(value, fallback = 0) {
+    const parsed = Number.parseInt(String(value ?? "").trim(), 10);
+    return Number.isFinite(parsed) ? Math.max(0, parsed) : fallback;
+  }
+
+  function abilityModifier(score) {
+    const value = Number.parseInt(String(score || "10"), 10);
+    const modifier = Math.floor(((Number.isFinite(value) ? value : 10) - 10) / 2);
+    return `${modifier >= 0 ? "+" : ""}${modifier}`;
+  }
+
   function normalizeConditionNames(value) {
     const knownConditions = Object.keys(window.CONDITION_DETAILS || {});
     return String(value || "")
@@ -87,11 +97,58 @@
     return normalizeConditionNames(conditions.join(", ")).join(", ");
   }
 
+  function normalizeStatblock(statblock) {
+    const normalized = {
+      id: String(statblock.id || createId("custom-statblock")),
+      name: String(statblock.name || "Unnamed Statblock"),
+      section: String(statblock.section || "Custom"),
+      size: String(statblock.size || "Medium"),
+      type: String(statblock.type || "Creature"),
+      alignment: String(statblock.alignment || "Unaligned"),
+      armorClass: String(statblock.armorClass ?? ""),
+      initiative: String(statblock.initiative ?? ""),
+      hp: String(statblock.hp ?? ""),
+      hpFormula: String(statblock.hpFormula || ""),
+      speed: String(statblock.speed || ""),
+      challengeRating: String(statblock.challengeRating || ""),
+      text: String(statblock.text || ""),
+      source: String(statblock.source || (statblock.section === "Custom" ? "Custom" : "SRD 5.2.1"))
+    };
+    normalized.legendaryResistanceMax = getLegendaryResistanceMax(normalized);
+    normalized.legendaryActionMax = getLegendaryActionMax(normalized);
+    return normalized;
+  }
+
+  function getCustomStatblocks() {
+    return (state.customStatblocks || []).map(normalizeStatblock);
+  }
+
+  function getAllStatblocks() {
+    const custom = getCustomStatblocks();
+    const customIds = new Set(custom.map(item => item.id));
+    return [...custom, ...statblockLibrary.filter(item => !customIds.has(item.id)).map(normalizeStatblock)];
+  }
+
   function getStatblockById(id) {
-    return statblockLibrary.find(statblock => statblock.id === id) || null;
+    return getAllStatblocks().find(statblock => statblock.id === id) || null;
+  }
+
+  function getLegendaryResistanceMax(statblock) {
+    if (Number.isFinite(Number(statblock.legendaryResistanceMax))) return Math.max(0, Number(statblock.legendaryResistanceMax));
+    const match = String(statblock.text || "").match(/Legendary Resistance\s*\((\d+)\s*\/\s*Day/i);
+    return match ? Number(match[1]) : 0;
+  }
+
+  function getLegendaryActionMax(statblock) {
+    if (Number.isFinite(Number(statblock.legendaryActionMax))) return Math.max(0, Number(statblock.legendaryActionMax));
+    const match = String(statblock.text || "").match(/Legendary Action Uses:\s*(\d+)/i);
+    return match ? Number(match[1]) : 0;
   }
 
   function normalizeNpc(npc) {
+    const statblock = npc.statblockId ? getStatblockById(npc.statblockId) : null;
+    const lrMax = toNumber(npc.legendaryResistanceMax, statblock ? getLegendaryResistanceMax(statblock) : 0);
+    const laMax = toNumber(npc.legendaryActionMax, statblock ? getLegendaryActionMax(statblock) : 0);
     return {
       id: String(npc.id || createId()),
       name: String(npc.name || "New NPC"),
@@ -102,7 +159,11 @@
       currentConditions: serializeConditionNames(normalizeConditionNames(npc.currentConditions)),
       concentrating: Boolean(npc.concentrating),
       statblockId: String(npc.statblockId || ""),
-      source: String(npc.source || "")
+      source: String(npc.source || ""),
+      legendaryResistanceMax: lrMax,
+      legendaryResistanceCurrent: Math.min(lrMax, toNumber(npc.legendaryResistanceCurrent, lrMax)),
+      legendaryActionMax: laMax,
+      legendaryActionCurrent: Math.min(laMax, toNumber(npc.legendaryActionCurrent, laMax))
     };
   }
 
@@ -118,7 +179,11 @@
       currentConditions: serializeConditionNames(normalizeConditionNames(character.currentConditions)),
       concentrating: Boolean(state.playerConcentration[character.id]),
       statblockId: "",
-      source: ""
+      source: "",
+      legendaryResistanceMax: 0,
+      legendaryResistanceCurrent: 0,
+      legendaryActionMax: 0,
+      legendaryActionCurrent: 0
     }));
 
     const npcs = state.npcs.map(normalizeNpc).map(npc => ({ ...npc, type: "npc" }));
@@ -172,7 +237,12 @@
 
   function statblockSummaryMarkup(statblock) {
     if (!statblock) return "";
-    return `<div class="statblock-summary-chips"><span>AC ${escapeHtml(statblock.armorClass)}</span><span>HP ${escapeHtml(statblock.hp)}${statblock.hpFormula ? ` (${escapeHtml(statblock.hpFormula)})` : ""}</span><span>CR ${escapeHtml(statblock.challengeRating)}</span><span>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}</span></div>`;
+    const legendary = [];
+    const lr = getLegendaryResistanceMax(statblock);
+    const la = getLegendaryActionMax(statblock);
+    if (lr) legendary.push(`LR ${lr}`);
+    if (la) legendary.push(`LA ${la}`);
+    return `<div class="statblock-summary-chips"><span>AC ${escapeHtml(statblock.armorClass)}</span><span>HP ${escapeHtml(statblock.hp)}${statblock.hpFormula ? ` (${escapeHtml(statblock.hpFormula)})` : ""}</span><span>CR ${escapeHtml(statblock.challengeRating || "—")}</span><span>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}</span>${legendary.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>`;
   }
 
   const STATBLOCK_SECTION_HEADINGS = ["Traits", "Actions", "Bonus Actions", "Reactions", "Legendary Actions"];
@@ -279,18 +349,33 @@
     return `<div class="inline-statblock-sections">${sections.map(section => `<section class="inline-statblock-section"><h4>${escapeHtml(section.title)}</h4>${section.entries.map(entry => `<article class="inline-statblock-entry">${entry.title ? `<h5>${escapeHtml(entry.title)}</h5>` : ""}<p>${escapeHtml(entry.text)}</p></article>`).join("")}</section>`).join("")}</div>`;
   }
 
+  function statblockPanelMarkup(statblock, { closeButton = false, addButton = false } = {}) {
+    if (!statblock) return "";
+    const structured = parseStructuredStatblock(statblock);
+    return `<section class="inline-statblock" aria-label="${escapeHtml(statblock.name)} statblock">
+      <header class="inline-statblock-header"><div><div class="dm-section-label">${escapeHtml(statblock.source || statblock.section || "Statblock")}</div><h3>${escapeHtml(statblock.name)}</h3><p>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}, ${escapeHtml(statblock.alignment)}</p></div>${closeButton ? `<button type="button" class="inline-statblock-close" data-action="toggle-statblock" aria-label="Close ${escapeHtml(statblock.name)} statblock">×</button>` : ""}</header>
+      <div class="inline-statblock-vitals"><div><span>Armor Class</span><strong>${escapeHtml(statblock.armorClass || "—")}</strong></div><div><span>Hit Points</span><strong>${escapeHtml(statblock.hp || "—")}</strong><small>${statblock.hpFormula ? `(${escapeHtml(statblock.hpFormula)})` : ""}</small></div><div><span>Initiative</span><strong>${escapeHtml(statblock.initiative || "—")}</strong></div><div><span>Speed</span><strong>${escapeHtml(statblock.speed || "—")}</strong></div><div><span>Challenge</span><strong>${statblock.challengeRating ? `CR ${escapeHtml(statblock.challengeRating)}` : "—"}</strong></div></div>
+      ${statblockAbilityMarkup(structured.abilities)}
+      ${statblockMetadataMarkup(structured.metadata)}
+      ${statblockSectionsMarkup(structured.sections)}
+      ${addButton ? `<div class="statblock-preview-actions"><button type="button" class="dm-primary-button" data-action="add-previewed-statblock" data-statblock-id="${escapeHtml(statblock.id)}">+ Add to Tracker</button></div>` : ""}
+    </section>`;
+  }
+
   function expandedStatblockMarkup(combatant) {
     if (!combatant.statblockId || !expandedStatblocks.has(combatant.id)) return "";
     const statblock = getStatblockById(combatant.statblockId);
     if (!statblock) return "";
-    const structured = parseStructuredStatblock(statblock);
-    return `<section class="inline-statblock" aria-label="${escapeHtml(statblock.name)} statblock">
-      <header class="inline-statblock-header"><div><div class="dm-section-label">SRD Statblock</div><h3>${escapeHtml(statblock.name)}</h3><p>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}, ${escapeHtml(statblock.alignment)}</p></div><button type="button" class="inline-statblock-close" data-action="toggle-statblock" aria-label="Close ${escapeHtml(statblock.name)} statblock">×</button></header>
-      <div class="inline-statblock-vitals"><div><span>Armor Class</span><strong>${escapeHtml(statblock.armorClass)}</strong></div><div><span>Hit Points</span><strong>${escapeHtml(statblock.hp)}</strong><small>${statblock.hpFormula ? `(${escapeHtml(statblock.hpFormula)})` : ""}</small></div><div><span>Initiative</span><strong>${escapeHtml(statblock.initiative || "—")}</strong></div><div><span>Speed</span><strong>${escapeHtml(statblock.speed || "—")}</strong></div><div><span>Challenge</span><strong>CR ${escapeHtml(statblock.challengeRating)}</strong></div></div>
-      ${statblockAbilityMarkup(structured.abilities)}
-      ${statblockMetadataMarkup(structured.metadata)}
-      ${statblockSectionsMarkup(structured.sections)}
-    </section>`;
+    return statblockPanelMarkup(statblock, { closeButton: true });
+  }
+
+  function legendaryTrackerMarkup(combatant) {
+    if (combatant.type !== "npc") return "";
+    const lrMax = toNumber(combatant.legendaryResistanceMax, 0);
+    const laMax = toNumber(combatant.legendaryActionMax, 0);
+    if (!lrMax && !laMax) return "";
+    const counter = (kind, label, current, max, note = "") => `<div class="legendary-counter legendary-${kind}"><span>${label}</span><button type="button" data-action="adjust-legendary" data-kind="${kind}" data-delta="-1" aria-label="Use one ${label}">−</button><strong>${escapeHtml(current)} / ${escapeHtml(max)}</strong><button type="button" data-action="adjust-legendary" data-kind="${kind}" data-delta="1" aria-label="Restore one ${label}">+</button>${note ? `<small>${escapeHtml(note)}</small>` : ""}</div>`;
+    return `<div class="legendary-tracker">${lrMax ? counter("resistance", "Legendary Resistance", combatant.legendaryResistanceCurrent, lrMax) : ""}${laMax ? counter("action", "Legendary Action", combatant.legendaryActionCurrent, laMax, "resets at start of turn") : ""}</div>`;
   }
 
   function renderCombatantRow(combatant, displayIndex) {
@@ -304,8 +389,9 @@
       <div class="combatant-order-medallion" aria-hidden="true">${hasInitiative ? displayIndex + 1 : "·"}</div>
       <div class="combatant-name-wrap">
         ${isNpc ? rowInput({ className: "combatant-name-input", field: "name", value: combatant.name, label: "NPC name" }) : `<span class="combatant-name">${encodedName}</span>`}
-        <span class="combatant-type">${isNpc ? (statblock ? `${escapeHtml(statblock.section)} · SRD statblock` : "Custom NPC") : "Player character · live sync"}</span>
+        <span class="combatant-type">${isNpc ? (statblock ? `${escapeHtml(statblock.section)} · ${escapeHtml(statblock.source || "Statblock")}` : "Custom NPC") : "Player character · live sync"}</span>
         ${statblock ? `<button type="button" class="statblock-toggle" data-action="toggle-statblock">${expandedStatblocks.has(combatant.id) ? "Hide" : "View"} statblock</button>` : ""}
+        ${legendaryTrackerMarkup(combatant)}
       </div>
       <div class="combatant-initiative">${rowInput({ className: "initiative-input", field: "initiative", value: combatant.initiative, label: `Initiative for ${combatant.name}`, type: "number", inputmode: "numeric" })}</div>
       <div class="combatant-hp">${hpBarMarkup(combatant)}<div class="combatant-hp-fields">${rowInput({ className: "hp-current-input", field: "hpCurrent", value: combatant.hpCurrent, label: `Current HP for ${combatant.name}`, type: "number", inputmode: "numeric" })}<span class="hp-divider">/</span>${rowInput({ className: "hp-max-input", field: "hpMax", value: combatant.hpMax, label: `Maximum HP for ${combatant.name}`, type: "number", inputmode: "numeric" })}</div></div>
@@ -379,12 +465,6 @@
     bar.classList.toggle("danger", pct > 0 && pct <= 50);
   }
 
-  function restoreFocus(id, field, selectionStart) {
-    const restored = document.querySelector(`.combatant-row[data-id="${CSS.escape(id)}"] [data-field="${CSS.escape(field)}"]`);
-    restored?.focus();
-    if (restored && typeof selectionStart === "number" && typeof restored.setSelectionRange === "function") restored.setSelectionRange(selectionStart, selectionStart);
-  }
-
   function handleTrackerInput(event) {
     const input = event.target.closest("[data-field]");
     const row = input?.closest(".combatant-row");
@@ -446,7 +526,21 @@
   function addStatblockNpc(statblockId) {
     const statblock = getStatblockById(statblockId);
     if (!statblock) return;
-    const npc = normalizeNpc({ id: createId(), name: statblock.name, hpCurrent: statblock.hp, hpMax: statblock.hp, armorClass: statblock.armorClass, statblockId: statblock.id, source: "SRD 5.2.1" });
+    const lr = getLegendaryResistanceMax(statblock);
+    const la = getLegendaryActionMax(statblock);
+    const npc = normalizeNpc({
+      id: createId(),
+      name: statblock.name,
+      hpCurrent: statblock.hp,
+      hpMax: statblock.hp,
+      armorClass: statblock.armorClass,
+      statblockId: statblock.id,
+      source: statblock.source || "SRD 5.2.1",
+      legendaryResistanceMax: lr,
+      legendaryResistanceCurrent: lr,
+      legendaryActionMax: la,
+      legendaryActionCurrent: la
+    });
     state.npcs.push(npc);
     expandedStatblocks.add(npc.id);
     persistTrackerState();
@@ -463,7 +557,29 @@
     renderTracker();
   }
 
+  function adjustLegendary(row, kind, delta) {
+    const id = row?.dataset.id || "";
+    const npc = state.npcs.find(item => item.id === id);
+    if (!npc) return;
+    const field = kind === "resistance" ? "legendaryResistanceCurrent" : "legendaryActionCurrent";
+    const maxField = kind === "resistance" ? "legendaryResistanceMax" : "legendaryActionMax";
+    const max = toNumber(npc[maxField], 0);
+    npc[field] = Math.max(0, Math.min(max, toNumber(npc[field], max) + delta));
+    persistTrackerState();
+    renderTracker();
+  }
+
   function getInitiativeCombatants() { return getCombatants().filter(combatant => numericInitiative(combatant.initiative) !== Number.NEGATIVE_INFINITY); }
+
+  function resetLegendaryActionsForTurn(activeId) {
+    const npc = state.npcs.find(item => item.id === activeId);
+    if (!npc) return;
+    const normalized = normalizeNpc(npc);
+    if (normalized.legendaryActionMax > 0) {
+      npc.legendaryActionMax = normalized.legendaryActionMax;
+      npc.legendaryActionCurrent = normalized.legendaryActionMax;
+    }
+  }
 
   function advanceTurn() {
     const combatants = getInitiativeCombatants();
@@ -472,12 +588,13 @@
     if (currentIndex < 0) state.activeId = combatants[0].id;
     else if (currentIndex === combatants.length - 1) { state.activeId = combatants[0].id; state.round += 1; }
     else state.activeId = combatants[currentIndex + 1].id;
+    resetLegendaryActionsForTurn(state.activeId);
     persistTrackerState(); renderTracker();
   }
 
   function resetCombat() {
-    if (!confirm("Reset initiative values, NPCs, concentration markers, active turn, and round number?")) return;
-    state = { round: 1, activeId: "", playerInitiatives: {}, playerConcentration: {}, npcs: [] };
+    if (!confirm("Reset initiative values, NPCs, concentration markers, active turn, and round number? Custom statblocks stay saved.")) return;
+    state = { ...state, round: 1, activeId: "", playerInitiatives: {}, playerConcentration: {}, npcs: [] };
     focusedConditions.clear(); expandedStatblocks.clear(); persistTrackerState(); renderTracker();
   }
 
@@ -506,11 +623,8 @@
     try {
       const response = await fetch(`${STATBLOCK_LIBRARY_URL}?cacheBust=${Date.now()}`, { cache: "no-store" });
       if (!response.ok) throw new Error("Could not load SRD statblocks.");
-      statblockLibrary = await response.json();
-      fillFilter("statblockSectionFilter", statblockLibrary.map(item => item.section));
-      fillFilter("statblockTypeFilter", statblockLibrary.map(item => item.type));
-      fillFilter("statblockSizeFilter", statblockLibrary.map(item => item.size));
-      fillFilter("statblockCrFilter", statblockLibrary.map(item => item.challengeRating));
+      statblockLibrary = (await response.json()).map(normalizeStatblock);
+      refreshStatblockFilters();
       renderStatblockResults();
     } catch (error) {
       console.warn(error.message);
@@ -519,27 +633,46 @@
     }
   }
 
+  function refreshStatblockFilters() {
+    const all = getAllStatblocks();
+    fillFilter("statblockSectionFilter", all.map(item => item.section));
+    fillFilter("statblockTypeFilter", all.map(item => item.type));
+    fillFilter("statblockSizeFilter", all.map(item => item.size));
+    fillFilter("statblockCrFilter", all.map(item => item.challengeRating));
+  }
+
   function statblockMatchesFilters(statblock) {
     const query = String(document.getElementById("statblockSearchInput")?.value || "").trim().toLowerCase();
     const section = document.getElementById("statblockSectionFilter")?.value || "";
     const type = document.getElementById("statblockTypeFilter")?.value || "";
     const size = document.getElementById("statblockSizeFilter")?.value || "";
     const cr = document.getElementById("statblockCrFilter")?.value || "";
-    const haystack = `${statblock.name} ${statblock.type} ${statblock.alignment} ${statblock.text}`.toLowerCase();
+    const haystack = `${statblock.name} ${statblock.type} ${statblock.alignment} ${statblock.section} ${statblock.text}`.toLowerCase();
     return (!query || haystack.includes(query)) && (!section || statblock.section === section) && (!type || statblock.type === type) && (!size || statblock.size === size) && (!cr || statblock.challengeRating === cr);
   }
 
   function renderStatblockResult(statblock) {
-    return `<article class="statblock-result-card"><div><h3>${escapeHtml(statblock.name)}</h3><p>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}, ${escapeHtml(statblock.alignment)}</p>${statblockSummaryMarkup(statblock)}<small>${escapeHtml(statblock.section)} · Speed ${escapeHtml(statblock.speed || "—")}</small></div><button type="button" class="dm-primary-button" data-action="add-statblock-npc" data-statblock-id="${escapeHtml(statblock.id)}">Add</button></article>`;
+    const selectedClass = selectedStatblockId === statblock.id ? " selected" : "";
+    return `<article class="statblock-result-card${selectedClass}"><div><h3>${escapeHtml(statblock.name)}</h3><p>${escapeHtml(statblock.size)} ${escapeHtml(statblock.type)}, ${escapeHtml(statblock.alignment)}</p>${statblockSummaryMarkup(statblock)}<small>${escapeHtml(statblock.section)} · Speed ${escapeHtml(statblock.speed || "—")}</small></div><div class="statblock-result-actions"><button type="button" class="dm-subtle-button" data-action="preview-statblock" data-statblock-id="${escapeHtml(statblock.id)}">Preview</button><button type="button" class="dm-primary-button" data-action="add-statblock-npc" data-statblock-id="${escapeHtml(statblock.id)}">Add</button></div></article>`;
+  }
+
+  function renderStatblockPreview(statblockId = selectedStatblockId) {
+    const preview = document.getElementById("statblockPreview");
+    if (!preview) return;
+    const statblock = statblockId ? getStatblockById(statblockId) : null;
+    selectedStatblockId = statblock?.id || "";
+    preview.innerHTML = statblock ? statblockPanelMarkup(statblock, { addButton: true }) : `<p class="initiative-empty-state">Select a statblock to preview its full rules before adding it.</p>`;
   }
 
   function renderStatblockResults() {
     const results = document.getElementById("statblockResults");
     const count = document.getElementById("statblockResultCount");
     if (!results || !count) return;
-    const matching = statblockLibrary.filter(statblockMatchesFilters);
+    const matching = getAllStatblocks().filter(statblockMatchesFilters);
     count.textContent = `${matching.length} statblock${matching.length === 1 ? "" : "s"}`;
     results.innerHTML = matching.length ? matching.map(renderStatblockResult).join("") : `<p class="initiative-empty-state">No statblocks match these filters.</p>`;
+    if (!matching.some(item => item.id === selectedStatblockId)) selectedStatblockId = "";
+    renderStatblockPreview(selectedStatblockId);
   }
 
   function openNpcPicker() {
@@ -547,6 +680,7 @@
     if (!backdrop) return;
     backdrop.classList.remove("is-hidden");
     backdrop.setAttribute("aria-hidden", "false");
+    refreshStatblockFilters();
     renderStatblockResults();
   }
 
@@ -562,8 +696,77 @@
     renderStatblockResults();
   }
 
+  function openCustomStatblockPanel() {
+    document.getElementById("customStatblockPanel")?.removeAttribute("hidden");
+    document.getElementById("customStatName")?.focus();
+  }
+
+  function closeCustomStatblockPanel() {
+    document.getElementById("customStatblockPanel")?.setAttribute("hidden", "");
+  }
+
+  function getFieldValue(id) {
+    return String(document.getElementById(id)?.value || "").trim();
+  }
+
+  function clearCustomStatblockForm() {
+    document.querySelectorAll("#customStatblockPanel input, #customStatblockPanel textarea").forEach(input => { input.value = ""; });
+    document.getElementById("customStatName")?.focus();
+  }
+
+  function buildCustomStatblockFromForm() {
+    const name = getFieldValue("customStatName") || "Custom Monster";
+    const size = getFieldValue("customStatSize") || "Medium";
+    const type = getFieldValue("customStatType") || "Creature";
+    const alignment = getFieldValue("customStatAlignment") || "Unaligned";
+    const armorClass = getFieldValue("customStatAc") || "10";
+    const hp = getFieldValue("customStatHp") || "1";
+    const hpFormula = getFieldValue("customStatHpFormula");
+    const initiative = getFieldValue("customStatInitiative");
+    const speed = getFieldValue("customStatSpeed") || "30 ft.";
+    const challengeRating = getFieldValue("customStatCr") || "0";
+    const lr = toNumber(getFieldValue("customStatLegendaryResistance"), 0);
+    const la = toNumber(getFieldValue("customStatLegendaryActions"), 0);
+    const abilities = [
+      ["Str", getFieldValue("customStatStr") || "10"],
+      ["Dex", getFieldValue("customStatDex") || "10"],
+      ["Con", getFieldValue("customStatCon") || "10"],
+      ["Int", getFieldValue("customStatInt") || "10"],
+      ["Wis", getFieldValue("customStatWis") || "10"],
+      ["Cha", getFieldValue("customStatCha") || "10"]
+    ];
+    const abilityLines = abilities.map(([label, score]) => `${label} ${score} ${abilityModifier(score)} ${abilityModifier(score)}`).join("\n");
+    const meta = getFieldValue("customStatMeta");
+    const traits = getFieldValue("customStatTraits");
+    const actions = getFieldValue("customStatActions");
+    const extra = getFieldValue("customStatExtraActions");
+    const legendaryText = getFieldValue("customStatLegendaryText");
+    const legendaryResistanceText = lr ? `Legendary Resistance (${lr}/Day). If the monster fails a saving throw, it can choose to succeed instead.` : "";
+    const legendaryHeader = la ? `Legendary Action Uses: ${la}. Immediately after another creature’s turn, the monster can expend a use to take one of the following actions. The monster regains all expended uses at the start of each of its turns.` : "";
+    const sections = [
+      `${name}\n${size} ${type}, ${alignment}\nAC ${armorClass}\n${initiative ? `Initiative ${initiative}\n` : ""}HP ${hp}${hpFormula ? ` (${hpFormula})` : ""}\nSpeed ${speed}\nMOD SAVE\n${abilityLines}\n${meta}\nCR ${challengeRating}`,
+      [legendaryResistanceText, traits].filter(Boolean).length ? `Traits\n${[legendaryResistanceText, traits].filter(Boolean).join("\n")}` : "",
+      actions ? `Actions\n${actions}` : "",
+      extra,
+      la || legendaryText ? `Legendary Actions\n${[legendaryHeader, legendaryText].filter(Boolean).join("\n")}` : ""
+    ];
+    return normalizeStatblock({ id: createId("custom-statblock"), name, section: "Custom", size, type, alignment, armorClass, initiative, hp, hpFormula, speed, challengeRating, text: sections.filter(Boolean).join("\n"), source: "Custom", legendaryResistanceMax: lr, legendaryActionMax: la });
+  }
+
+  function saveCustomStatblock({ addToTracker = false } = {}) {
+    const statblock = buildCustomStatblockFromForm();
+    state.customStatblocks = [...(state.customStatblocks || []).filter(item => item.id !== statblock.id), statblock];
+    persistTrackerState();
+    refreshStatblockFilters();
+    selectedStatblockId = statblock.id;
+    renderStatblockResults();
+    closeCustomStatblockPanel();
+    if (addToTracker) addStatblockNpc(statblock.id);
+  }
+
   document.addEventListener("DOMContentLoaded", async () => {
     state.npcs = state.npcs.map(normalizeNpc);
+    state.customStatblocks = getCustomStatblocks();
     persistTrackerState();
 
     const list = document.getElementById("initiativeList");
@@ -579,7 +782,7 @@
       const actionElement = event.target.closest("[data-action]");
       const action = actionElement?.dataset.action;
       if (!row) return;
-      if (!action && row.classList.contains("has-statblock") && !event.target.closest("input, select, button, label, .inline-statblock")) {
+      if (!action && row.classList.contains("has-statblock") && !event.target.closest("input, select, button, label, .inline-statblock, .legendary-tracker")) {
         const id = row.dataset.id || "";
         if (expandedStatblocks.has(id)) expandedStatblocks.delete(id); else expandedStatblocks.add(id);
         renderTracker();
@@ -591,18 +794,33 @@
       if (action === "remove-condition") removeCondition(row, actionElement.dataset.condition || "");
       if (action === "close-condition-info") { focusedConditions.delete(row.dataset.id || ""); renderTracker(); }
       if (action === "toggle-statblock") { const id = row.dataset.id || ""; if (expandedStatblocks.has(id)) expandedStatblocks.delete(id); else expandedStatblocks.add(id); renderTracker(); }
+      if (action === "adjust-legendary") adjustLegendary(row, actionElement.dataset.kind || "", Number(actionElement.dataset.delta) || 0);
     });
 
     document.getElementById("addNpcBtn")?.addEventListener("click", openNpcPicker);
     document.getElementById("addCustomNpcBtn")?.addEventListener("click", addCustomNpc);
+    document.getElementById("openCustomStatblockBtn")?.addEventListener("click", openCustomStatblockPanel);
+    document.getElementById("closeCustomStatblockBtn")?.addEventListener("click", closeCustomStatblockPanel);
+    document.getElementById("saveCustomStatblockBtn")?.addEventListener("click", () => saveCustomStatblock({ addToTracker: false }));
+    document.getElementById("saveAddCustomStatblockBtn")?.addEventListener("click", () => saveCustomStatblock({ addToTracker: true }));
+    document.getElementById("resetCustomStatblockBtn")?.addEventListener("click", clearCustomStatblockForm);
     document.getElementById("closeNpcPickerBtn")?.addEventListener("click", closeNpcPicker);
     document.getElementById("npcPickerBackdrop")?.addEventListener("click", event => { if (event.target.id === "npcPickerBackdrop") closeNpcPicker(); });
-    document.getElementById("statblockResults")?.addEventListener("click", event => { const button = event.target.closest('[data-action="add-statblock-npc"]'); if (button) addStatblockNpc(button.dataset.statblockId || ""); });
+    document.getElementById("statblockResults")?.addEventListener("click", event => {
+      const addButton = event.target.closest('[data-action="add-statblock-npc"]');
+      const previewButton = event.target.closest('[data-action="preview-statblock"]');
+      if (addButton) addStatblockNpc(addButton.dataset.statblockId || "");
+      if (previewButton) { selectedStatblockId = previewButton.dataset.statblockId || ""; renderStatblockResults(); }
+    });
+    document.getElementById("statblockPreview")?.addEventListener("click", event => {
+      const button = event.target.closest('[data-action="add-previewed-statblock"]');
+      if (button) addStatblockNpc(button.dataset.statblockId || selectedStatblockId);
+    });
     ["statblockSearchInput", "statblockSectionFilter", "statblockTypeFilter", "statblockSizeFilter", "statblockCrFilter"].forEach(id => document.getElementById(id)?.addEventListener(id === "statblockSearchInput" ? "input" : "change", renderStatblockResults));
     document.getElementById("clearStatblockFiltersBtn")?.addEventListener("click", clearStatblockFilters);
     document.getElementById("nextTurnBtn")?.addEventListener("click", advanceTurn);
     document.getElementById("resetCombatBtn")?.addEventListener("click", resetCombat);
-    window.addEventListener("keydown", event => { if (event.key === "Escape") closeNpcPicker(); });
+    window.addEventListener("keydown", event => { if (event.key === "Escape") { closeCustomStatblockPanel(); closeNpcPicker(); } });
 
     syncChannel?.addEventListener("message", event => receiveLiveUpdate(event.data));
     window.addEventListener("storage", event => { if (event.key !== SYNC_STORAGE_KEY || !event.newValue) return; try { receiveLiveUpdate(JSON.parse(event.newValue)); } catch {} });
