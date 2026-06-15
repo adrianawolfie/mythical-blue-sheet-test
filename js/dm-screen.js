@@ -936,14 +936,93 @@
     fillFilter("statblockCrFilter", all.map(item => item.challengeRating));
   }
 
+  function normalizeSearchString(value) {
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function escapeRegExp(value) {
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function getSearchTokens(query) {
+    return normalizeSearchString(query)
+      .split(/[^a-z0-9]+/i)
+      .map(token => token.trim())
+      .filter(Boolean);
+  }
+
+  function tokenMatchesStatblock(token, statblock) {
+    const name = normalizeSearchString(statblock.name);
+    const compactToken = token.replace(/[^a-z0-9]+/g, "");
+    const nameWords = name.split(/[^a-z0-9]+/i).filter(Boolean);
+
+    if (compactToken) {
+      const nameHasExactOrPlural = nameWords.some(word =>
+        word === compactToken ||
+        word === `${compactToken}s` ||
+        word === `${compactToken}es`
+      );
+      if (nameHasExactOrPlural) return true;
+
+      // Very short searches should not match the middle of unrelated names
+      // such as Pirate or Triceratops. Allow suffix matches so Rat still finds
+      // Wererat, but keep everything else exact.
+      if (compactToken.length <= 3) {
+        if (nameWords.some(word => word.endsWith(compactToken))) return true;
+      } else if (name.replace(/[^a-z0-9]+/g, "").includes(compactToken)) {
+        return true;
+      }
+    }
+
+    const metadataCorpus = normalizeSearchString([
+      statblock.type,
+      statblock.alignment,
+      statblock.section,
+      statblock.source,
+      statblock.description
+    ].filter(Boolean).join(" "));
+    const fullRulesCorpus = normalizeSearchString([metadataCorpus, statblock.text].filter(Boolean).join(" "));
+    const corpus = token.length <= 3 ? metadataCorpus : fullRulesCorpus;
+
+    const escaped = escapeRegExp(token);
+    const exactOrPlural = new RegExp(`(^|[^a-z0-9])${escaped}(?:s|es)?(?=$|[^a-z0-9])`, "i");
+    if (exactOrPlural.test(corpus)) return true;
+
+    // For longer terms, allow prefix searching in rules text so "zomb" can
+    // find Zombies. Very short terms stay exact and outside the rules text to
+    // avoid noisy matches such as rat -> aberration/creature/restoration.
+    if (token.length >= 4) {
+      return new RegExp(`(^|[^a-z0-9])${escaped}`, "i").test(corpus);
+    }
+
+    return false;
+  }
+
+  function statblockMatchesSearch(statblock, query) {
+    const trimmedQuery = normalizeSearchString(query).trim();
+    if (!trimmedQuery) return true;
+
+    const tokens = getSearchTokens(trimmedQuery);
+    if (tokens.length === 1 && tokenMatchesStatblock(tokens[0], statblock)) return true;
+
+    return tokens.length > 0 && tokens.every(token => tokenMatchesStatblock(token, statblock));
+  }
+
   function statblockMatchesFilters(statblock) {
-    const query = String(document.getElementById("statblockSearchInput")?.value || "").trim().toLowerCase();
+    const query = String(document.getElementById("statblockSearchInput")?.value || "").trim();
     const section = document.getElementById("statblockSectionFilter")?.value || "";
     const type = document.getElementById("statblockTypeFilter")?.value || "";
     const size = document.getElementById("statblockSizeFilter")?.value || "";
     const cr = document.getElementById("statblockCrFilter")?.value || "";
-    const haystack = `${statblock.name} ${statblock.type} ${statblock.alignment} ${statblock.section} ${statblock.text}`.toLowerCase();
-    return (!query || haystack.includes(query)) && (!section || statblock.section === section) && (!type || statblock.type === type) && (!size || statblock.size === size) && (!cr || statblock.challengeRating === cr);
+
+    return statblockMatchesSearch(statblock, query)
+      && (!section || statblock.section === section)
+      && (!type || statblock.type === type)
+      && (!size || statblock.size === size)
+      && (!cr || statblock.challengeRating === cr);
   }
 
   function renderStatblockResult(statblock) {

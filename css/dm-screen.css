@@ -2393,3 +2393,75 @@ html[data-theme="moonlight"] .combatant-row > .legendary-tracker .legendary-coun
 html[data-theme="moonlight"] .custom-statblock-field-help {
   color: rgba(236,248,255,.76);
 }
+
+/* Patch: tighter statblock search, mobile NPC results visibility, compact proficiency checks */
+.npc-picker-body .statblock-results {
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.custom-save-proficiency-grid input[type="checkbox"],
+.custom-statblock-panel input[type="checkbox"] {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  max-width: 14px !important;
+  max-height: 14px !important;
+  flex: 0 0 14px;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.custom-save-proficiency-grid label {
+  min-height: 34px;
+}
+
+@media (max-width: 600px) {
+  .npc-picker-modal {
+    height: calc(100svh - 16px);
+    max-height: calc(100svh - 16px);
+  }
+
+  @supports (height: 100dvh) {
+    .npc-picker-modal {
+      height: calc(100dvh - 16px);
+      max-height: calc(100dvh - 16px);
+    }
+  }
+
+  .npc-picker-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .npc-picker-body .statblock-results {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .statblock-preview-panel {
+    min-height: auto;
+    max-height: none;
+  }
+
+  .custom-save-proficiency-grid label {
+    justify-content: flex-start;
+    min-height: 36px;
+    padding: 6px 8px;
+  }
+
+  .custom-save-proficiency-grid input[type="checkbox"],
+  .custom-statblock-panel input[type="checkbox"] {
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px !important;
+    min-height: 15px !important;
+    max-width: 15px !important;
+    max-height: 15px !important;
+  }
+}

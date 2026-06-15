@@ -10,6 +10,7 @@ function sw(name, btn) {
 
 let currentCharacterId = null;
 let loadedCharacterUpdatedAt = null;
+let characterHasUnsavedChanges = false;
 
 const STORAGE_KEY = "mythicalBlueCharacters";
 const CURRENT_SCHEMA_VERSION = 2;
@@ -104,6 +105,29 @@ function getCharacters() {
 
 function saveCharacters(characters) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(characters));
+}
+
+function isCharacterSheetVisible() {
+  const sheet = document.querySelector(".sheet");
+  return Boolean(currentCharacterId && sheet && sheet.style.display !== "none");
+}
+
+function markCharacterDirty() {
+  if (!isCharacterSheetVisible()) return;
+  characterHasUnsavedChanges = true;
+}
+
+function markCharacterClean() {
+  characterHasUnsavedChanges = false;
+}
+
+function hasUnsavedCharacterChanges() {
+  return isCharacterSheetVisible() && characterHasUnsavedChanges === true;
+}
+
+function confirmDiscardUnsavedCharacterChanges(actionText = "leave this character") {
+  if (!hasUnsavedCharacterChanges()) return true;
+  return confirm(`You have unsaved character changes. Do you want to ${actionText} without saving?`);
 }
 
 function getFields() {
@@ -474,6 +498,7 @@ if (hitDiceInput && character.summary?.hitDice !== undefined) {
 updateHPBar(); // sync bar with loaded values
 
 showSheet();
+markCharacterClean();
 }
 
 async function saveCurrentCharacter(showAlert = true) {
@@ -484,6 +509,7 @@ async function saveCurrentCharacter(showAlert = true) {
 
     currentCharacterId = data.id;
     loadedCharacterUpdatedAt = result.updatedAt || data.updatedAt;
+    markCharacterClean();
 
     if (showAlert) {
       alert("Character saved!");
@@ -521,10 +547,12 @@ focusedCondition = "";
 renderSelectedConditions();
 
 showSheet();
+markCharacterClean();
 }
 
 async function deleteCurrentCharacter() {
   if (!currentCharacterId) return;
+  if (!confirmDiscardUnsavedCharacterChanges("delete this character")) return;
   if (!confirm("Delete this character?")) return;
 
   try {
@@ -535,6 +563,7 @@ async function deleteCurrentCharacter() {
 
     currentCharacterId = null;
     loadedCharacterUpdatedAt = null;
+    markCharacterClean();
 
     await renderCharacterList();
     showStartPage();
