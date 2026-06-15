@@ -2329,3 +2329,53 @@ html[data-theme="moonlight"] .combatant-description-input::placeholder {
     font-size: 16px;
   }
 }
+
+/* Patch: campaign-saved custom statblocks and compact tracker legendary row */
+.combatant-row > .legendary-tracker {
+  grid-column: 2 / 6;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  margin: 2px 0 0;
+}
+
+.combatant-row > .legendary-tracker .legendary-counter {
+  flex: 0 1 auto;
+  min-width: max-content;
+  max-width: 100%;
+}
+
+.combatant-description-input {
+  display: none;
+}
+
+.custom-statblock-description-field textarea::placeholder {
+  font-style: italic;
+}
+
+html[data-theme="moonlight"] .combatant-row > .legendary-tracker .legendary-counter {
+  border-color: rgba(177, 229, 255, .44);
+  background: rgba(4, 17, 38, .42);
+}
+
+@media (max-width: 1040px) {
+  .combatant-row > .legendary-tracker {
+    grid-column: 2 / -2;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .combatant-row > .legendary-tracker {
+    grid-column: 1 / -1;
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+
+  .combatant-row > .legendary-tracker .legendary-counter {
+    flex: 1 1 190px;
+    min-width: 0;
+  }
+}

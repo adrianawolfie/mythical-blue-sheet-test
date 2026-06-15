@@ -6,7 +6,8 @@
   const SYNC_CHANNEL_NAME = "mythical-blue-hp-sync-v1";
   const SYNC_STORAGE_KEY = "mythicalBlueHPBroadcastV1";
   const STATBLOCK_LIBRARY_URL = "data/srd-statblocks.json";
-  const CUSTOM_STATBLOCK_LIBRARY_URL = "data/custom-statblocks.json";
+  const CUSTOM_STATBLOCK_SEED_URL = "data/custom-statblocks.json";
+  const LOCAL_CUSTOM_STATBLOCKS_KEY = "mythicalBlueCampaignCustomStatblocksV1";
   const CUSTOM_MONSTER_SECTION = "Custom Monsters";
   const SAVE_DELAY = 550;
   const POLL_DELAY = 5000;
@@ -36,6 +37,7 @@
   let playerCharacters = [];
   let statblockLibrary = [];
   let customStatblockLibrary = [];
+  let campaignCustomStatblockLibrary = [];
   let state = loadTrackerState();
   let saveTimers = new Map();
   let pollTimer = null;
@@ -182,8 +184,19 @@
     return normalized;
   }
 
+  function combineStatblockLists(...lists) {
+    const combined = new Map();
+    lists.flat().filter(Boolean).forEach(item => {
+      const normalized = normalizeStatblock(item);
+      combined.set(normalized.id, normalized);
+    });
+    return [...combined.values()].sort((a, b) =>
+      String(a.name || "").localeCompare(String(b.name || ""), undefined, { sensitivity: "base" })
+    );
+  }
+
   function getCustomStatblocks() {
-    return (state.customStatblocks || []).map(normalizeStatblock);
+    return combineStatblockLists(state.customStatblocks || [], campaignCustomStatblockLibrary);
   }
 
   function getAllStatblocks() {
@@ -342,7 +355,6 @@
       concentrating: Boolean(npc.concentrating),
       statblockId: String(npc.statblockId || ""),
       source: String(npc.source || ""),
-      description: String(npc.description ?? statblock?.description ?? ""),
       legendaryResistanceMax: lrMax,
       legendaryResistanceCurrent: Math.max(0, Math.min(lrMax, lrCurrent)),
       legendaryActionMax: laMax,
@@ -363,7 +375,6 @@
       concentrating: Boolean(state.playerConcentration[character.id]),
       statblockId: "",
       source: "",
-      description: "",
       legendaryResistanceMax: 0,
       legendaryResistanceCurrent: 0,
       legendaryActionMax: 0,
@@ -578,8 +589,6 @@
         ${isNpc ? rowInput({ className: "combatant-name-input", field: "name", value: combatant.name, label: "NPC name" }) : `<span class="combatant-name">${encodedName}</span>`}
         <span class="combatant-type">${isNpc ? (statblock ? `${escapeHtml(statblock.section)} · ${escapeHtml(statblock.source || "Statblock")}` : "Custom NPC") : "Player character · live sync"}</span>
         ${statblock ? `<button type="button" class="statblock-toggle" data-action="toggle-statblock">${expandedStatblocks.has(combatant.id) ? "Hide" : "View"} statblock</button>` : ""}
-        ${legendaryTrackerMarkup(combatant)}
-        ${isNpc ? `<textarea class="combatant-description-input" data-field="description" rows="2" aria-label="Description or table note for ${encodedName}" placeholder="Monster description / table note…">${escapeHtml(combatant.description || "")}</textarea>` : ""}
       </div>
       <div class="combatant-initiative">${rowInput({ className: "initiative-input", field: "initiative", value: combatant.initiative, label: `Initiative for ${combatant.name}`, type: "number", inputmode: "numeric" })}</div>
       <div class="combatant-hp">${hpBarMarkup(combatant)}<div class="combatant-hp-fields">${rowInput({ className: "hp-current-input", field: "hpCurrent", value: combatant.hpCurrent, label: `Current HP for ${combatant.name}`, type: "number", inputmode: "numeric" })}<span class="hp-divider">/</span>${rowInput({ className: "hp-max-input", field: "hpMax", value: combatant.hpMax, label: `Maximum HP for ${combatant.name}`, type: "number", inputmode: "numeric" })}</div></div>
@@ -587,6 +596,7 @@
       <div class="combatant-conditions">${conditionEditorMarkup(combatant)}</div>
       <label class="combatant-concentration concentration-toggle" title="Concentrating"><input data-field="concentrating" type="checkbox" ${combatant.concentrating ? "checked" : ""} aria-label="${encodedName} is concentrating"><span class="concentration-rune" aria-hidden="true">✦</span></label>
       ${isNpc ? `<button class="combatant-remove" type="button" data-action="remove-npc" title="Remove ${encodedName}" aria-label="Remove ${encodedName}">×</button>` : `<span class="player-lock-icon" title="Character live sync" aria-label="Character live sync">◆</span>`}
+      ${legendaryTrackerMarkup(combatant)}
       ${expandedStatblockMarkup(combatant)}
     </article>`;
   }
@@ -724,7 +734,6 @@
       armorClass: statblock.armorClass,
       statblockId: statblock.id,
       source: statblock.source || "SRD 5.2.1",
-      description: statblock.description || "",
       legendaryResistanceMax: lr,
       legendaryResistanceCurrent: lr,
       legendaryActionMax: la,
@@ -824,14 +833,65 @@
     }
   }
 
+  async function parseCustomStatblockResponse(response, fallbackMessage) {
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.error || fallbackMessage);
+    return body;
+  }
+
+  async function loadCampaignCustomStatblocks() {
+    const legacyLocal = Array.isArray(state.customStatblocks) ? state.customStatblocks : [];
+
+    if ((window.APP_CONFIG || {}).storageMode === "netlify") {
+      try {
+        const response = await fetch(`/.netlify/functions/get-custom-statblocks?cacheBust=${Date.now()}`, { cache: "no-store" });
+        const body = await parseCustomStatblockResponse(response, "Could not load campaign custom statblocks.");
+        return combineStatblockLists(legacyLocal, Array.isArray(body) ? body : body.statblocks || []);
+      } catch (error) {
+        console.warn(error.message);
+        return combineStatblockLists(legacyLocal);
+      }
+    }
+
+    try {
+      const localCustom = JSON.parse(localStorage.getItem(LOCAL_CUSTOM_STATBLOCKS_KEY) || "[]");
+      return combineStatblockLists(legacyLocal, Array.isArray(localCustom) ? localCustom : []);
+    } catch {
+      return combineStatblockLists(legacyLocal);
+    }
+  }
+
+  async function saveCampaignCustomStatblocks(statblocks) {
+    const normalized = combineStatblockLists(statblocks).map(statblock => ({
+      ...statblock,
+      section: CUSTOM_MONSTER_SECTION,
+      source: statblock.source || "Custom Monster"
+    }));
+
+    if ((window.APP_CONFIG || {}).storageMode === "netlify") {
+      const response = await fetch("/.netlify/functions/save-custom-statblocks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ statblocks: normalized })
+      });
+      const body = await parseCustomStatblockResponse(response, "Could not save campaign custom statblocks.");
+      return combineStatblockLists(Array.isArray(body) ? body : body.statblocks || normalized);
+    }
+
+    localStorage.setItem(LOCAL_CUSTOM_STATBLOCKS_KEY, JSON.stringify(normalized));
+    return normalized;
+  }
+
   async function loadStatblockLibrary() {
     try {
-      const [srdStatblocks, customStatblocks] = await Promise.all([
+      const [srdStatblocks, customStatblocks, campaignCustomStatblocks] = await Promise.all([
         fetchStatblockJson(STATBLOCK_LIBRARY_URL, true),
-        fetchStatblockJson(CUSTOM_STATBLOCK_LIBRARY_URL, false)
+        fetchStatblockJson(CUSTOM_STATBLOCK_SEED_URL, false),
+        loadCampaignCustomStatblocks()
       ]);
       statblockLibrary = srdStatblocks.map(normalizeStatblock);
       customStatblockLibrary = customStatblocks.map(normalizeStatblock);
+      campaignCustomStatblockLibrary = campaignCustomStatblocks.map(normalizeStatblock);
       refreshStatblockFilters();
       renderStatblockResults();
     } catch (error) {
@@ -1082,21 +1142,34 @@
     });
   }
 
-  function saveCustomStatblock({ addToTracker = false } = {}) {
+  async function saveCustomStatblock({ addToTracker = false } = {}) {
     const statblock = buildCustomStatblockFromForm();
-    state.customStatblocks = [...(state.customStatblocks || []).filter(item => item.id !== statblock.id), statblock];
-    editingStatblockId = statblock.id;
-    persistTrackerState();
-    refreshStatblockFilters();
-    selectedStatblockId = statblock.id;
-    renderStatblockResults();
-    closeCustomStatblockPanel();
-    if (addToTracker) addStatblockNpc(statblock.id);
+    const saveButtons = [document.getElementById("saveCustomStatblockBtn"), document.getElementById("saveAddCustomStatblockBtn")].filter(Boolean);
+    const originalButtonText = new Map(saveButtons.map(button => [button, button.textContent]));
+    saveButtons.forEach(button => { button.disabled = true; button.textContent = "Saving…"; });
+
+    try {
+      const nextCustomStatblocks = combineStatblockLists(campaignCustomStatblockLibrary.filter(item => item.id !== statblock.id), statblock);
+      campaignCustomStatblockLibrary = await saveCampaignCustomStatblocks(nextCustomStatblocks);
+      state.customStatblocks = (state.customStatblocks || []).filter(item => item.id !== statblock.id);
+      editingStatblockId = statblock.id;
+      persistTrackerState();
+      refreshStatblockFilters();
+      selectedStatblockId = statblock.id;
+      renderStatblockResults();
+      closeCustomStatblockPanel();
+      if (addToTracker) addStatblockNpc(statblock.id);
+    } catch (error) {
+      console.error(error);
+      alert(error.message || "Could not save this custom statblock for the campaign.");
+    } finally {
+      saveButtons.forEach(button => { button.disabled = false; button.textContent = originalButtonText.get(button) || "Save Statblock"; });
+    }
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
     state.npcs = state.npcs.map(normalizeNpc);
-    state.customStatblocks = getCustomStatblocks();
+    state.customStatblocks = Array.isArray(state.customStatblocks) ? state.customStatblocks.map(normalizeStatblock) : [];
     persistTrackerState();
 
     const list = document.getElementById("initiativeList");
@@ -1162,7 +1235,7 @@
     try {
       await Promise.all([characterStorage.init(), loadStatblockLibrary()]);
       state.npcs = state.npcs.map(normalizeNpc);
-      state.customStatblocks = getCustomStatblocks();
+      state.customStatblocks = Array.isArray(state.customStatblocks) ? state.customStatblocks.map(normalizeStatblock) : [];
       persistTrackerState();
       await refreshPlayers();
       startPolling();
